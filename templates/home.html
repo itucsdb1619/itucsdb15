@@ -67,10 +67,10 @@ li a:hover:not(.active) {
 
 <ul>
   <li><a href="{{ url_for('events_page') }}">Events</a></li>
-  <li><a href="#Places">Places</a></li>
+  <li><a href="{{ url_for('places_page') }}">Places</a></li>
   <li><a href="#contact">Contact</a></li>
   <li><a href="#friends">Friends</a></li>
-  <li><a href="#photos">Photos</a></li>
+  <li><a href="#{{ url_for('photos_page') }}">Photos</a></li>
   <li style="float:right"><a class="active" href="#about">About</a></li>
 </ul>
 

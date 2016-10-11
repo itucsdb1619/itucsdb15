@@ -17,6 +17,13 @@ def home_page():
 def events_page():
     return render_template('events.html')
 
+@app.route('/places')
+def places_page():
+    return render_template('places.html')
+
+@app.route('/photos')
+def photos_page():
+    return render_template('photos.html')
 
 if __name__ == '__main__':
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
