@@ -1,21 +1,52 @@
-body {
-  background-color: white;
-  color: #6F6F6F;
-  font-family: 'Droid Sans', 'Helvetica', 'sans';
-  font-size: 12pt;
-  margin: 2ex 2em;
-}
-
-h1, h2, h3, h4 {
-  color: #E9601A;
-}
-
 a {
-  color: #6F6F6F;
-  text-decoration: underline;
+    color: blue;
+    padding: 10px;
 }
 
-div#datetime {
-  font-size: 80%;
-  text-align: right;
+body {
+    background-color: silver;
+}
+
+h1 {
+    color: black;
+    font-family: verdana;
+    font-size: 200%;
+}
+
+p {
+    border: 1px solid powderblue;
+    padding: 20px;
+    margin: 15px;
+}
+
+img {
+    float:left;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #111;
+}
+
+.active {
+    background-color: #4CAF50;
 }
