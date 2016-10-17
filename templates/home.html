@@ -1,42 +1,55 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html>
+<style>
+
+.logo {
+    height: 200px;
+    width: 600px;
+    right: 0%;
+    position: static;
+    padding-left: 710px;
+}
+
+.logBox {
+    height: 400 px;
+    width: 500 px;
+    border-width: 10 px;
+    border-color: white;
+    background-color: violet;
+    border-style:groove;
+    margin-left: 50px;
+    border-radius: 15px;
+    position: static;
+}
+
+.login{
+    height: 25 px;
+    width: 35 px;
+    border-width: 5 px;
+    border-color: white;
+    background-color: white;
+    border-style:groove;
+    margin-left: 50px;
+    border-radius: 15px;
+    position: static;
+}
+</style>
 <head>
-<title> AdVMeet </title>
-<meta charset="utf-8">
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+	<meta charset="utf-8" />
+    <title> MyPage </title>
+ 	 <head style="background-color: #ffffe6;">
+     <div class = "logo">
+ 	      <a href="#home"><img style = "opacity: 0.7; border: 3px solid #94b8b8; border-radius: 1em;" src="logo_complete_cut.jpg"></a>
+    </div>
+   <hr>
+   <div class = "logBox">
+        <p>This design of section is only for now</p>
+        <div class = "login">
+              <p><a href="mypage.html">Log in</a></p>
+        </div>
+   </div>
+
 </head>
-
-<body>
-
-<h1>AdVMeet</h1>
-
-<!-- this is a comment -->
-<p>Where your journey starts.</p>
-<hr>
-
-<img title="island"  src="/static/DSC_1943.jpg" alt="resim bulunamadi" width="404" height="242">
-<hr>
-
-<ul>
-  <li><a href="{{ url_for('events_page') }}">Events</a></li>
-  <li><a href="{{ url_for('places_page') }}">Places</a></li>
-  <li><a href="#contact">Contact</a></li>
-  <li><a href="#friends">Friends</a></li>
-  <li><a href="#{{ url_for('photos_page') }}">Photos</a></li>
-  <li style="float:right"><a class="active" href="#about">About</a></li>
-</ul>
-
-
-<hr style="clear:both;">
-
-<address>
-Written by Muhammed isiyok<br>
-Visit us at: itu<br>
-isiyok.com<br>
-Box 564, Disneyland<br>
-USA
-</address>
-
+<body background="wall3.jpg">
 </body>
 </html>
