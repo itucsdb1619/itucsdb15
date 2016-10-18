@@ -1,8 +1,10 @@
+{% extends "base.html" %}
+
 <!DOCTYPE html>
 <html>
 <head>
 
-<style>
+{% block style %}
 
 div.block {
 	height:300px;
@@ -31,9 +33,9 @@ img {
 	margin-top: 25px;
 }
 
-</style>
+{% endblock %}
 
-
+{% block title %} places {% endblock %}
 
 </head>
 <body>
@@ -46,7 +48,7 @@ img {
 		<p style="margin-left: 100px"><b><br><br><br><br><br><br>Information about the place, and meeting</b></p>
 		</div>
 		<div class="picture">
-		<img src="noImage.png">
+		<img src="/static/index.jpeg">
 		</div>
 	
 	</div>
@@ -59,7 +61,7 @@ img {
 		<p style="margin-left: 100px"><b><br><br><br><br><br><br>Information about the place, and meeting</b></p>
 		</div>
 		<div class="picture">
-		<img src="noImage.png">
+		<img src="/static/indexx.jpeg">
 		</div>
 	</div>
 
@@ -71,7 +73,7 @@ img {
 		<p style="margin-left: 100px"><b><br><br><br><br><br><br>Information about the place, and meeting</b></p>
 		</div>
 		<div class="picture">
-		<img src="noImage.png">
+		<img src="/static/index2.jpeg">
 		</div>
 	</div>
 
