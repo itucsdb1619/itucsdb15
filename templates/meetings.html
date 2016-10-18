@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-
-{% block style %}
+<style>
 
 div {
-    width: 628px;
+    width: 635px;
     border: 3px solid gray;
     margin: 0;
 }
 .box {
     float: left;
-    width: 600px;
+    width: 640px;
     margin-top: 5px;
     padding: 15px;
     border: 2px solid gray;
@@ -47,10 +46,10 @@ li a:hover {
     background-color: #ffffcc;
 }
 
-{% endblock %}
+</style>
 
     <meta charset="utf-8" />
-    {% block title %} events {% endblock %}
+    <title> AdVMeet </title>
   </head>
   <body>
   <body style="background-color: #ffffe6;">
@@ -59,16 +58,18 @@ li a:hover {
   <hr>
 <div>
 <ul>
-  <li style="color: #000000"><a href="# Events History"> Events History</a></li>
-  <li><a href="# UpcomingEvents"> Upcoming Events</a></li>
-  <li><a href="# SavedEvents"> Saved Events</a></li>
-  <li><a href="# EventCreation"> CREATE AN EVENT</a></li>
+  <li style="color: #000000"><a href="# Meetings History"> Meetings History</a></li>
+  <li><a href="# UpcomingMeetings"> Upcoming Meetings</a></li>
+  <li><a href="# SavedMeetings"> Saved Meetings</a></li>
+  <li><a href="# MeetingCreation"> CREATE AN MEETING</a></li>
 </ul>
 </div>
 <div class="box">
-  <article> //here some events feed comes
+  <article> //feeds
   </article>
 </div>
+<div>Differance between event and meeting ?</div>
+
 
 
   </body>
