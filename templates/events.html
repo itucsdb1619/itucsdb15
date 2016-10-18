@@ -1,7 +1,10 @@
+{% extends "base.html" %}
+
 <!DOCTYPE html>
 <html>
   <head>
-<style>
+
+{% block style %}
 
 div {
     width: 628px;
@@ -46,10 +49,10 @@ li a:hover {
     background-color: #ffffcc;
 }
 
-</style>
+{% endblock %}
 
     <meta charset="utf-8" />
-    <title> AdVMeet </title>
+    {% block title %} events {% endblock %}
   </head>
   <body>
   <body style="background-color: #ffffe6;">
