@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+	<style>
+
+		.logo {
+			height: 200px;
+			width: 600px;
+			position: static;
+			padding-left: 710px;
+		}
+
+		.quickMenucontainer {
+			width: 1150px;
+			height:40px;
+			border-style:groove;
+			margin-left: 50px;
+			border-radius: 15px;
+			background-color: #c2d6d6;
+			opacity: 0.9;
+			position: static;
+		}
+		.quickMenucontainer ul {
+			padding-top: 5px;
+			padding-left: 400px;
+			margin: 0;
+			list-style-type: none;
+		}
+		.quickMenucontainer ul li {
+			width: 36px;
+			height: 35px;
+			background-color:#c2d6d6;
+			border-left: 5px;
+			float: left;
+			text-align: center;
+			color: #000000;
+		}
+
+		input[type=text] {
+			width: 130px;
+			box-sizing: border-box;
+			border: 3px solid #94b8b8;
+			border-radius: 10px;
+			font-size: 16px;
+			background-color: #ffff66;
+			background-image: url('search.png');
+			background-position: 10px 5px;
+			background-repeat: no-repeat;
+			padding-top: 5px;
+			padding-left: 30px;
+
+			-webkit-transition: width 0.4s ease-in-out;
+			transition: width 0.4s ease-in-out;
+		}
+
+		input[type=text]:focus {
+			width: 30%;
+		}
+		.mainBox{
+			width: 1150px;
+			height:600px;
+			border-style:groove;
+			margin-top: 50px;
+			margin-left: 50px;
+			border-radius: 15px;
+			background-color: #f6bcf6;
+			opacity: 0.9;
+			position: static;
+		}
+		.photoBox {
+			  width: 240px;
+			height:240px;
+			display: block;
+			border-style:groove;
+			  border-radius: 1em;
+			margin-top: -30px;
+			margin-left: 50px;
+		}
+		.userMenuBox {
+			width: 535px;
+			height:48px;
+			border: 2px solid gray;
+			margin-top: 80px;
+			margin-left: 280px;
+			  border-radius: 0.5em;
+			background-color: #b3b3ff;
+		}
+		.createBox{
+			width: 190px !important;
+			height:48px;
+			border: 2px solid gray;
+			margin-top: -52px !important;
+			margin-left: 580px;
+			border-radius: 0.5em;
+			background-color: #b3b3ff;
+			font-family: "Lucida Console", Monaco, monospace;
+			text-align: center;
+		}
+		.feed{
+			width: 535px;
+			height:465px;
+			border: 2px solid gray;
+			margin-top: 20px;
+			border-radius: 0.5em;
+			background-color: #e6e6ff;
+			display: block;
+		}
+		.popularBox{
+			width: 190px !important;
+			height:465px;
+			border: 2px solid gray;
+			margin-top: 0px;
+			margin-left: 580px;
+			border-radius: 0.5em;
+			background-color: #e6e6ff;
+			font-family: "Lucida Console", Monaco, monospace;
+			text-align: center;
+		}
+		.infoBox{
+			width: 240px;
+			height:340px;
+			border-style: solid ;
+			border-radius: 1em;
+			margin-top: 30px;
+			margin-left: 50px;
+			background-color: #f2f2f2;
+			display: block;
+		}
+		#joinBox{
+			background-color: #923a69;
+			color: #923a69;
+			text-align: center;
+			text-decoration: none;
+			display: block;
+			width: 100px;
+			height: 20px;
+			margin-top: 10px;
+			border-style:groove;
+			border-radius: 1em;
+			margin-left: 50px;
+		}
+		ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+			font-family: "Lucida Console", Monaco, monospace;
+		}
+
+		#nav-a ul li {
+			float: left;
+			color: #000000;
+			width: 106px !important;
+		}
+		#nav-a ul li a {
+			border-left: 1px solid gray;
+			display: block;
+			color: #666666;
+			text-align: center;
+			padding: 15px;
+			text-decoration: none;
+		}
+
+		#nav-a ul li a:hover {
+			background-color: #c56d9d;
+		}
+
+		#nav-b ul li {
+			color: #666666;
+			padding: 5px;
+			font-size: 12px;
+			text-decoration: none;
+		}
+
+		.messages {
+			margin: 10px;
+			padding: 10px;
+			padding-top: 20px;
+			padding-left: 20px;
+			width: 850px;
+			height:30px;
+			border-style:groove;
+			margin-left: 70px;
+			border-radius: 15px;
+			background-color: #d6d6c2;
+			opacity: 0.9;
+		}
+
+		.messages a{
+			text-decoration: none;
+		}
+
+	</style>
+
+	<head style="background-color: #ffffe6;">
+		<meta charset="utf-8" />
+		<title> Messages </title>
+
+
+
+	</head>
+
+	<body background="wall.jpg">
+		<div class = "logo">
+			<a href="#home"><img style = "opacity: 0.7; border: 3px solid #94b8b8; border-radius: 1em;" src="images/logo.jpg" alt="LOGO"></a>
+		</div>
+
+	   <hr>
+
+		<div class="quickMenucontainer">
+			<ul >
+				<li style="padding-right: 20px">
+					<a href="#Home"><img src="home.png" alt="home_icon"></a>
+				</li>
+				<li style="padding-right: 20px">
+					<a href="#myPage"><img src="user.png" alt="myPage_icon"></a>
+				</li>
+				<li style="padding-right: 20px">
+					<a href="#Messages"><img src="msg2.png" alt="messages_icon"></a>
+				</li>
+				<li style="padding-right: 20px">
+					<a href="#Notifications"><img src="not.png" alt="notifications_icon"></a>
+				</li>
+				<form>
+					<input type="text" name="search" placeholder="Search..">
+				</form>
+			</ul>
+		</div>
+
+		<h1 style="margin: 10px; margin-left:50px"> Messages </h1>
+		<ul >
+			<li class="messages">
+				<a href="#message_no">Message_Title</a>
+				From:
+				<a href="#friend_no">Friend_name</a>
+			</li>
+			<li class="messages">
+				<a href="#message_no">Message_Title</a>
+				From:
+				<a href="#friend_no">Friend_name</a>
+			</li>
+			<li class="messages">
+				<a href="#message_no">Message_Title</a>
+				From:
+				<a href="#friend_no">Friend_name</a>
+			</li>
+		</ul>
+	</body>
+</html>
