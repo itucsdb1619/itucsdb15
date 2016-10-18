@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+
+    {% block style %} {% endblock %}
+
+
+<head>
+	<meta charset="utf-8" />
+    <title>AdVMeet - {% block title %} {% endblock %}</title>
+ 	 <head style="background-color: #ffffe6;">
+     <div class = "logo">
+ 	      <a href="#home"><img style = "opacity: 0.7; border: 3px solid #94b8b8; border-radius: 1em;" src="/static/logo.jpg"></a>
+    </div>
+   <hr>
+     <div class="quickMenucontainer">
+     <ul >
+        <li style="padding-right: 20px">
+            <a href="#Home"><img src="/static/home.png"></a>
+        </li>
+        <li style="padding-right: 20px">
+            <a href="#myPage"><img src="/static/user.png"></a>
+        </li>
+        <li style="padding-right: 20px">
+            <a href="#Messages"><img src="/static/msg2.png"></a>
+        </li>
+        <li style="padding-right: 20px">
+            <a href="#Notifications"><img src="/static/not.png"></a>
+        </li>
+        <form>
+            <input type="text" name="search" placeholder="Search..">
+        </form>
+    </div>
+    </ul>
+    </div>
+</head>
+
+<body background="/static/wall.jpg">
+
+{%- block body %}{%- endblock %}
+
+</body>
+
+</html>

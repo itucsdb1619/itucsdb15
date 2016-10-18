@@ -1,10 +1,7 @@
-{% extends "base.html" %}
-
 <!DOCTYPE html>
 <html>
-
-{% block style %}
 <style>
+
 .logo {
     height: 200px;
     width: 600px;
@@ -164,7 +161,7 @@ ul {
 }
 
 #nav-a ul li a:hover {
-    background-color: #00c575;
+    background-color: #c56d9d;
 }
 
 #nav-b ul li {
@@ -173,30 +170,58 @@ ul {
     font-size: 12px;
     text-decoration: none;
 }
+
+
 </style>
-
-{% endblock %}
-
-
-    {% block body %}
+<head>
+  { % block head %}
+	<meta charset="utf-8" />
+    <title>{% block title %}My amazing site{% endblock %}</title>
+ 	 <head style="background-color: #ffffe6;">
+     <div class = "logo">
+ 	      <a href="#home"><img style = "opacity: 0.7; border: 3px solid #94b8b8; border-radius: 1em;" src="logo.jpg"></a>
+    </div>
+   <hr>
+     <div class="quickMenucontainer">
+     <ul >
+        <li style="padding-right: 20px">
+            <a href="#Home"><img src="home.png"></a>
+        </li>
+        <li style="padding-right: 20px">
+            <a href="#Settings"><img src="user.png"></a>
+        </li>
+        <li style="padding-right: 20px">
+            <a href="#Messages"><img src="msg2.png"></a>
+        </li>
+        <li style="padding-right: 20px">
+            <a href="#Notifications"><img src="not.png"></a>
+        </li>
+        <form>
+            <input type="text" name="search" placeholder="Search..">
+        </form>
+    </div>
+    </ul>
+    </div>
+    {% endblock %}
+</head>
+<body background="wall.jpg">
 
     <div class="mainBox">
 	<div class="photoBox">
 	<div class="userMenuBox">
     <div id="nav-a">
     <ul>
-        <li><a style = "border-left:0px" href="#Statuses"> Statuses</a></li>
-        <li><a href="/events"> MyEvents</a></li>
-        <li><a href="/places"> Places</a></li>
-        <li><a href="/photos"> Photos</a></li>
-        <li><a href="#Interests"> Interests</a></li>
+        <li><a style = "border-left:0px" > Statuses</a></li>
+        <li><a > MyEvents</a></li>
+        <li><a > Friends</a></li>
+        <li><a > Photos</a></li>
+        <li><a > Interests</a></li>
     </ul>
     </div>
     <div class="createBox">
     <a style="padding: 15px; text-decoration: none;display: block; align:center" href="#EventCreation"> CREATE EVENT</a>
     </div>
     <div class = "feed">
-      <p>Hello, you are now in the home page. and this section will be designed later.</p>
     <div class = "popularBox">
     <div id="nav-b">
     <ul>
@@ -227,7 +252,6 @@ ul {
     </div>
     </div>
     </div>
-
-    {% endblock %}
+</body>
 
 </html>
