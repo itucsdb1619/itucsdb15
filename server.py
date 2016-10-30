@@ -5,6 +5,7 @@ import re
 
 from flask import Flask
 from flask import redirect
+from flask import request
 from flask.helpers import url_for
 from flask import render_template
 
@@ -24,8 +25,15 @@ def get_elephantsql_dsn(vcap_services):
 def home_page():
     return render_template('home.html')
 
-@app.route('/events')
+@app.route('/events', methods=['POST', 'GET'])
 def events_page():
+    if request.method == 'POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            ##values for startingDate and endingDate not set
+            query = "INSERT INTO EVENT VALUES ("+ request.form['Name'] + "," + request.form['Description'] + "," + request.form['Description']+ "," + request.form['place']
+            cursor.execute(query)
+            connection.commit()
     return render_template('events.html')
 
 @app.route('/places')
@@ -36,9 +44,13 @@ def places_page():
 def photos_page():
     return render_template('photos.html')
 
+@app.route('/EventCreation')
+def eventcreation_page():
+    return render_template('EventCreation.html')
+
 @app.route('/initdb')
 def initDataBase():
-    with dbapi.connect(app.config['dsn']) as connection:
+    with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
         ###
         query = """DROP TABLE IF EXISTS EVENT_COUNTER"""
@@ -53,7 +65,7 @@ def initDataBase():
         cursor.execute(query)
         query = """CREATE TABLE EVENT (
                 NAME VARCHAR(50) NOT NULL,
-                DESCRIPTION VARCHAR(50) NOT NULL,
+                DESCRIPTION VARCHAR(200) NOT NULL,
                 STARTING_DATE DATETIME,
                 ENDING_DATE DATETIME,
                 PLACE VARCHAR(100),
@@ -61,6 +73,7 @@ def initDataBase():
         cursor.execute(query)
         ###
         connection.commit()
+        return render_template('events.html')
 
 if __name__ == '__main__':
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
@@ -73,5 +86,5 @@ if __name__ == '__main__':
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
         app.config['dsn'] = """user='vagrant' password='vagrant'
-                               host='localhost' port=54321 dbname='itucsdb'"""
+                               host='localhost' port=5432 dbname='itucsdb'"""
     app.run(host='0.0.0.0', port=port, debug=debug)

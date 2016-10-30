@@ -196,7 +196,20 @@ ul {
     <a style="padding: 15px; text-decoration: none;display: block; align:center" href="EventCreation"> CREATE EVENT</a>
     </div>
     <div class = "feed">
-      <p>Hello, you are now in the home page. and this section will be designed later.</p>
+      <form action="events"
+        enctype="multipart/form-data" method="post">
+					<p>Name of the event:</p>
+                    <input type="text" name="Name" size="50"/><br>
+					<p>Description:</p>
+                    <input type="text" name="Description" size="200" /><br>
+					<p>Starting date:</p>
+                    <input type="text" name="startingDate" size="20" /><br>
+					<p>Ending date:</p>
+                    <input type="text" name="endingDate" size="20"/><br>
+					<p>Location:</p>
+                    <input type="text" name="place" size="100"/><br>
+                    <input type="submit" value="Create" />
+    	</form>
     <div class = "popularBox">
     <div id="nav-b">
     <ul>
@@ -211,19 +224,6 @@ ul {
     </div>
     </div>
     </div>
-    </div>
-    </div>
-    <div class ="infoBox">
-    <div id="nav-b">
-    <ul>
-        <li style = "border-bottom: 1px solid gray; color: black"> User Information: </li>
-        <li> Aziza Kasenova </li>
-        <li> 21, student </li>
-        <li>  Istanbul Technical University </li>
-        <li>  Istanbul, Turkey </li>
-        <li style = "border-bottom: 1px solid gray; color: black">Interests: </li>
-        <li>Reading, Swimming, Camping</li>
-    </ul>
     </div>
     </div>
     </div>
