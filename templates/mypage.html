@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+<!DOCTYPE html>
+<html>
+
+{% block style %}
+<style>
+.logo {
+    height: 200px;
+    width: 600px;
+    position: static;
+    padding-left: 710px;
+}
+
+.quickMenucontainer {
+    width: 1150px;
+    height:40px;
+    border-style:groove;
+    margin-left: 50px;
+    border-radius: 15px;
+    background-color: #c2d6d6;
+    opacity: 0.9;
+    position: static;
+}
+.quickMenucontainer ul {
+    padding-top: 5px;
+    padding-left: 400px;
+    margin: 0;
+    list-style-type: none;
+}
+.quickMenucontainer ul li {
+    width: 36px;
+    height: 35px;
+    background-color:#c2d6d6;
+    border-left: 5px;
+    float: left;
+    text-align: center;
+    color: #000000;
+}
+
+input[type=text] {
+    width: 130px;
+    box-sizing: border-box;
+    border: 3px solid #94b8b8;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: #ffff66;
+    background-image: url('search.png');
+    background-position: 10px 5px;
+    background-repeat: no-repeat;
+    padding-top: 5px;
+    padding-left: 30px;
+
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+}
+
+input[type=text]:focus {
+    width: 30%;
+}
+.mainBox{
+    width: 1150px;
+    height:600px;
+    border-style:groove;
+    margin-top: 50px;
+    margin-left: 50px;
+    border-radius: 15px;
+    background-color: #f6bcf6;
+    opacity: 0.9;
+    position: static;
+}
+.photoBox {
+	  width: 240px;
+    height:240px;
+    display: block;
+    border-style:groove;
+ 	  border-radius: 1em;
+    margin-top: -30px;
+    margin-left: 50px;
+}
+.userMenuBox {
+    width: 535px;
+    height:48px;
+    border: 2px solid gray;
+    margin-top: 80px;
+    margin-left: 280px;
+	  border-radius: 0.5em;
+    background-color: #b3b3ff;
+}
+.createBox{
+    width: 190px !important;
+    height:48px;
+    border: 2px solid gray;
+    margin-top: -52px !important;
+    margin-left: 580px;
+    border-radius: 0.5em;
+    background-color: #b3b3ff;
+    font-family: "Lucida Console", Monaco, monospace;
+    text-align: center;
+}
+.feed{
+    width: 535px;
+    height:465px;
+    border: 2px solid gray;
+    margin-top: 20px;
+    border-radius: 0.5em;
+    background-color: #e6e6ff;
+    display: block;
+}
+.popularBox{
+    width: 190px !important;
+    height:465px;
+    border: 2px solid gray;
+    margin-top: 0px;
+    margin-left: 580px;
+    border-radius: 0.5em;
+    background-color: #e6e6ff;
+    font-family: "Lucida Console", Monaco, monospace;
+    text-align: center;
+}
+.infoBox{
+    width: 240px;
+    height:340px;
+    border-style: solid ;
+    border-radius: 1em;
+    margin-top: 30px;
+    margin-left: 50px;
+    background-color: #f2f2f2;
+    display: block;
+}
+#joinBox{
+    background-color: #923a69;
+    color: #923a69;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    width: 100px;
+    height: 20px;
+    margin-top: 10px;
+    border-style:groove;
+    border-radius: 1em;
+    margin-left: 50px;
+}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
+#nav-a ul li {
+    float: left;
+    color: #000000;
+    width: 106px !important;
+}
+#nav-a ul li a {
+    border-left: 1px solid gray;
+    display: block;
+    color: #666666;
+    text-align: center;
+    padding: 15px;
+    text-decoration: none;
+}
+
+#nav-a ul li a:hover {
+    background-color: #00c575;
+}
+
+#nav-b ul li {
+    color: #666666;
+    padding: 5px;
+    font-size: 12px;
+    text-decoration: none;
+}
+</style>
+
+{% endblock %}
+
+
+    {% block body %}
+
+    <div class="mainBox">
+	<div class="photoBox">
+	<div class="userMenuBox">
+    <div id="nav-a">
+    <ul>
+        <li><a style = "border-left:0px" href="#Statuses"> Statuses</a></li>
+        <li><a href="/events"> MyEvents</a></li>
+        <li><a href="/places"> Places</a></li>
+        <li><a href="/photos"> Photos</a></li>
+        <li><a href="#Interests"> Interests</a></li>
+    </ul>
+    </div>
+    <div class="createBox">
+    <a style="padding: 15px; text-decoration: none;display: block; align:center" href="EventCreation"> CREATE EVENT</a>
+    </div>
+    <div class = "feed">
+      <p>Hello, you are now in the home page. and this section will be designed later.</p>
+    <div class = "popularBox">
+    <div id="nav-b">
+    <ul>
+        <li style = "border-bottom: 1px solid gray; color: black"> Popular Events: </li>
+        <li><a href="comingEvent"> 14:00, Picnic, Yildiz Parki, Istanbul</a>
+            <a id = "joinBox" href="#Accept Event"></a>
+        </li>
+        <li><a href="comingEvent"> 18:00, Php Conference, Istanbul Kongre Merkezi, Istanbul</a>
+            <a id = "joinBox" href="#Accept Event"></a>
+        </li>
+    </ul>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    <div class ="infoBox">
+    <div id="nav-b">
+    <ul>
+        <li style = "border-bottom: 1px solid gray; color: black"> User Information: </li>
+        <li> Aziza Kasenova </li>
+        <li> 21, student </li>
+        <li>  Istanbul Technical University </li>
+        <li>  Istanbul, Turkey </li>
+        <li style = "border-bottom: 1px solid gray; color: black">Interests: </li>
+        <li>Reading, Swimming, Camping</li>
+    </ul>
+    </div>
+    </div>
+    </div>
+
+    {% endblock %}
+
+</html>

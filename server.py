@@ -8,6 +8,7 @@ from flask import redirect
 from flask import request
 from flask.helpers import url_for
 from flask import render_template
+from users import User, Users
 
 
 app = Flask(__name__)
@@ -24,6 +25,11 @@ def get_elephantsql_dsn(vcap_services):
 @app.route('/')
 def home_page():
     return render_template('home.html')
+
+ @app.route('/users')
+ def users():
+    now = datetime.datetime.now()
+    return render_template('mypage.html')
 
 @app.route('/events', methods=['POST', 'GET'])
 def events_page():
@@ -75,13 +81,31 @@ def initDataBase():
         connection.commit()
         return render_template('events.html')
 
+ def create_tables():
+    with dbapi2.connect(app.config['dsn']) as connection:
+        cursor = connection.cursor()
+    
+        query = """ CREATE TABLE IF NOT EXISTS USERS
+        (   
+        USER_ID serial NOT NULL PRIMARY KEY,
+        NAME varchar(100) NOT NULL,
+        BIRTHDAY date NOT NULL,
+        LOCATION varchar(50) NOT NULL,
+        OCUPATION varchar(50) NOT NULL,
+        INTERESTS varchar(100) NOT NULL
+        )"""    
+        cursor.execute(query)
+        connection.commit()
+        app.user.initialize_tables()
+
 if __name__ == '__main__':
+    app.user = Users(app)
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
     if VCAP_APP_PORT is not None:
         port, debug = int(VCAP_APP_PORT), False
     else:
         port, debug = 5000, True
-        VCAP_SERVICES = os.getenv('VCAP_SERVICES')
+    VCAP_SERVICES = os.getenv('VCAP_SERVICES')
     if VCAP_SERVICES is not None:
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
