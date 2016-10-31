@@ -41,7 +41,7 @@ def events_page():
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
             ##values for startingDate and endingDate not set
-            query = "INSERT INTO EVENT VALUES ("+ request.form['Name'] + "," + request.form['Description'] + "," + request.form['Description']+ "," + request.form['place']
+            query = "INSERT INTO EVENT VALUES ("+ request.form['Name'] + "," + request.form['Description'] + "," + request.form['Description']+ ","+ ",NULL" + ",NULL"  + request.form['place']+ ")"
             cursor.execute(query)
             connection.commit()
     return render_template('events.html')
@@ -113,18 +113,18 @@ def initDataBase():
                 'friend_status': 0 }
         query = """INSERT INTO FRIENDS VALUES (1, 3, 0)"""
         cursor.execute(query)
-        
+
         query = """DROP TABLE IF EXISTS USERS"""
         cursor.execute(query)
         query = """ CREATE TABLE USERS
-            (   
+            (
             USER_ID serial NOT NULL PRIMARY KEY,
             USER_NAME varchar(100) NOT NULL,
             BIRTHDAY date NOT NULL,
             LOCATION varchar(50) NOT NULL,
             OCUPATION varchar(50) NOT NULL,
             INTERESTS varchar(100) NOT NULL
-            )"""    
+            )"""
         cursor.execute(query)
         connection.commit()
         app.user.initialize_tables()
