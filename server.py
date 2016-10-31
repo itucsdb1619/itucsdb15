@@ -120,14 +120,36 @@ def initDataBase():
         query = """INSERT INTO FRIENDS
                    VALUES (1, 3, 0)"""
         cursor.execute(query)
-        connection.commit()
+        #Photos Table created
+	query = """CREATE TABLE PHOTOS (
+                ID INTEGER NOT NULL PRIMARY KEY,
+                PHOTOINFO VARCHAR(300),
+                URL VARCHAR(100) NOT NULL,
+                UPLOADER VARCHAR(50)
+                )"""
+        cursor.execute(query)
+        
+        place_data = [
+        {'id':1224,
+         'photoinfo':"Having nice time with my friends.",
+         'url':"http://imageshack.com/a/img843/4243/sample.png",
+         'uploader':"John LEGEND"}
+        ]
+	
+        for item in place_data:
+        statement = """
+               INSERT INTO PHOTOS (ID, PHOTOINFO, URL, UPLOADER)
+                  VALUES (%(id)s, %(photoinfo)s, %(url)s, %(uploader)s)
+            """
+            cursor.execute(statement, item)
+		
+	connection.commit()
         return render_template('events.html')
-
  def create_tables():
-    with dbapi2.connect(app.config['dsn']) as connection:
+	with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
     
-        query = """ CREATE TABLE IF NOT EXISTS USERS
+	query = """ CREATE TABLE IF NOT EXISTS USERS
         (   
         USER_ID serial NOT NULL PRIMARY KEY,
         USER_NAME varchar(100) NOT NULL,
