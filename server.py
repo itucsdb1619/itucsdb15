@@ -26,7 +26,7 @@ def get_elephantsql_dsn(vcap_services):
 def home_page():
     return render_template('home.html')
 
- @app.route('/users')
+ @app.route('/users', methods=['GET', 'POST'])
  def users():
     now = datetime.datetime.now()
     return render_template('mypage.html')
