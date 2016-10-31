@@ -24,10 +24,15 @@ def get_elephantsql_dsn(vcap_services):
 
 @app.route('/')
 def home_page():
-    return render_template('home.html')
+    return redirect(url_for('mypage'))
 
- @app.route('/users', methods=['GET', 'POST'])
- def users():
+@app.route('/users', methods=['POST', 'GET'])
+def users():
+    if request.method == 'POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """ INSERT INTO USER (USER_NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s)"""
+            cursor.execute(query, (user_name, birthday, location, ocupation, interests))
     return render_template('mypage.html')
 
 @app.route('/events', methods=['POST', 'GET'])
@@ -41,17 +46,6 @@ def events_page():
             connection.commit()
     return render_template('events.html')
 
-@app.route('/places')
-def places_page():
-    return render_template('places.html')
-
-@app.route('/photos')
-def photos_page():
-    return render_template('photos.html')
-
-@app.route('/EventCreation')
-def eventcreation_page():
-    return render_template('EventCreation.html')
 
 @app.route('/initdb')
 def initDataBase():
@@ -99,68 +93,24 @@ def initDataBase():
                   VALUES (%(name)s, %(info)s, %(address)s, %(phonenum)s)
             """
             cursor.execute(statement, item)
-        #
-        #  Creating friends table and filling it with sample data
-        #
-        query = """DROP TABLE IF EXISTS FRIENDS"""
+            connection.commit()
+
+        query = """DROP TABLE IF EXISTS USERS"""
         cursor.execute(query)
-        query = """
-		        CREATE TABLE FRIENDS (
-                PERSON_ID INT NOT NULL,
-                FRIEND_ID INT NOT NULL,
-	            FRIEND_STATUS INT,
-                primary key (PERSON_ID, FRIEND_ID)
-                )"""
-        cursor.execute(query)
-        friends_data = {
-            'person_id': 1,
-            'friend_id': 3,
-            'friend_status': 0 }
-        
-        query = """INSERT INTO FRIENDS
-                   VALUES (1, 3, 0)"""
-        cursor.execute(query)
-        #Photos Table created
-	query = """CREATE TABLE PHOTOS (
-                ID INTEGER NOT NULL PRIMARY KEY,
-                PHOTOINFO VARCHAR(300),
-                URL VARCHAR(100) NOT NULL,
-                UPLOADER VARCHAR(50)
-                )"""
-        cursor.execute(query)
-        
-        place_data = [
-        {'id':1224,
-         'photoinfo':"Having nice time with my friends.",
-         'url':"http://imageshack.com/a/img843/4243/sample.png",
-         'uploader':"John LEGEND"}
-        ]
-	
-        for item in place_data:
-        statement = """
-               INSERT INTO PHOTOS (ID, PHOTOINFO, URL, UPLOADER)
-                  VALUES (%(id)s, %(photoinfo)s, %(url)s, %(uploader)s)
-            """
-            cursor.execute(statement, item)
-		
-	connection.commit()
-        return render_template('events.html')
- def create_tables():
-	with dbapi2.connect(app.config['dsn']) as connection:
-        cursor = connection.cursor()
-    
-	query = """ CREATE TABLE IF NOT EXISTS USERS
-        (   
-        USER_ID serial NOT NULL PRIMARY KEY,
-        USER_NAME varchar(100) NOT NULL,
-        BIRTHDAY date NOT NULL,
-        LOCATION varchar(50) NOT NULL,
-        OCUPATION varchar(50) NOT NULL,
-        INTERESTS varchar(100) NOT NULL
-        )"""    
+        query = """ CREATE TABLE USERS
+            (   
+            USER_ID serial NOT NULL PRIMARY KEY,
+            USER_NAME varchar(100) NOT NULL,
+            BIRTHDAY date NOT NULL,
+            LOCATION varchar(50) NOT NULL,
+            OCUPATION varchar(50) NOT NULL,
+            INTERESTS varchar(100) NOT NULL
+            )"""    
         cursor.execute(query)
         connection.commit()
         app.user.initialize_tables()
+        return redirect(url_for('mypage'))
+
 
 if __name__ == '__main__':
     app.user = Users(app)
