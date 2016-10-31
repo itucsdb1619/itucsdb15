@@ -76,7 +76,16 @@ def initDataBase():
                 PLACE VARCHAR(100),
                 )"""
         cursor.execute(query)
-        ###
+         ##########################################################
+        Creating Places Table In Database
+        ##########################################################
+        query = """CREATE TABLE PLACES (
+                NAME VARCHAR(50) NOT NULL PRIMARY KEY,
+                INFORMATION VARCHAR(300) NOT NULL,
+                ADDRESS VARCHAR(1000) NOT NULL,
+                PHONENUMBER VARCHAR(20)
+                )"""
+        cursor.execute(query)
         connection.commit()
         return render_template('events.html')
 
