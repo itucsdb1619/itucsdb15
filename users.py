@@ -9,7 +9,7 @@ class User:
         self.ocupation = ocupation
         self.interests = interests
 
-class Players:
+class Users:
     def __init__(self, app):
         self.app = app
 
