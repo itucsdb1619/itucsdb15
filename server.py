@@ -65,9 +65,9 @@ def initDataBase():
         query = """CREATE TABLE EVENT (
                 NAME VARCHAR(50) NOT NULL,
                 DESCRIPTION VARCHAR(200) NOT NULL,
-                STARTING_DATE DATETIME,
-                ENDING_DATE DATETIME,
-                PLACE VARCHAR(100),
+                STARTING_DATE TIMESTAMP,
+                ENDING_DATE TIMESTAMP,
+                PLACE VARCHAR(100)
                 )"""
         cursor.execute(query)
         ###################################################################
@@ -94,7 +94,26 @@ def initDataBase():
             """
             cursor.execute(statement, item)
             connection.commit()
-
+        #
+        # Creating friends table and filling it with sample data
+        #
+        query = """ DROP TABLE IF EXITS FRIENDS"""
+        cursor.execute(query)
+        query = """
+                CREATE TABLE FRIENDS (
+                PERSON_ID INT NOT NULL,
+                FRIEND_ID INT NOT NULL,
+                FRIEND_STATUS INT,
+                primary key (PERSON_ID, FRIEND_ID)
+                )"""
+        cursor.execute(query)
+        friends_data = {
+                'person_id': 1,
+                'friend_id': 3,
+                'friend_status': 0 }
+        query = """INSERT INTO FRIENDS VALUES (1, 3, 0)"""
+        cursor.execute(query)
+        
         query = """DROP TABLE IF EXISTS USERS"""
         cursor.execute(query)
         query = """ CREATE TABLE USERS
