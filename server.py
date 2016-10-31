@@ -99,6 +99,27 @@ def initDataBase():
                   VALUES (%(name)s, %(info)s, %(address)s, %(phonenum)s)
             """
             cursor.execute(statement, item)
+        #
+        #  Creating friends table and filling it with sample data
+        #
+        query = """DROP TABLE IF EXISTS FRIENDS"""
+        cursor.execute(query)
+        query = """
+		        CREATE TABLE FRIENDS (
+                PERSON_ID INT NOT NULL,
+                FRIEND_ID INT NOT NULL,
+	            FRIEND_STATUS INT,
+                primary key (PERSON_ID, FRIEND_ID)
+                )"""
+        cursor.execute(query)
+        friends_data = {
+            'person_id': 1,
+            'friend_id': 3,
+            'friend_status': 0 }
+        
+        query = """INSERT INTO FRIENDS
+                   VALUES (1, 3, 0)"""
+        cursor.execute(query)
         connection.commit()
         return render_template('events.html')
 
