@@ -76,9 +76,9 @@ def initDataBase():
                 PLACE VARCHAR(100),
                 )"""
         cursor.execute(query)
-         ##########################################################
-        Creating Places Table In Database
-        ##########################################################
+        ###################################################################
+        # Creating Places Table In Database, and filling it with a sample #
+        ###################################################################
         query = """CREATE TABLE PLACES (
                 NAME VARCHAR(50) NOT NULL PRIMARY KEY,
                 INFORMATION VARCHAR(300) NOT NULL,
@@ -86,6 +86,19 @@ def initDataBase():
                 PHONENUMBER VARCHAR(20)
                 )"""
         cursor.execute(query)
+        place_data = [
+        {'name': "Starbucks",
+         'info': "Great place to drink coffe",
+         'address': "Istanbul",
+         'phonenum':"05458965896"}
+        ]
+
+        for item in place_data:
+            statement = """
+               INSERT INTO PLACES (NAME, INFORMATION, ADDRESS, PHONENUMBER)
+                  VALUES (%(name)s, %(info)s, %(address)s, %(phonenum)s)
+            """
+            cursor.execute(statement, item)
         connection.commit()
         return render_template('events.html')
 
