@@ -1,9 +1,9 @@
 import psycopg2 as dbapi2
 
 class User:
-    def __init__(self, user_id, name, birthday, location, ocupation, interests):
+    def __init__(self, user_id, user_name, birthday, location, ocupation, interests):
         self.user_id = user_id
-        self.name = name
+        self.user_name = name
         self.birthday = birthday
         self.location = location
         self.ocupation = ocupation
@@ -19,7 +19,7 @@ class Players:
     		cursor.execute ("""
     			CREATE TABLE IF NOT EXISTS USERS
     			( 	USER_ID serial NOT NULL PRIMARY KEY,
-    				NAME varchar(100) NOT NULL,
+    				USER_NAME varchar(100) NOT NULL,
     				BIRTHDAY date NOT NULL,
     				LOCATION varchar(50) NOT NULL,
     				OCUPATION varchar(50) NOT NULL,
@@ -28,9 +28,9 @@ class Players:
     			""")
     		connection.commit()
 
-    def add_user(self, name, birthday, location, ocupation, interests):
+    def add_user(self, user_name, birthday, location, ocupation, interests):
     	with dbapi2.connect(self.app.config['dsn'] as connection):
     		cursor = connection.cursor()
-    		query = """ INSERT INTO USER (NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s)"""
-    		cursor.execute(query, (name, birthday, location, ocupation, interests))
+    		query = """ INSERT INTO USER (USER_NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s)"""
+    		cursor.execute(query, (user_name, birthday, location, ocupation, interests))
     		connection.commit()

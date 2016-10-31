@@ -28,7 +28,6 @@ def home_page():
 
  @app.route('/users', methods=['GET', 'POST'])
  def users():
-    now = datetime.datetime.now()
     return render_template('mypage.html')
 
 @app.route('/events', methods=['POST', 'GET'])
@@ -88,7 +87,7 @@ def initDataBase():
         query = """ CREATE TABLE IF NOT EXISTS USERS
         (   
         USER_ID serial NOT NULL PRIMARY KEY,
-        NAME varchar(100) NOT NULL,
+        USER_NAME varchar(100) NOT NULL,
         BIRTHDAY date NOT NULL,
         LOCATION varchar(50) NOT NULL,
         OCUPATION varchar(50) NOT NULL,
