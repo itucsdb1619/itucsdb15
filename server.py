@@ -24,7 +24,15 @@ def get_elephantsql_dsn(vcap_services):
 
 @app.route('/')
 def home_page():
-    return redirect(url_for('mypage'))
+    return render_template('home.html')
+
+@app.route('/EventCreation')
+def eventcreation_page():
+    return render_template('EventCreation.html')
+@app.route('/mypage')
+def my_page():
+    return render_template('mypage.html')
+
 
 @app.route('/users', methods=['POST', 'GET'])
 def users():
