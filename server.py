@@ -49,11 +49,20 @@ def events_page():
     if request.method == 'POST':
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
+            query = "SELECT N FROM EVENT_COUNTER"
+            eventId = cursor.execute(query)
             ##values for startingDate and endingDate not set
-            query = "INSERT INTO EVENT VALUES ("+ request.form['Name'] + "," + request.form['Description'] + "," + request.form['Description']+ ","+ ",NULL" + ",NULL"  + request.form['place']+ ")"
+            query = "INSERT INTO EVENT VALUES ("+ str(eventId) + "," + request.form['Name']
+            + "," + request.form['Description']
+            + "," + request.form['Description']
+            + ",NULL"+ ",NULL,"
+            + request.form['place']+ ")"
             cursor.execute(query)
+            query = "UPDATE EVENT_COUNTER N = N + 1"
+            cursor.execute(query)
+            retVal = cursor.execute("SELECT * FROM EVENT")
             connection.commit()
-    return render_template('events.html')
+    return retVal
 
 
 @app.route('/initdb')
@@ -67,15 +76,15 @@ def initDataBase():
         cursor.execute(query)
         query = """CREATE TABLE EVENT_COUNTER (N INTEGER)"""
         cursor.execute(query)
-        query = """CREATE TABLE EVENT_COUNTER (N INTEGER)"""
-        cursor.execute(query)
         query = """INSERT INTO EVENT_COUNTER VALUES (0)"""
         cursor.execute(query)
         query = """CREATE TABLE EVENT (
-                NAME VARCHAR(50) NOT NULL,
-                DESCRIPTION VARCHAR(200) NOT NULL,
-                STARTING_DATE TIMESTAMP,
-                ENDING_DATE TIMESTAMP,
+                #EVENT INT NOT NULL PRIMARY KEY,
+                NAME VARCHAR(50) NOT NULL DEFAULT 'EMPTY',
+                SHORT_DESCRIPTION VARCHAR(200) NOT NULL DEFAULT 'EMPTY',
+                DESCRIPTION VARCHAR(2000) NOT NULL DEFAULT 'EMPTY',
+                STARTING_DATE VARCHAR(50),
+                ENDING_DATE VARCHAR(50),
                 PLACE VARCHAR(100)
                 )"""
         cursor.execute(query)
