@@ -12,6 +12,7 @@ from users import User, Users
 
 
 app = Flask(__name__)
+
 def get_elephantsql_dsn(vcap_services):
     """Returns the data source name for ElephantSQL."""
     parsed = json.loads(vcap_services)
@@ -136,14 +137,13 @@ def initDataBase():
         cursor.execute(query)
         connection.commit()
         app.user.initialize_tables()
-        return redirect(url_for('mypage'))
+        return redirect(url_for('home_page'))
 
 
 if __name__ == '__main__':
-    app.user = Users(app)
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
     if VCAP_APP_PORT is not None:
-        port, debug = int(VCAP_APP_PORT), False
+        port, debug = int(VCAP_APP_PORT), True
     else:
         port, debug = 5000, True
     VCAP_SERVICES = os.getenv('VCAP_SERVICES')
