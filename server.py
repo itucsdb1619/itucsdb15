@@ -52,11 +52,11 @@ def events_page():
             query = "SELECT N FROM EVENT_COUNTER"
             eventId = cursor.execute(query)
             ##values for startingDate and endingDate not set
-            query = "INSERT INTO EVENT VALUES ("+ str(eventId) + "," + request.form['Name']
+            query = ("INSERT INTO EVENT VALUES ("+ str(eventId) + "," + request.form['Name']
             + "," + request.form['Description']
             + "," + request.form['Description']
             + ",NULL"+ ",NULL,"
-            + request.form['place']+ ")"
+            + request.form['place']+ ")")
             cursor.execute(query)
             query = "UPDATE EVENT_COUNTER N = N + 1"
             cursor.execute(query)
@@ -79,7 +79,7 @@ def initDataBase():
         query = """INSERT INTO EVENT_COUNTER VALUES (0)"""
         cursor.execute(query)
         query = """CREATE TABLE EVENT (
-                #EVENT INT NOT NULL PRIMARY KEY,
+                EVENT_ID INT NOT NULL PRIMARY KEY,
                 NAME VARCHAR(50) NOT NULL DEFAULT 'EMPTY',
                 SHORT_DESCRIPTION VARCHAR(200) NOT NULL DEFAULT 'EMPTY',
                 DESCRIPTION VARCHAR(2000) NOT NULL DEFAULT 'EMPTY',
