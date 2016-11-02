@@ -49,40 +49,29 @@ def events_page():
     if request.method == 'POST':
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
-            query = "SELECT N FROM EVENT_COUNTER"
-            eventId = cursor.execute(query)
-            ##values for startingDate and endingDate not set
-            query = ("INSERT INTO EVENT VALUES ("+ str(eventId) + "," + request.form['Name']
-            + "," + request.form['Description']
-            + "," + request.form['Description']
-            + ",NULL"+ ",NULL,"
-            + request.form['place']+ ")")
-            cursor.execute(query)
-            query = "UPDATE EVENT_COUNTER N = N + 1"
-            cursor.execute(query)
-            retVal = cursor.execute("SELECT * FROM EVENT")
+            query = ("INSERT INTO EVENT (NAME,SHORT_DESCRIPTION,DESCRIPTION,STARTING_DATE,ENDING_DATE,PLACE)"
+            + " VALUES (%s, %s, %s, %s, %s, %s)")
+            cursor.execute(query, [request.form['Name'],
+                                  request.form['Description'],
+                                  request.form['Description'],
+                                  request.form['startingDate'],
+                                  request.form['endingDate'],
+                                  request.form['place']])
             connection.commit()
-    return retVal
+    return render_template('events.html')
 
 
 @app.route('/initdb')
 def initDataBase():
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
-        ###
-        query = """DROP TABLE IF EXISTS EVENT_COUNTER"""
-        cursor.execute(query)
         query = """DROP TABLE IF EXISTS EVENT"""
         cursor.execute(query)
-        query = """CREATE TABLE EVENT_COUNTER (N INTEGER)"""
-        cursor.execute(query)
-        query = """INSERT INTO EVENT_COUNTER VALUES (0)"""
-        cursor.execute(query)
         query = """CREATE TABLE EVENT (
-                EVENT_ID INT NOT NULL PRIMARY KEY,
-                NAME VARCHAR(50) NOT NULL DEFAULT 'EMPTY',
-                SHORT_DESCRIPTION VARCHAR(200) NOT NULL DEFAULT 'EMPTY',
-                DESCRIPTION VARCHAR(2000) NOT NULL DEFAULT 'EMPTY',
+                EVENT_ID SERIAL  PRIMARY KEY,
+                NAME VARCHAR(50) NOT NULL,
+                SHORT_DESCRIPTION VARCHAR(200) NOT NULL,
+                DESCRIPTION VARCHAR(2000) NOT NULL,
                 STARTING_DATE VARCHAR(50),
                 ENDING_DATE VARCHAR(50),
                 PLACE VARCHAR(100)
@@ -91,6 +80,8 @@ def initDataBase():
         ###################################################################
         # Creating Places Table In Database, and filling it with a sample #
         ###################################################################
+        query = """DROP TABLE IF EXISTS PLACES"""
+        cursor.execute(query)
         query = """CREATE TABLE PLACES (
                 NAME VARCHAR(50) NOT NULL PRIMARY KEY,
                 INFORMATION VARCHAR(300) NOT NULL,
@@ -115,7 +106,7 @@ def initDataBase():
         #
         # Creating friends table and filling it with sample data
         #
-        query = """ DROP TABLE IF EXSITS FRIENDS"""
+        query = """ DROP TABLE IF EXISTS FRIENDS"""
         cursor.execute(query)
         query = """
                 CREATE TABLE FRIENDS (
@@ -139,7 +130,6 @@ def initDataBase():
             )"""
         cursor.execute(query)
         connection.commit()
-        app.user.initialize_tables()
         return redirect(url_for('home_page'))
 
 
