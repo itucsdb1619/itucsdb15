@@ -30,9 +30,14 @@ def home_page():
 @app.route('/EventCreation')
 def eventcreation_page():
     return render_template('EventCreation.html')
+
 @app.route('/mypage')
 def my_page():
     return render_template('mypage.html')
+
+@app.route('/places')
+def places_page():
+    return render_template('places.html')
 
 
 @app.route('/users', methods=['POST', 'GET'])
