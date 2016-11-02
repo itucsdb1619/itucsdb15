@@ -115,7 +115,7 @@ def initDataBase():
         #
         # Creating friends table and filling it with sample data
         #
-        query = """ DROP TABLE IF EXITS FRIENDS"""
+        query = """ DROP TABLE IF EXSITS FRIENDS"""
         cursor.execute(query)
         query = """
                 CREATE TABLE FRIENDS (
@@ -124,12 +124,6 @@ def initDataBase():
                 FRIEND_STATUS INT,
                 primary key (PERSON_ID, FRIEND_ID)
                 )"""
-        cursor.execute(query)
-        friends_data = {
-                'person_id': 1,
-                'friend_id': 3,
-                'friend_status': 0 }
-        query = """INSERT INTO FRIENDS VALUES (1, 3, 0)"""
         cursor.execute(query)
 
         query = """DROP TABLE IF EXISTS USERS"""
