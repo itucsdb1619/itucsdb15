@@ -1,13 +1,12 @@
+{% extends "base.html" %}
+
 <!DOCTYPE html>
 <html>
-<style>
 
-.logo {
-    height: 200px;
-    width: 600px;
-    position: static;
-    padding-left: 710px;
-}
+{% block my_style %}
+
+    body{
+    overflow-x:hidden;}
 
 .quickMenucontainer {
     width: 1150px;
@@ -161,7 +160,7 @@ ul {
 }
 
 #nav-a ul li a:hover {
-    background-color: #c56d9d;
+    background-color: #00c575;
 }
 
 #nav-b ul li {
@@ -170,58 +169,57 @@ ul {
     font-size: 12px;
     text-decoration: none;
 }
+{% endblock %}
 
 
-</style>
-<head>
-  { % block head %}
-	<meta charset="utf-8" />
-    <title>{% block title %}My amazing site{% endblock %}</title>
- 	 <head style="background-color: #ffffe6;">
-     <div class = "logo">
- 	      <a href="#home"><img style = "opacity: 0.7; border: 3px solid #94b8b8; border-radius: 1em;" src="logo.jpg"></a>
-    </div>
-   <hr>
-     <div class="quickMenucontainer">
-     <ul >
-        <li style="padding-right: 20px">
-            <a href="#Home"><img src="home.png"></a>
-        </li>
-        <li style="padding-right: 20px">
-            <a href="#Settings"><img src="user.png"></a>
-        </li>
-        <li style="padding-right: 20px">
-            <a href="#Messages"><img src="msg2.png"></a>
-        </li>
-        <li style="padding-right: 20px">
-            <a href="#Notifications"><img src="not.png"></a>
-        </li>
-        <form>
-            <input type="text" name="search" placeholder="Search..">
-        </form>
-    </div>
-    </ul>
-    </div>
-    {% endblock %}
-</head>
-<body background="wall.jpg">
+
+    {% block my_body %}
+
+
+
+        <div class="quickMenucontainer">
+             <ul >
+                <li style="padding-right: 20px">
+                    <a href="#Home"><img src="/static/home.png"></a>
+                </li>
+                <li style="padding-right: 20px">
+                    <a href="#myPage"><img src="/static/user.png"></a>
+                </li>
+                <li style="padding-right: 20px">
+                    <a href="#Messages"><img src="/static/msg2.png"></a>
+                </li>
+                <li style="padding-right: 20px">
+                    <a href="#Notifications"><img src="/static/not.png"></a>
+                </li>
+                <form>
+                    <input type="text" name="search" placeholder="Search..">
+                </form>
+            </ul>
+        </div>
+
+
+
+
+
+
 
     <div class="mainBox">
 	<div class="photoBox">
 	<div class="userMenuBox">
     <div id="nav-a">
     <ul>
-        <li><a style = "border-left:0px" > Statuses</a></li>
-        <li><a > MyEvents</a></li>
-        <li><a > Friends</a></li>
-        <li><a > Photos</a></li>
-        <li><a > Interests</a></li>
+        <li><a style = "border-left:0px" href="#MyPage"> My Page</a></li>
+        <li><a href="{{ url_for('events_page') }}"> MyEvents</a></li>
+        <li><a href="{{ url_for('places_page') }}"> Places</a></li>
+        <li><a href="photos"> Photos</a></li>
+        <li><a href="#Friends"> Friends</a></li>
     </ul>
     </div>
     <div class="createBox">
     <a style="padding: 15px; text-decoration: none;display: block; align:center" href="#EventCreation"> CREATE EVENT</a>
     </div>
     <div class = "feed">
+      <p></p>
     <div class = "popularBox">
     <div id="nav-b">
     <ul>
@@ -252,6 +250,7 @@ ul {
     </div>
     </div>
     </div>
-</body>
+
+    {% endblock %}
 
 </html>
