@@ -70,7 +70,7 @@ def my_form_post():
                     UPDATE PLACES
                         SET INFORMATION = %s, ADDRESS = %s, PHONENUMBER = %s
                             WHERE NAME = %s"""
-                cursor.execute(statement, [description, address, phone, PlaceName]) 
+                cursor.execute(statement, [description, address, phone, PlaceName])
                 connection.commit()
     elif 'delete_button' in request.form:
         PlaceName = request.form['PlaceName']
@@ -108,19 +108,32 @@ def delete_event():
 def update_event():
     if request.method == 'POST':
         with dbapi2.connect(app.config['dsn']) as connection:
-            #:)
             if request.form['EVENT_ID'] is "":
                 return redirect(url_for('events_page'))
             cursor = connection.cursor()
-            query = "UPDATE EVENT SET NAME = %s ,SHORT_DESCRIPTION =%s,DESCRIPTION = %s,STARTING_DATE = %s,ENDING_DATE = %s,PLACE = %s"
-            connection.commit()
-            query = query + " WHERE EVENT_ID = " + request.form['EVENT_ID']
-            cursor.execute(query, [request.form['Name'],
-                request.form['Short_Description'],
-                request.form['Description'],
-                request.form['startingDate'],
-                request.form['endingDate'],
-                request.form['place']])
+            query = "SELECT EVENT_ID FROM EVENT WHERE EVENT_ID = %s"
+            cursor.execute(query, [request.form['EVENT_ID']])
+            if cursor.fetchall is "":
+                connection.commit()
+                return redirect(url_for('events_page'))
+            if request.form['Name'] is not "":
+                query = "UPDATE EVENT SET NAME = %s WHERE EVENT_ID = %s"
+                cursor.execute(query, [request.form['Name'], request.form['EVENT_ID']])
+            if request.form['Short_Description'] is not "":
+                query = "UPDATE EVENT SET SHORT_DESCRIPTION = %s WHERE EVENT_ID = %s"
+                cursor.execute(query, [request.form['Short_Description'], request.form['EVENT_ID']])
+            if request.form['Description'] is not "":
+                query = "UPDATE EVENT SET DESCRIPTION = %s WHERE EVENT_ID = %s"
+                cursor.execute(query, [request.form['Description'], request.form['EVENT_ID']])
+            if request.form['startingDate'] is not "":
+                query = "UPDATE EVENT SET STARTING_DATE = %s WHERE EVENT_ID = %s"
+                cursor.execute(query, [request.form['startingDate'], request.form['EVENT_ID']])
+            if request.form['endingDate'] is not "":
+                query = "UPDATE EVENT SET ENDING_DATE = %s WHERE EVENT_ID = %s"
+                cursor.execute(query, [request.form['endingDate'], request.form['EVENT_ID']])
+            if request.form['place'] is not "":
+                query = "UPDATE EVENT SET PLACE = %s WHERE EVENT_ID = %s"
+                cursor.execute(query, [request.form['place'], request.form['EVENT_ID']])
             connection.commit()
     return redirect(url_for('events_page'))
 
