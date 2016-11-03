@@ -1,85 +1,125 @@
-{% extends "base_detailed.html" %}
-
-<!DOCTYPE html>
 <html>
-<head>
-
-{% block style %}
-
-div.block {
-	height:300px;
-	width: 754px;
-	border: 1px solid gray;
-	margin: 0 auto;
-	margin-bottom: 50px;
-}
-div.header {
-	width: 300px;
-	height: 50px;
-	float: left;
-	border: 1px solid red;
-}
-div.info {
-	width: 450px;
-	height: 300px;
-	border: 1px solid blue;
-	float: right;
-}
-div.picture {
-	
-}
-img {
-	margin-left: 50px;
-	margin-top: 25px;
-}
-
-{% endblock %}
-
-{% block title %} places {% endblock %}
-
-</head>
-
-
-{% block body %}
 <body>
-	<div class="block">
-		
-		<div class="header">
-		<p><center>Place Name</center></p>
-		</div>
-		<div class="info">
-		<p style="margin-left: 100px"><b><br><br><br><br><br><br>Information about the place, and meeting</b></p>
-		</div>
-		<div class="picture">
-		<img src="/static/index.jpeg">
-		</div>
-	
-	</div>
 
-	<div class="block">
-		<div class="header">
-		<p><center>Place Name</center></p>
-		</div>
-		<div class="info">
-		<p style="margin-left: 100px"><b><br><br><br><br><br><br>Information about the place, and meeting</b></p>
-		</div>
-		<div class="picture">
-		<img src="/static/indexx.jpeg">
-		</div>
-	</div>
+    <div align="center">
+        <div class="left" align="center">
+            <form action="/places" method="POST">
+                <label for="pname">Place Name:</label><p> </p>
+                <input type="text" id="pname" name="PlaceName"><p> </p>
 
-	<div class="block">
-		<div class="header">
-		<p><center>Place Name</center></p>
-		</div>
-		<div class="info">
-		<p style="margin-left: 100px"><b><br><br><br><br><br><br>Information about the place, and meeting</b></p>
-		</div>
-		<div class="picture">
-		<img src="/static/index2.jpeg">
-		</div>
-	</div>
+                <label for="description">Description:</label><p> </p>
+                <input type="text" id="description" name="description"><p> </p>
+
+                <label for="address">Address:</label><p> </p>
+                <input type="text" id="address" name="address"><p> </p>
+
+                <label for="phone">Phone Number:</label><p> </p>
+                <input type="text" id="phone" name="phone"><p> </p>
+
+                <input type="submit" name="add_button" value="Create" class='button'>
+                <input type="submit" name="update_button" value="Update" class='button'>
+                <input type="submit" name="delete_button" value="Delete" class='button'>
+            </form>
+        </div>
+    </div>
+    <div>
+        <table>
+            <tr>
+                <th>Place Name</th>
+                <th>Information</th>
+                <th>Address</th>
+                <th>Phone Number</th>
+            </tr>
+
+            {% for row in test %}
+            <tr>
+                <td> {{row[0]}}</td>
+                <td> {{row[1]}}</td>
+                <td> {{row[2]}}</td>
+                <td> {{row[3]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+
+
 
 </body>
-{% endblock %}
+
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #ffd1b3;
+    }
+
+    th {
+        background-color: #ff751a;
+        color: white;
+    }
+
+    label {
+        color: #e65c00;
+    }
+
+
+    .button {
+        display: inline-block;
+        padding: 15px 25px;
+        font-size: 24px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        outline: none;
+        color: #fff;
+        background-color: #ff6600;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 9px #999;
+    }
+
+        .button:hover {
+            background-color: #e65c00;
+        }
+
+        .button:active {
+            background-color: #e65c00;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
+
+
+    input[type=text], select {
+        width: 100%;
+        padding: 10px 18px;
+        margin: 1px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    div {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+    }
+
+    .left {
+        width: 44%;
+        background-color: #ffe0cc;
+        border: #4d1f00 solid 1px;
+    }
+</style>
 </html>
