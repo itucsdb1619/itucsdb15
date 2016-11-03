@@ -69,51 +69,15 @@ def update_event():
             if request.form['EVENT_ID'] is "":
                 return redirect(url_for('events_page'))
             cursor = connection.cursor()
-            query = ("UPDATE EVENT SET ")
-            if request.form['Name'] is not "":
-                query = query + " NAME =" + request.form['Name']
-            if request.form['Short_Description'] is not "":
-                if request.form['Name'] is not "":
-                    if request.form['Short_Description'] is not "":
-                        query = query + ","
-                query = query + " SHORT_DESCRIPTION =" + request.form['Short_Description']
-            if request.form['Description'] is not "":
-                if request.form['Short_Description'] is not "":
-                    if request.form['Name'] is not "":
-                        query = query + ","
-                query = query + " Description =" + request.form['Description']
-            if request.form['startingDate'] is not "":
-                if request.form['Description'] is not "":
-                    if request.form['Short_Description'] is not "":
-                        if request.form['Name'] is not "":
-                            query = query + ","
-                query = query + " STARTING_DATE =" + request.form['startingDate']
-            if request.form['endingDate'] is not "":
-                if request.form['startingDate'] is not "":
-                    if request.form['Description'] is not "":
-                        if request.form['Short_Description'] is not "":
-                            if request.form['Name'] is not "":
-                                query = query + ","
-                query = query + " ENDING_DATE =" + request.form['endingDate']
-            if request.form['place'] is not "":
-                if request.form['endingDate'] is not "":
-                    if request.form['startingDate'] is not "":
-                        if request.form['Description'] is not "":
-                            if request.form['Short_Description'] is not "":
-                                if request.form['Name'] is not "":
-                                    print("DEBUG")
-                                    #crashes
-                                    #query = query + ","
-                #query = query + " PLACE = none"+ request.form['place']
-            if request.form['place'] is not "":
-                if request.form['endingDate'] is not "":
-                    if request.form['startingDate'] is not "":
-                        if request.form['Description'] is not "":
-                            if request.form['Short_Description'] is not "":
-                                if request.form['Name'] is not "":
-                                    return redirect(url_for('events_page'))
+            query = "UPDATE EVENT SET NAME = %s ,SHORT_DESCRIPTION =%s,DESCRIPTION = %s,STARTING_DATE = %s,ENDING_DATE = %s,PLACE = %s"
+            connection.commit()
             query = query + " WHERE EVENT_ID = " + request.form['EVENT_ID']
-            cursor.execute(query)
+            cursor.execute(query, [request.form['Name'],
+                request.form['Short_Description'],
+                request.form['Description'],
+                request.form['startingDate'],
+                request.form['endingDate'],
+                request.form['place']])
             connection.commit()
     return redirect(url_for('events_page'))
 
