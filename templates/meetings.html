@@ -1,76 +1,148 @@
-<!DOCTYPE html>
 <html>
-  <head>
+<body>
+
+    <div align="center">
+        <div class="left" align="center">
+            <form action="/photos" method="POST">
+                <label for="pname">ID:</label><p> </p>
+                <input type="text" id="id" name="id"><p> </p>
+
+                <label for="description">Info:</label><p> </p>
+                <input type="text" id="info" name="info"><p> </p>
+
+                <label for="address">Url:</label><p> </p>
+                <input type="text" id="url" name="url"><p> </p>
+
+                <label for="phone">User Name:</label><p> </p>
+                <input type="text" id="username" name="username"><p> </p>
+
+                <input type="submit" name="create_button" value="Create" class='button'>
+                <input type="submit" name="update_button" value="Update" class='button'>
+                <input type="submit" name="delete_button" value="Delete" class='button'>
+            </form>
+        </div>
+     </div>
+    {% for row in photo_db %}
+    <div class="photo_frame">
+        <div class="image" align="center"><img src="{{row[2]}}" alt="HTML5 Icon" style="width:250px;height:250px;"></div>
+        <div class="information">
+            <ul>
+                <li>
+                    <p style="font-size:160%;">{{row[0]}}</p>
+                </li>
+                <li>
+                    <p style="font-size:160%;">{{row[1]}}</p>
+                </li>
+                <li>
+                    <p style="font-size:160%;">{{row[3]}}</p>
+                </li>
+            </ul>
+        </div>
+    </div>
+    {% endfor %}
+
+</body>
+
 <style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
 
-div {
-    width: 635px;
-    border: 3px solid gray;
-    margin: 0;
-}
-.box {
-    float: left;
-    width: 640px;
-    margin-top: 5px;
-    padding: 15px;
-    border: 2px solid gray;
-}
-h1 {
-    padding: 20px;
-}
-h4 {
-    padding: 10px;
-}
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #ffaa80;
-}
+    th, td {
+        text-align: left;
+        padding: 8px;
+    }
 
-li {
-    float: left;
-}
+    tr:nth-child(even) {
+        background-color: #ccffb3;
+    }
 
-li a {
-    border-left: 1px solid gray;
-    display: block;
-    color: #666666;
-    text-align: center;
-    padding: 15px;
-    text-decoration: none;
-}
+    th {
+        background-color: #3bb300;
+        color: white;
+    }
 
-li a:hover {
-    background-color: #ffffcc;
-}
+    label {
+        color: #194d00;
+    }
 
+
+    .button {
+        display: inline-block;
+        padding: 15px 25px;
+        font-size: 24px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        outline: none;
+        color: #fff;
+        background-color: #77ff33;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 9px #999;
+    }
+
+        .button:hover {
+            background-color: #44cc00;
+        }
+
+        .button:active {
+            background-color: #44cc00;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
+
+
+    input[type=text], select {
+        width: 100%;
+        padding: 10px 18px;
+        margin: 1px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    div {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+    }
+
+
+    .image {
+        float: left;
+        width: 30%;
+        border-radius: 5px;
+        border: #4d1f00 solid 1px;
+        background-color: #ccffb3;
+        padding: 20px;
+        height: 250px;
+        margin: 10px 10px 10px 10px;
+    }
+
+    .information {
+        float: left;
+        width: 60%;
+        border-radius: 5px;
+        border: #4d1f00 solid 1px;
+        background-color: #ccffb3;
+        padding: 20px;
+        height: 250px;
+        margin: 10px 10px 10px 10px;
+    }
+
+    .left {
+        width: 44%;
+        background-color: #ccffb3;
+        border: #4d1f00 solid 1px;
+    }
+
+    .photo_frame {
+        width: 1400px;
+    }
 </style>
-
-    <meta charset="utf-8" />
-    <title> AdVMeet </title>
-  </head>
-  <body>
-  <body style="background-color: #ffffe6;">
-  <h1 style="color: #ff3333;font-family:verdana;"><b><i> AdVMeet </b></i></h1>
-  <h4 style="color:#ff3333;font-family:courier;"> Where your journey starts </h4>
-  <hr>
-<div>
-<ul>
-  <li style="color: #000000"><a href="# Meetings History"> Meetings History</a></li>
-  <li><a href="# UpcomingMeetings"> Upcoming Meetings</a></li>
-  <li><a href="# SavedMeetings"> Saved Meetings</a></li>
-  <li><a href="# MeetingCreation"> CREATE AN MEETING</a></li>
-</ul>
-</div>
-<div class="box">
-  <article> //feeds
-  </article>
-</div>
-<div>Differance between event and meeting ?</div>
-
-
-
-  </body>
 </html>
+
