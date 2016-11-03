@@ -82,6 +82,59 @@ def my_form_post():
                 connection.commit()
     return places_page()
 
+@app.route('/photos')
+def photos_page():
+    with dbapi2.connect(app.config['dsn']) as connection:
+        with connection.cursor() as cursor:
+            statement = """SELECT ID, INFORMATION, URL, USERNAME
+                        FROM PHOTOS"""
+            cursor.execute(statement)
+            photo_db = cursor.fetchall()
+    return render_template ('meetings.html', photo_db = photo_db)
+@app.route('/photos', methods=['POST'])
+def photos_post():
+    if 'create_button' in request.form:
+        info = request.form['info']
+        url = request.form['url']
+        username = request.form['username']
+        with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                statement = """INSERT INTO PHOTOS (INFORMATION, URL, USERNAME)
+                      VALUES (%s, %s, %s)"""
+                cursor.execute(statement, [info, url, username])
+    elif 'update_button' in request.form:
+        id = request.form['id']
+        info = request.form['info']
+        url = request.form['url']
+        username = request.form['username']
+        with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                statement = """UPDATE PHOTOS
+                        SET INFORMATION = %s, URL = %s, USERNAME = %s
+                            WHERE ID = %s"""
+                cursor.execute(statement, [info, url, username, id])
+    elif 'delete_button' in request.form:
+        id = request.form['id']
+        with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                statement = """ DELETE FROM PHOTOS
+                                    WHERE ID = %s """
+                cursor.execute(statement,[id])
+        connection.commit()
+    return photos_page()
+@app.route('/init_phdb')
+def initilize_photos_db():
+    with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                statement = """CREATE TABLE PHOTOS (
+                ID SERIAL PRIMARY KEY,
+                INFORMATION VARCHAR(300) NOT NULL,
+                URL VARCHAR(1000) NOT NULL,
+                USERNAME VARCHAR(20)
+                )"""
+                cursor.execute(statement)
+                connection.commit()
+    return photos_page()
 
 @app.route('/users', methods=['POST', 'GET'])
 def users():
