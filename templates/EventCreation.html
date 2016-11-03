@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_detailed.html" %}
 
 <!DOCTYPE html>
 <html>
@@ -11,7 +11,6 @@
     position: static;
     padding-left: 710px;
 }
-
 .quickMenucontainer {
     width: 1150px;
     height:40px;
@@ -37,7 +36,6 @@
     text-align: center;
     color: #000000;
 }
-
 input[type=text] {
     width: 130px;
     box-sizing: border-box;
@@ -50,11 +48,9 @@ input[type=text] {
     background-repeat: no-repeat;
     padding-top: 5px;
     padding-left: 30px;
-
     -webkit-transition: width 0.4s ease-in-out;
     transition: width 0.4s ease-in-out;
 }
-
 input[type=text]:focus {
     width: 30%;
 }
@@ -148,7 +144,6 @@ ul {
     overflow: hidden;
     font-family: "Lucida Console", Monaco, monospace;
 }
-
 #nav-a ul li {
     float: left;
     color: #000000;
@@ -162,11 +157,9 @@ ul {
     padding: 15px;
     text-decoration: none;
 }
-
 #nav-a ul li a:hover {
     background-color: #00c575;
 }
-
 #nav-b ul li {
     color: #666666;
     padding: 5px;
@@ -195,13 +188,16 @@ ul {
     <div class="createBox">
     <a style="padding: 15px; text-decoration: none;display: block; align:center" href="EventCreation"> CREATE EVENT</a>
     </div>
+    {%- block my_body %}
     <div class = "feed">
       <form action="events"
         enctype="multipart/form-data" method="post">
 					<p>Name of the event:</p>
                     <input type="text" name="Name" size="50"/><br>
+                    <p>Short Description:</p>
+                    <input type="text" name="Short_Description" size="200" /><br>
 					<p>Description:</p>
-                    <input type="text" name="Description" size="200" /><br>
+                    <input type="text" name="Description" size="2000" /><br>
 					<p>Starting date:</p>
                     <input type="text" name="startingDate" size="50" /><br>
 					<p>Ending date:</p>
@@ -210,20 +206,10 @@ ul {
                     <input type="text" name="place" size="100"/><br>
                     <input type="submit" value="Create" />
     	</form>
-    <div class = "popularBox">
-    <div id="nav-b">
-    <ul>
-        <li style = "border-bottom: 1px solid gray; color: black"> Popular Events: </li>
-        <li><a href="comingEvent"> 14:00, Picnic, Yildiz Parki, Istanbul</a>
-            <a id = "joinBox" href="#Accept Event"></a>
-        </li>
-        <li><a href="comingEvent"> 18:00, Php Conference, Istanbul Kongre Merkezi, Istanbul</a>
-            <a id = "joinBox" href="#Accept Event"></a>
-        </li>
-    </ul>
+    {%- endblock %}
+
     </div>
-    </div>
-    </div>
+
     </div>
     </div>
     </div>

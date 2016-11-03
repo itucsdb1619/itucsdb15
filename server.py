@@ -49,6 +49,74 @@ def users():
             cursor.execute(query, (user_name, birthday, location, ocupation, interests))
     return render_template('mypage.html')
 
+
+@app.route('/deleteEvent',  methods=['POST', 'GET'])
+def delete_event():
+    if request.method == 'POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            if request.form['EVENT_ID'] is not "":
+                cursor = connection.cursor()
+                query = ("DELETE FROM EVENT WHERE EVENT_ID = %s")
+                cursor.execute(query, [request.form['EVENT_ID']])
+                connection.commit()
+    return redirect(url_for('events_page'))
+
+@app.route('/updateEvent',  methods=['POST', 'GET'])
+def update_event():
+    if request.method == 'POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            #:)
+            if request.form['EVENT_ID'] is "":
+                return redirect(url_for('events_page'))
+            cursor = connection.cursor()
+            query = ("UPDATE EVENT SET ")
+            if request.form['Name'] is not "":
+                query = query + " NAME =" + request.form['Name']
+            if request.form['Short_Description'] is not "":
+                if request.form['Name'] is not "":
+                    if request.form['Short_Description'] is not "":
+                        query = query + ","
+                query = query + " SHORT_DESCRIPTION =" + request.form['Short_Description']
+            if request.form['Description'] is not "":
+                if request.form['Short_Description'] is not "":
+                    if request.form['Name'] is not "":
+                        query = query + ","
+                query = query + " Description =" + request.form['Description']
+            if request.form['startingDate'] is not "":
+                if request.form['Description'] is not "":
+                    if request.form['Short_Description'] is not "":
+                        if request.form['Name'] is not "":
+                            query = query + ","
+                query = query + " STARTING_DATE =" + request.form['startingDate']
+            if request.form['endingDate'] is not "":
+                if request.form['startingDate'] is not "":
+                    if request.form['Description'] is not "":
+                        if request.form['Short_Description'] is not "":
+                            if request.form['Name'] is not "":
+                                query = query + ","
+                query = query + " ENDING_DATE =" + request.form['endingDate']
+            if request.form['place'] is not "":
+                if request.form['endingDate'] is not "":
+                    if request.form['startingDate'] is not "":
+                        if request.form['Description'] is not "":
+                            if request.form['Short_Description'] is not "":
+                                if request.form['Name'] is not "":
+                                    print("DEBUG")
+                                    #crashes
+                                    #query = query + ","
+                #query = query + " PLACE = none"+ request.form['place']
+            if request.form['place'] is not "":
+                if request.form['endingDate'] is not "":
+                    if request.form['startingDate'] is not "":
+                        if request.form['Description'] is not "":
+                            if request.form['Short_Description'] is not "":
+                                if request.form['Name'] is not "":
+                                    return redirect(url_for('events_page'))
+            query = query + " WHERE EVENT_ID = " + request.form['EVENT_ID']
+            cursor.execute(query)
+            connection.commit()
+    return redirect(url_for('events_page'))
+
 @app.route('/events', methods=['POST', 'GET'])
 def events_page():
     if request.method == 'POST':
@@ -57,13 +125,22 @@ def events_page():
             query = ("INSERT INTO EVENT (NAME,SHORT_DESCRIPTION,DESCRIPTION,STARTING_DATE,ENDING_DATE,PLACE)"
             + " VALUES (%s, %s, %s, %s, %s, %s)")
             cursor.execute(query, [request.form['Name'],
-                                  request.form['Description'],
+                                  request.form['Short_Description'],
                                   request.form['Description'],
                                   request.form['startingDate'],
                                   request.form['endingDate'],
                                   request.form['place']])
+
             connection.commit()
-    return render_template('events.html')
+    if request == 'PUT':
+        print("DEBUG PT")
+    with dbapi2.connect(app.config['dsn']) as connection:
+        cursor = connection.cursor()
+        query = ("SELECT * FROM EVENT ")
+        cursor.execute(query)
+        eventTable = cursor.fetchall()
+        connection.commit()
+        return render_template('events.html', event = eventTable)
 
 
 @app.route('/initdb')
