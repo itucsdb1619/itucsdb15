@@ -37,7 +37,50 @@ def my_page():
 
 @app.route('/places')
 def places_page():
-    return render_template('places.html')
+    with dbapi2.connect(app.config['dsn']) as connection:
+        with connection.cursor() as cursor:
+            statement = """SELECT NAME, INFORMATION, ADDRESS, PHONENUMBER
+                        FROM PLACES"""
+            cursor.execute(statement)
+            test = cursor.fetchall()
+    return render_template('places.html', test = test)
+@app.route('/places', methods=['POST'])
+def my_form_post():
+    if 'add_button' in request.form:
+        PlaceName = request.form['PlaceName']
+        description = request.form['description']
+        address = request.form['address']
+        phone = request.form['phone']
+        with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                statement = """
+                   INSERT INTO PLACES (NAME, INFORMATION, ADDRESS, PHONENUMBER)
+                      VALUES (%s, %s, %s, %s)
+                """
+                cursor.execute(statement, [PlaceName, description, address, phone])
+                connection.commit()
+    elif 'update_button' in request.form:
+        PlaceName = request.form['PlaceName']
+        description = request.form['description']
+        address = request.form['address']
+        phone = request.form['phone']
+        with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                statement = """
+                    UPDATE PLACES
+                        SET INFORMATION = %s, ADDRESS = %s, PHONENUMBER = %s
+                            WHERE NAME = %s"""
+                cursor.execute(statement, [description, address, phone, PlaceName]) 
+                connection.commit()
+    elif 'delete_button' in request.form:
+        PlaceName = request.form['PlaceName']
+        with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                statement = """ DELETE FROM PLACES
+                                    WHERE NAME = %s """
+                cursor.execute(statement, [PlaceName])
+                connection.commit()
+    return places_page()
 
 
 @app.route('/users', methods=['POST', 'GET'])
