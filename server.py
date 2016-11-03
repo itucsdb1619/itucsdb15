@@ -136,15 +136,46 @@ def initilize_photos_db():
                 connection.commit()
     return photos_page()
 
-@app.route('/users', methods=['POST', 'GET'])
+''' USERS '''
+@app.route('/users', methods=['GET', 'POST'])
 def users():
-    if request.method == 'POST':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            query = """ INSERT INTO USER (USER_NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s)"""
-            cursor.execute(query, (user_name, birthday, location, ocupation, interests))
-    return render_template('mypage.html')
+    if request.method == 'GET':
+        return render_template('user.html', users = app.user.select_users())
+    else:
+        name = request.form['name']
+        birthday = request.form['birthday']
+        location = request.form['location']
+        ocupation = request.form['ocupation']
+        interests = request.form['interests']
+        app.user.add_user(name, birthday, location, ocupation, interests)
+    return redirect(url_for('user'))
 
+@app.route('/users/add', methods=['GET', 'POST'])
+def add_users():
+    return render_template('user_add.html')
+
+@app.route('/users/update/<user_id>', methods=['GET', 'POST'])
+def update_users(user_id):
+    if request.method == 'GET':
+        return render_template('user_update.html', user = app.users.get_user(user_id))
+    else:
+        name = request.form['name']
+        birthday = request.form['birthday']
+        location = request.form['location']
+        ocupation = request.form['ocupation']
+        interests = request.form['interests']
+        return redirect(url_for('user'))
+
+@app.route('/users/delete/<user_id>', methods=['GET', 'POST'])
+def delete_users(user_id):
+    app.users.delete_user(user_id)
+    return redirect(url_for('user'))
+
+
+@app.route('/users/search', methods=['GET', 'POST'])
+def search_users():
+    return render_template('user_search.html')
+''' end of USERs part'''
 
 @app.route('/deleteEvent',  methods=['POST', 'GET'])
 def delete_event():

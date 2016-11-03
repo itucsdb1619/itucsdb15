@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+<!DOCTYPE html>
+<html>
+{% block my_style %}
+
+.horizontalForm{
+    width: 200px;
+    height: 50px;
+}
+.operationBox{
+    width: 190px !important;
+    height:48px;
+    border: 2px solid gray;
+    border-radius: 0.5em;
+    background-color: #b3b3ff;
+    font-family: "Lucida Console", Monaco, monospace;
+    text-align: center;
+}
+{% endblock %}
+    {% block body %}
+    {% block my_body %}
+<div class = "operationBox">
+</div>
+
+
+<form class = "horizontalForm" role="form" action ={{url_for('users')}} method="post">
+  <div class="form-group">
+    <label for="name">user Name:</label>
+    <div>
+      <input type = "text" class="form-control" name="name" placeholder="Enter user name" required>
+    </div>
+  </div>
+
+  
+
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-6">
+    <button type="submit" class="btn btn-default">Search user</button>
+    </div>
+  </div>
+</form>
+    {% endblock %}
+{% endblock %}
+</html>
