@@ -268,8 +268,10 @@ def initDataBase():
         ###################################################################
         query = """DROP TABLE IF EXISTS PLACES"""
         cursor.execute(query)
+        # !! ADDED PLACES_ID AS PRIMARY KEY, REMOVED PRIMARY_KEY ATTR. FROM NAME
         query = """CREATE TABLE PLACES (
-                NAME VARCHAR(50) NOT NULL PRIMARY KEY,
+                PLACES_ID SERIAL PRIMARY_KEY,
+                NAME VARCHAR(50) NOT NULL,
                 INFORMATION VARCHAR(300) NOT NULL,
                 ADDRESS VARCHAR(1000) NOT NULL,
                 PHONENUMBER VARCHAR(20)
