@@ -260,7 +260,31 @@ def initDataBase():
                 DESCRIPTION VARCHAR(2000) NOT NULL,
                 STARTING_DATE VARCHAR(50),
                 ENDING_DATE VARCHAR(50),
-                PLACE VARCHAR(100)
+                FOREIGN KEY PLACE REFERENCES PLACES (PLACES_ID)
+                )"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS MEETING"""
+        cursor.execute(query)
+        query = """CREATE TABLE MEETING (
+                MEETING_ID SERIAL  PRIMARY KEY,
+                NAME VARCHAR(50) NOT NULL,
+                DESCRIPTION VARCHAR(500) NOT NULL,
+                DATE VARCHAR(50),
+                FOREIGN KEY PLACE REFERENCES PLACES (PLACES_ID)
+                )"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS EVENT_PARTICIPANTS"""
+        cursor.execute(query)
+        query = """CREATE TABLE EVENT_PARTICIPANTS (
+                FOREIGN KEY EVENT_ID REFERENCES EVENT (EVENT_ID)
+                FOREIGN KEY USER_ID REFERENCES USERS (USER_ID)
+                )"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS MEETING_PARTICIPANTS"""
+        cursor.execute(query)
+        query = """CREATE TABLE MEETING_PARTICIPANTS (
+                FOREIGN KEY MEETING_ID REFERENCES MEETING (MEETING_ID)
+                FOREIGN KEY USER_ID REFERENCES USERS (USER_ID)
                 )"""
         cursor.execute(query)
         ###################################################################
