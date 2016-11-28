@@ -47,7 +47,7 @@ class Users:
     def add_user(self, name, birthday, location, ocupation, interests):
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
-            query = """ INSERT INTO USER (NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s, %s, %s)"""
+            query = """ INSERT INTO USERS (NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s, %s, %s)"""
             cursor.execute(query, (name, birthday, location, ocupation, interests))
             connection.commit()
 
