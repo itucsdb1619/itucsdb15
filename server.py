@@ -35,7 +35,7 @@ def eventcreation_page():
         cursor.execute(query)
         Places = cursor.fetchall()
     return render_template('EventCreation.html', Places = Places)
-	
+
 @app.route('/create_meeting')
 def createmeeting_page():
     with dbapi2.connect(app.config['dsn']) as connection:
@@ -161,7 +161,7 @@ def user_page():
             cursor.execute(statement)
             user_all = cursor.fetchall()
     return render_template('home.html', user_all = user_all)
-    
+
 @app.route('/users', methods=['POST'])
 def operation():
     if 'add_button' in request.form:
@@ -207,7 +207,7 @@ def useradd():
         interests = request.form['interests']
         with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
-                query = """ 
+                query = """
                 INSERT INTO USER (NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s, %s, %s)"""
                 cursor.execute(query, [name, birthday, location, ocupation, interests])
                 connection.commit()
@@ -233,7 +233,7 @@ def meeting_delete():
             id = request.form['button']
             cursor.execute(query, str(id))
             connection.commit()
-    return redirect(url_for('events_page'))	
+    return redirect(url_for('events_page'))
 
 @app.route('/eventPage',  methods=['GET', 'POST'])
 def eventPage():
@@ -254,7 +254,7 @@ def eventPage():
         Place = cursor.fetchone()
         connection.commit()
     return render_template('eventPage.html', Event = Event,  Place = Place, Participants = Participants, Users = Users)
-	
+
 @app.route('/meeting_page',  methods=['GET', 'POST'])
 def meeting_page():
     with dbapi2.connect(app.config['dsn']) as connection:
@@ -263,7 +263,7 @@ def meeting_page():
         id = request.form['button']
         cursor.execute(query, (id))
         Meeting = cursor.fetchone()
-        query = ("SELECT EVENT_PARTICIPANTS.USER_ID FROM MEETING_PARTICIPANTS  JOIN USERS ON MEETING_ID = %s ")
+        query = ("SELECT MEETING_PARTICIPANTS.USER_ID FROM MEETING_PARTICIPANTS  JOIN USERS ON MEETING_ID = %s ")
         cursor.execute(query, str(id))
         Participants = cursor.fetchall()
         query = ("SELECT * FROM USERS")
@@ -292,7 +292,7 @@ def update_event_page():
             return render_template('event_update.html', Event = Event, Place = Place)
     return redirect(url_for('events_page'))
 
-	
+
 @app.route('/updateEvent',  methods=['GET', 'POST'])
 def update_event():
     if request.method == 'POST':
@@ -362,7 +362,7 @@ def meeting_update():
                 cursor.execute(query, (token, str(id)))
             connection.commit()
             return redirect(url_for('events_page'))
-	
+
 @app.route('/events', methods=['POST', 'GET'])
 def events_page():
     if request.method == 'POST':
@@ -432,7 +432,7 @@ def add_participant_meeting():
             query = "INSERT INTO MEETING_PARTICIPANTS (USER_ID, MEETING_ID) VALUES (%s, %s)"
             cursor.execute(query, (Token, id))
     return redirect(url_for('events_page'))
-	
+
 
 @app.route('/initdb')
 def initDataBase():
