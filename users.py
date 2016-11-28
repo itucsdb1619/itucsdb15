@@ -55,14 +55,14 @@ class Users:
     def update_user(self, user_id, name, birthday, location, ocupation, interests):
         with dbapi2.connect(self.app.config['dsn']) as connection:
                 cursor = connection.cursor()
-                query = """ UPDATE PLAYERS
+                query = """ UPDATE USERS
                         SET NAME = %s,
                         BIRTHDAY = %s,
                         LOCATION = %s,
                         OCUPATION = %s,
                         INTERESTS = %s
                         WHERE
-                        PLAYER_ID = %s """
+                        USER_ID = %s """
                 cursor.execute(query, (name, birthday, location, ocupation, interests, user_id))
                 connection.commit()
     def delete_user(self, name):
