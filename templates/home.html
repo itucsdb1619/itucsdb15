@@ -1,51 +1,141 @@
-<!DOCTYPE html>
+{% extends "base_new.html" %}
 <html>
-<style>
-
-.logo {
-    height: 200px;
-    width: 600px;
-    position: static;
-    padding-left: 710px;
-}
-
-.feed{
-    width: 535px;
-    height:465px;
-    border: 2px solid gray;
-    margin-top: 20px;
-    margin-left: 350px;
-    border-radius: 0.5em;
-    background-color: #e6e6ff;
-    display: block;
-}
-.login{
-    width: 100px;
-    height:50px;
-    border: 2px solid gray;
-    margin-top: 180px;
-    margin-left: 200px;
-    border-radius: 0.5em;
-    background-color: #e6e6ff;
-    display: block;
-}
-</style>
 <head>
-    <meta charset="utf-8" />
-    <title> Home </title>
-     <head style="background-color: #ffffe6;">
-     <div class = "logo">
-          <a href="#home"><img style = "opacity: 0.7; border: 3px solid #94b8b8; border-radius: 1em;" src="logo.jpg"></a>
-    </div>
-   <hr>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.indigo-blue.min.css" />
+    <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
 </head>
-<body background="wall.jpg">
-
-    <div class = "feed">
-        <div class = "login">
-            <a href="mypage">LOG IN</a>
-        </div>
+<body>
+   {% block body %}
+    <h2> User Table Manipulations </h2>
+    <table class="mdl-data-table mdl-js-data-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Birthday</th>
+                <th>Location</th>
+                <th>Occupation</th>
+                <th>Interests</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in user_all %}
+            <tr>
+                <td class="thclass"> {{row[0]}}</td>
+                <td class="thclass"> {{row[1]}}</td>
+                <td class="thclass"> {{row[2]}}</td>
+                <td class="thclass"> {{row[3]}}</td>
+                <td class="thclass">
+                    <form action="/places" method="post">
+                        <button class="mdl-button mdl-js-button " name="update_button" value="Update">
+                            Update
+                        </button>
+                        <button class="mdl-button mdl-js-button " name="delete_button" value="Delete">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td></td><td></td>
+                <td><form action='/users' method="post">
+                    <div align="center">
+                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored"
+                            type="submit" name="add_button">
+                            <i class="material-icons">add</i>
+                        </button>
+                    </div>
+                    </form>
+                </td>
+                <td></td><td></td>
+            </tr>
+        </tbody>
+    </table>
+        
     </div>
+    <!-- Colored FAB button with ripple -->
+    <form action="/places" method="post"
+    
+    </input>
+    </form>
+
 </body>
 
+<style>
+    .tableclass {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .thclass {
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #ffd1b3;
+    }
+
+    .thclass {
+        background-color: #0066ff;
+        color: white;
+    }
+
+    label {
+        color: #e65c00;
+    }
+
+
+    .button {
+        display: inline-block;
+        padding: 15px 25px;
+        font-size: 12px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        outline: none;
+        color: #fff;
+        background-color: #ff6600;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 3px #999;
+    }
+
+        .button:hover {
+            background-color: #e65c00;
+        }
+
+        .button:active {
+            background-color: #e65c00;
+            box-shadow: 0 2px #666;
+            transform: translateY(4px);
+        }
+
+
+
+    input[type=text], select {
+        width: 100%;
+        padding: 10px 18px;
+        margin: 1px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    .divclass {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+    }
+
+    .left {
+        width: 44%;
+        background-color: #ffe0cc;
+        border: #4d1f00 solid 1px;
+    }
+</style>
+{% endblock %}
 </html>
+

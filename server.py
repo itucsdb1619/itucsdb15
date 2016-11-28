@@ -137,46 +137,68 @@ def initilize_photos_db():
     return photos_page()
 
 ''' USERS '''
-@app.route('/users', methods=['GET', 'POST'])
-def users():
-    if request.method == 'GET':
-        return render_template('user.html', users = app.user.select_users())
-    else:
+
+
+@app.route('/users')
+def user_page():
+    with dbapi2.connect(app.config['dsn']) as connection:
+        with connection.cursor() as cursor:
+            statement = """SELECT * FROM USERS"""
+            cursor.execute(statement)
+            user_all = cursor.fetchall()
+    return render_template('home.html', user_all = user_all)
+    
+@app.route('/users', methods=['POST'])
+def operation():
+    if 'add_button' in request.form:
+        return user_add_page()
+    elif 'update_button' in request.form:
         name = request.form['name']
         birthday = request.form['birthday']
         location = request.form['location']
         ocupation = request.form['ocupation']
         interests = request.form['interests']
-        app.user.add_user(name, birthday, location, ocupation, interests)
-    return redirect(url_for('user'))
+        with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                statement = """ UPDATE USERS
+                        SET NAME = %s,
+                        BIRTHDAY = %s,
+                        LOCATION = %s,
+                        OCUPATION = %s,
+                        INTERESTS = %s
+                        WHERE
+                        USER_ID = %s """
+                cursor.execute(statement, [name, birthday, location, ocupation, interests])
+                connection.commit()
+    elif 'delete_button' in request.form:
+        user_id = request.form['user_id']
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            statement = """ DELETE FROM USERS
+                                    WHERE USER_ID = %s"""
+            cursor.execute(statement, [user_id])
+            connection.commit()
+    return users()
 
-@app.route('/users/add', methods=['GET', 'POST'])
-def add_users():
+@app.route('/user_add')
+def user_add_page():
     return render_template('user_add.html')
-
-@app.route('/users/update/<user_id>', methods=['GET', 'POST'])
-def update_users(user_id):
-    if request.method == 'GET':
-        return render_template('user_update.html', user = app.users.get_user(user_id))
-    else:
+@app.route('/user_add', methods = ['POST'])
+def useradd():
+    if 'add_button' in request.form:
         name = request.form['name']
         birthday = request.form['birthday']
         location = request.form['location']
         ocupation = request.form['ocupation']
         interests = request.form['interests']
-        return redirect(url_for('user'))
-
-@app.route('/users/delete/<user_id>', methods=['GET', 'POST'])
-def delete_users(user_id):
-    app.users.delete_user(user_id)
-    return redirect(url_for('user'))
-
-
-@app.route('/users/search', methods=['GET', 'POST'])
-def search_users():
-    return render_template('user_search.html')
+        with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                query = """ 
+                INSERT INTO USER (NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s, %s, %s)"""
+                cursor.execute(query, [name, birthday, location, ocupation, interests])
+                connection.commit()
+    return render_template('home.html')
 ''' end of USERs part'''
-
 @app.route('/deleteEvent',  methods=['POST', 'GET'])
 def delete_event():
     if request.method == 'POST':
