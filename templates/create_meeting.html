@@ -1,43 +1,31 @@
-{% extends "base_new.html" %}
-	{%- block body %}
+{% extends "base_material.html" %}
+	{%- block my_body %}
+	<div class="mdl-grid">
       <form action="events"
         enctype="multipart/form-data" method="post">
-        <div class="mdl-grid">
+        	<div class="mdl-grid">
  			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 			    <input class="mdl-textfield__input" type="text" name="NAME">
-			    <label class="mdl-textfield__label" for="sample3">Name of the event:</label>
+			    <label class="mdl-textfield__label" for="sample3">Name:</label>
 		  	</div>
 		  	</div>
 		  	<div class="mdl-grid">
 			<div class="mdl-textfield mdl-js-textfield">
 			  <textarea class="mdl-textfield__input" type="text" rows="2" maxrows="4"
-			   name="SHORT_DESCRIPTION"></textarea>
-			  <label class="mdl-textfield__label" for="schools">Short Description</label>
-			</div>
-			</div>
-			<div class="mdl-grid">
-			<div class="mdl-textfield mdl-js-textfield">
-			  <textarea class="mdl-textfield__input" type="text" rows="6" maxrows="10"
 			   name="DESCRIPTION"></textarea>
 			  <label class="mdl-textfield__label" for="schools">Description</label>
 			</div>
 			</div>
 			<div class="mdl-grid">
 		  	<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-			    <input class="mdl-textfield__input" type="text" name="STARTING_DATE">
-			    <label class="mdl-textfield__label" for="sample3">Starting Date:</label>
-		  	</div>
-		  	</div>
-		  	<div class="mdl-grid">
-		  	<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-			    <input class="mdl-textfield__input" type="text" name="ENDING_DATE">
-			    <label class="mdl-textfield__label" for="sample3">Ending date:</label>
+			    <input class="mdl-textfield__input" type="text" name="DATE">
+			    <label class="mdl-textfield__label" for="sample3">Date:</label>
 		  	</div>
 		  	</div>
 				<div class="mdl-grid">
 				<ul class="demo-list-item mdl-list">
 				<h3> Places </h3>
-			{% for places in Places %}
+					{% for places in Places %}
 				  <li class="mdl-list__item">
 				    <span class="mdl-list__item-primary-content">
 				     <i class="material-icons mdl-list__item-avatar">place</i>
@@ -47,7 +35,7 @@
 					</span>
 				    </span>
 				  </li>
-			{% endfor %}
+					{% endfor %}
 			</ul>
 			</div>
 			<div class="mdl-grid">
@@ -55,7 +43,8 @@
 			    <input class="mdl-textfield__input" type="text" name="PLACE_NAME">
 			    <label class="mdl-textfield__label" for="sample3">Place:</label>
 		  	</div>
-			<button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="event">CREATE</button>
+			<button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="meeting">CREATE</button>
+    		</div>
     	</form>
     </div>
-	{% endblock %}
+{% endblock %}

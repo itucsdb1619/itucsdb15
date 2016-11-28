@@ -1,251 +1,84 @@
-{% extends "base_detailed.html" %}
+{% extends "base_new.html" %}
+  {%- block body %}
+<div class="mdl-grid">
+  <form action="EventCreation" method="GET">
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+      CREATE EVENT
+    </button>
+  </form>
+  <form action="create_meeting" method="GET">
+    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+      CREATE MEETING
+    </button>
+  </form>
+</div>
 
-<!DOCTYPE html>
-<html>
+<div class="mdl-grid">
+    <table width="600"; class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+      <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric">Event Name</th>
+          <th class="mdl-data-table__cell--non-numeric">Description</th>
+          <th class="mdl-data-table__cell--non-numeric">Date</th>
+          <th class="mdl-data-table__cell--non-numeric">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for event in Event %}
+        <tr>
+            <td class="mdl-data-table__cell--non-numeric">{{event[1]}}</td>
+            <td class="mdl-data-table__cell--non-numeric"> {{event[2]}}</td>
+            <td class="mdl-data-table__cell--non-numeric">{{event[4]}} - {{event[5]}}</td>
+            <td class="mdl-data-table__cell--non-numeric">
+          <form action="eventPage" method="post">
+            <button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{ event[0] }}">Select</button>
+           </form>
+           <form action="update_event_page" method="post">
+            <button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{ event[0] }}">Update</button>
+           </form>
+           <form action="deleteEvent" method="post">
+            <button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{ event[0] }}">Delete</button>
+           </form>
+        </td>
+        </tr>
+         {% endfor %}
+      </tbody>
+    </table>
+        </div>
+        <div class="mdl-grid">
+    <table width="600"; class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+      <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric">Meeting Name</th>
+          <th class="mdl-data-table__cell--non-numeric">Description</th>
+          <th class="mdl-data-table__cell--non-numeric">Date</th>
+          <th class="mdl-data-table__cell--non-numeric">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
 
-{% block style %}
-<style>
+      {% for meeting in Meeting %}
+        <tr>
 
-.logo {
-    height: 200px;
-    width: 600px;
-    position: static;
-    padding-left: 710px;
-}
-.quickMenucontainer {
-    width: 1150px;
-    height:40px;
-    border-style:groove;
-    margin-left: 50px;
-    border-radius: 15px;
-    background-color: #c2d6d6;
-    opacity: 0.9;
-    position: static;
-}
-.quickMenucontainer ul {
-    padding-top: 5px;
-    padding-left: 400px;
-    margin: 0;
-    list-style-type: none;
-}
-.quickMenucontainer ul li {
-    width: 36px;
-    height: 35px;
-    background-color:#c2d6d6;
-    border-left: 5px;
-    float: left;
-    text-align: center;
-    color: #000000;
-}
-input[type=text] {
-    width: 130px;
-    box-sizing: border-box;
-    border: 3px solid #94b8b8;
-    border-radius: 10px;
-    font-size: 16px;
-    background-color: #ffff66;
-    background-image: url('search.png');
-    background-position: 10px 5px;
-    background-repeat: no-repeat;
-    padding-top: 5px;
-    padding-left: 30px;
-    -webkit-transition: width 0.4s ease-in-out;
-    transition: width 0.4s ease-in-out;
-}
-input[type=text]:focus {
-    width: 30%;
-}
-.mainBox{
-    width: 1150px;
-    height:600px;
-    border-style:groove;
-    margin-top: 50px;
-    margin-left: 50px;
-    border-radius: 15px;
-    background-color: #f6bcf6;
-    opacity: 0.9;
-    position: static;
-}
-.photoBox {
-	  width: 240px;
-    height:240px;
-    display: block;
-    border-style:groove;
- 	  border-radius: 1em;
-    margin-top: -30px;
-    margin-left: 50px;
-}
-.userMenuBox {
-    width: 535px;
-    height:48px;
-    border: 2px solid gray;
-    margin-top: 80px;
-    margin-left: 280px;
-	  border-radius: 0.5em;
-    background-color: #b3b3ff;
-}
-.createBox{
-    width: 190px !important;
-    height:48px;
-    border: 2px solid gray;
-    margin-top: -52px !important;
-    margin-left: 580px;
-    border-radius: 0.5em;
-    background-color: #b3b3ff;
-    font-family: "Lucida Console", Monaco, monospace;
-    text-align: center;
-}
-.feed{
-    width: 535px;
-    height:465px;
-    border: 2px solid gray;
-    margin-top: 20px;
-    border-radius: 0.5em;
-    background-color: #e6e6ff;
-    display: block;
-}
-.popularBox{
-    width: 190px !important;
-    height:465px;
-    border: 2px solid gray;
-    margin-top: 0px;
-    margin-left: 580px;
-    border-radius: 0.5em;
-    background-color: #e6e6ff;
-    font-family: "Lucida Console", Monaco, monospace;
-    text-align: center;
-}
-.infoBox{
-    width: 240px;
-    height:340px;
-    border-style: solid ;
-    border-radius: 1em;
-    margin-top: 30px;
-    margin-left: 50px;
-    background-color: #f2f2f2;
-    display: block;
-}
-#joinBox{
-    background-color: #923a69;
-    color: #923a69;
-    text-align: center;
-    text-decoration: none;
-    display: block;
-    width: 100px;
-    height: 20px;
-    margin-top: 10px;
-    border-style:groove;
-    border-radius: 1em;
-    margin-left: 50px;
-}
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    font-family: "Lucida Console", Monaco, monospace;
-}
-#nav-a ul li {
-    float: left;
-    color: #000000;
-    width: 106px !important;
-}
-#nav-a ul li a {
-    border-left: 1px solid gray;
-    display: block;
-    color: #666666;
-    text-align: center;
-    padding: 15px;
-    text-decoration: none;
-}
-#nav-a ul li a:hover {
-    background-color: #00c575;
-}
-#nav-b ul li {
-    color: #666666;
-    padding: 5px;
-    font-size: 12px;
-    text-decoration: none;
-}
-</style>
+            <td class="mdl-data-table__cell--non-numeric">{{meeting[1]}}</td>
+            <td class="mdl-data-table__cell--non-numeric"> {{meeting[2]}}</td>
+            <td class="mdl-data-table__cell--non-numeric">{{meeting[3]}}</td>
+            <td class="mdl-data-table__cell--non-numeric">
+          <form action="meeting_page" method="post">
+            <button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{ meeting[0] }}">Select</button>
+           </form>
+           <form action="meeting_update_page" method="post">
+            <button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{ meeting[0] }}">Update</button>
+           </form>
+           <form action="meeting_delete" method="post">
+            <button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{ meeting[0] }}">Delete</button>
+           </form>
+        </td>
+        </tr>
+         {% endfor %}
+      </tbody>
+    </table>
+        </div>
+
 
 {% endblock %}
-
-
-    {% block body %}
-
-    <div class="mainBox">
-	<div class="photoBox">
-	<div class="userMenuBox">
-    <div id="nav-a">
-    <ul>
-        <li><a style = "border-left:0px" href="#Statuses"> Statuses</a></li>
-        <li><a href="/events"> MyEvents</a></li>
-        <li><a href="/places"> Places</a></li>
-        <li><a href="/photos"> Photos</a></li>
-        <li><a href="#Interests"> Interests</a></li>
-    </ul>
-    </div>
-    <div class="createBox">
-    <a style="padding: 15px; text-decoration: none;display: block; align:center" href="EventCreation"> CREATE EVENT</a>
-    </div>
-    {%- block my_body %}
-    	{%for row in event %}
-		<div class = "eventList"; display:table;>
-			<table style="width:100%;text-align: left">
-				<tr>{%for column in row %}
-					<td>
-						 {{ column}}
-					</td>{% endfor %}
-					<td>
-				</tr>
-			</table>
-		</div >
-		{% endfor %}
-		<div class = "eventList"; display:table;height="150">
-			<table style="width:100%;text-align: left">
-				<form action="deleteEvent" enctype="multipart/form-data"  method="post" >
-					<p>DELETE ID </p>
-                    <input type="text" name="EVENT_ID" size="10"/>
-                    <input type="submit"  value="DELETE"/>
-    			</form>
-			</table>
-		</div>
-		<div class = "updateList"; display:table;>
-			<table style="width:100%;text-align: left">
-
-      		<form action="updateEvent" enctype="multipart/form-data" method="post"><tr>
-      		<p>Enter ID and attributes you want change</p>
-					<tr>
-						<td><p>ID</p></td>
-						<td><p>Name of the event:</p></td>
-						<td><p>Short Description:</p></td>
-						<td><p>Description:</p></td>
-						<td><p>Starting date:</p></td>
-						<td><p>Ending date:</p></td>
-						<td><p>Location:</p></td>
-					</tr>
-					<tr>
-						<td><input type="text" name="EVENT_ID" size="10"/><br></td>
-						<td><input type="text" name="Name" size="50"/><br></td>
-						<td><input type="text" name="Short_Description" size="200" /><br></td>
-						<td><input type="text" name="Description" size="2000" /><br></td>
-						<td><input type="text" name="startingDate" size="50" /><br></td>
-						<td><input type="text" name="endingDate" size="50"/><br></td>
-						<td><input type="text" name="place" size="100"/><br></td>
-					</tr>
-					<input type="submit"  value="UPDATE"/>
-		    	</form>
-			</table>
-		</div>
-    {%- endblock %}
-
-    </div>
-
-    </div>
-    </div>
-    </div>
-
-    {% endblock %}
-
-</html>

@@ -29,7 +29,21 @@ def home_page():
 
 @app.route('/EventCreation')
 def eventcreation_page():
-    return render_template('EventCreation.html')
+    with dbapi2.connect(app.config['dsn']) as connection:
+        cursor = connection.cursor()
+        query = ("SELECT * FROM PLACES")
+        cursor.execute(query)
+        Places = cursor.fetchall()
+    return render_template('EventCreation.html', Places = Places)
+	
+@app.route('/create_meeting')
+def createmeeting_page():
+    with dbapi2.connect(app.config['dsn']) as connection:
+        cursor = connection.cursor()
+        query = ("SELECT * FROM PLACES")
+        cursor.execute(query)
+        Places = cursor.fetchall()
+    return render_template('create_meeting.html',Places = Places)
 
 @app.route('/mypage')
 def my_page():
@@ -199,124 +213,239 @@ def useradd():
                 connection.commit()
     return render_template('home.html')
 ''' end of USERs part'''
-@app.route('/deleteEvent',  methods=['POST', 'GET'])
+@app.route('/deleteEvent',  methods=['GET', 'POST'])
 def delete_event():
     if request.method == 'POST':
         with dbapi2.connect(app.config['dsn']) as connection:
-            if request.form['EVENT_ID'] is not "":
-                cursor = connection.cursor()
-                query = ("DELETE FROM EVENT WHERE EVENT_ID = %s")
-                cursor.execute(query, [request.form['EVENT_ID']])
-                connection.commit()
-    return redirect(url_for('events_page'))
-
-@app.route('/updateEvent',  methods=['POST', 'GET'])
-def update_event():
-    if request.method == 'POST':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            if request.form['EVENT_ID'] is "":
-                return redirect(url_for('events_page'))
             cursor = connection.cursor()
-            query = "SELECT EVENT_ID FROM EVENT WHERE EVENT_ID = %s"
-            cursor.execute(query, [request.form['EVENT_ID']])
-            if cursor.fetchall is "":
-                connection.commit()
-                return redirect(url_for('events_page'))
-            if request.form['Name'] is not "":
-                query = "UPDATE EVENT SET NAME = %s WHERE EVENT_ID = %s"
-                cursor.execute(query, [request.form['Name'], request.form['EVENT_ID']])
-            if request.form['Short_Description'] is not "":
-                query = "UPDATE EVENT SET SHORT_DESCRIPTION = %s WHERE EVENT_ID = %s"
-                cursor.execute(query, [request.form['Short_Description'], request.form['EVENT_ID']])
-            if request.form['Description'] is not "":
-                query = "UPDATE EVENT SET DESCRIPTION = %s WHERE EVENT_ID = %s"
-                cursor.execute(query, [request.form['Description'], request.form['EVENT_ID']])
-            if request.form['startingDate'] is not "":
-                query = "UPDATE EVENT SET STARTING_DATE = %s WHERE EVENT_ID = %s"
-                cursor.execute(query, [request.form['startingDate'], request.form['EVENT_ID']])
-            if request.form['endingDate'] is not "":
-                query = "UPDATE EVENT SET ENDING_DATE = %s WHERE EVENT_ID = %s"
-                cursor.execute(query, [request.form['endingDate'], request.form['EVENT_ID']])
-            if request.form['place'] is not "":
-                query = "UPDATE EVENT SET PLACE = %s WHERE EVENT_ID = %s"
-                cursor.execute(query, [request.form['place'], request.form['EVENT_ID']])
+            query = ("DELETE FROM EVENT WHERE EVENT_ID = %s")
+            id = request.form['button']
+            cursor.execute(query, str(id))
             connection.commit()
     return redirect(url_for('events_page'))
 
+@app.route('/meeting_delete',  methods=['GET', 'POST'])
+def meeting_delete():
+    if request.method == 'POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = ("DELETE FROM MEETING WHERE MEETING_ID = %s")
+            id = request.form['button']
+            cursor.execute(query, str(id))
+            connection.commit()
+    return redirect(url_for('events_page'))	
+
+@app.route('/eventPage',  methods=['GET', 'POST'])
+def eventPage():
+    with dbapi2.connect(app.config['dsn']) as connection:
+        cursor = connection.cursor()
+        query = ("SELECT * FROM EVENT WHERE EVENT_ID = %s")
+        id = request.form['button']
+        cursor.execute(query, str(id))
+        Event = cursor.fetchone()
+        query = ("SELECT EVENT_PARTICIPANTS.USER_ID FROM EVENT_PARTICIPANTS  JOIN USERS ON EVENT_ID = %s ")
+        cursor.execute(query, str(id))
+        Participants = cursor.fetchall()
+        query = ("SELECT * FROM USERS")
+        Users = cursor.fetchall()
+        query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
+        id = Event[6]
+        cursor.execute(query, (str(id)))
+        Place = cursor.fetchone()
+        connection.commit()
+    return render_template('eventPage.html', Event = Event,  Place = Place, Participants = Participants, Users = Users)
+	
+@app.route('/meeting_page',  methods=['GET', 'POST'])
+def meeting_page():
+    with dbapi2.connect(app.config['dsn']) as connection:
+        cursor = connection.cursor()
+        query = ("SELECT * FROM MEETING WHERE MEETING_ID = %s")
+        id = request.form['button']
+        cursor.execute(query, (id))
+        Meeting = cursor.fetchone()
+        query = ("SELECT EVENT_PARTICIPANTS.USER_ID FROM MEETING_PARTICIPANTS  JOIN USERS ON MEETING_ID = %s ")
+        cursor.execute(query, str(id))
+        Participants = cursor.fetchall()
+        query = ("SELECT * FROM USERS")
+        Users = cursor.fetchall()
+        query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
+        id = Meeting[4]
+        cursor.execute(query, (str(id)))
+        Place = cursor.fetchone()
+        connection.commit()
+    return render_template('meeting_page.html', Meeting = Meeting,  Place = Place,Participants = Participants, Users = Users)
+
+@app.route('/update_event_page',  methods=['GET', 'POST'])
+def update_event_page():
+    if request.method == 'POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = ("SELECT * FROM EVENT WHERE EVENT_ID = %s")
+            id = request.form['button']
+            cursor.execute(query,(str(id)))
+            Event = cursor.fetchone()
+            query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
+            id = Event[6]
+            cursor.execute(query, (str(id)))
+            Place = cursor.fetchone()
+            connection.commit()
+            return render_template('event_update.html', Event = Event, Place = Place)
+    return redirect(url_for('events_page'))
+
+	
+@app.route('/updateEvent',  methods=['GET', 'POST'])
+def update_event():
+    if request.method == 'POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            id = request.form['button']
+            cursor = connection.cursor()
+            query = "SELECT EVENT_ID FROM EVENT WHERE EVENT_ID = %s"
+            cursor.execute(query, (str(id)))
+            if cursor.fetchall is "":
+                connection.commit()
+                return redirect(url_for('events_page'))
+            if request.form['NAME'] is not "":
+                query = "UPDATE EVENT SET NAME = %s WHERE EVENT_ID = %s"
+                cursor.execute(query, [request.form['NAME'], str(id)])
+            if request.form['SHORT_DESCRIPTION'] is not "":
+                query = "UPDATE EVENT SET SHORT_DESCRIPTION = %s WHERE EVENT_ID = %s"
+                cursor.execute(query, [request.form['SHORT_DESCRIPTION'], str(id)])
+            if request.form['DESCRIPTION'] is not "":
+                query = "UPDATE EVENT SET DESCRIPTION = %s WHERE EVENT_ID = %s"
+                cursor.execute(query, [request.form['DESCRIPTION'], str(id)])
+            if request.form['STARTING_DATE'] is not "":
+                query = "UPDATE EVENT SET STARTING_DATE = %s WHERE EVENT_ID = %s"
+                cursor.execute(query, [request.form['STARTING_DATE'], str(id)])
+            if request.form['ENDING_DATE'] is not "":
+                query = "UPDATE EVENT SET ENDING_DATE = %s WHERE EVENT_ID = %s"
+                cursor.execute(query, [request.form['ENDING_DATE'], str(id)])
+            connection.commit()
+            return redirect(url_for('events_page'))
+
+@app.route('/meeting_update_page',  methods=['GET', 'POST'])
+def meeting_update_page():
+    with dbapi2.connect(app.config['dsn']) as connection:
+        cursor = connection.cursor()
+        query = ("SELECT * FROM MEETING WHERE MEETING_ID = %s")
+        id = request.form['button']
+        cursor.execute(query, (str(id)))
+        Meeting = cursor.fetchone()
+        query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
+        id = Meeting[4]
+        cursor.execute(query, (str(id)))
+        Place = cursor.fetchone()
+        connection.commit()
+        return render_template('meeting_update.html', Meeting = Meeting, Place = Place)
+
+@app.route('/meeting_update',  methods=['GET', 'POST'])
+def meeting_update():
+    if request.method == 'POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            id = request.form['button']
+            cursor = connection.cursor()
+            query = "SELECT MEETING_ID FROM MEETING WHERE MEETING_ID = %s"
+            cursor.execute(query, (str(id)))
+            if cursor.fetchall is "":
+                connection.commit()
+                return redirect(url_for('events_page'))
+            if request.form['NAME'] is not "":
+                query = "UPDATE MEETING SET NAME = %s WHERE MEETING_ID = %s"
+                token = request.form['NAME']
+                cursor.execute(query, (token, str(id)))
+            if request.form['DESCRIPTION'] is not "":
+                query = "UPDATE MEETING SET DESCRIPTION = %s WHERE MEETING_ID = %s"
+                token = request.form['DESCRIPTION']
+                cursor.execute(query, (token, str(id)))
+            if request.form['DATE'] is not "":
+                query = "UPDATE MEETING SET DATE = %s WHERE MEETING_ID = %s"
+                token = request.form['DATE']
+                cursor.execute(query, (token, str(id)))
+            connection.commit()
+            return redirect(url_for('events_page'))
+	
 @app.route('/events', methods=['POST', 'GET'])
 def events_page():
     if request.method == 'POST':
         with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            query = ("INSERT INTO EVENT (NAME,SHORT_DESCRIPTION,DESCRIPTION,STARTING_DATE,ENDING_DATE,PLACE)"
-            + " VALUES (%s, %s, %s, %s, %s, %s)")
-            cursor.execute(query, [request.form['Name'],
-                                  request.form['Short_Description'],
-                                  request.form['Description'],
-                                  request.form['startingDate'],
-                                  request.form['endingDate'],
-                                  request.form['place']])
-
-            connection.commit()
-    if request == 'PUT':
-        print("DEBUG PT")
+            if request.form['button'] == "event":
+                cursor = connection.cursor()
+                query = "SELECT * FROM PLACES WHERE (NAME = %s)"
+                cursor.execute(query, [request.form['PLACE_NAME']])
+                placeRow = cursor.fetchone()
+                placeId = placeRow[0]
+                query = """INSERT INTO EVENT(NAME, SHORT_DESCRIPTION,DESCRIPTION ,STARTING_DATE,ENDING_DATE,PLACE)
+                                VALUES (%s,%s,%s,%s,%s,%s)"""
+                cursor.execute(query, [request.form['NAME'], request.form['SHORT_DESCRIPTION'],
+                                       request.form['DESCRIPTION'],request.form['STARTING_DATE'],request.form['ENDING_DATE'],placeId])
+                connection.commit()
+            if request.form['button'] == "meeting":
+                cursor = connection.cursor()
+                query = "SELECT * FROM PLACES WHERE (NAME = %s)"
+                cursor.execute(query, [request.form['PLACE_NAME']])
+                placeRow = cursor.fetchone()
+                placeId = placeRow[0]
+                query = """INSERT INTO MEETING (NAME, DESCRIPTION , DATE, PLACE)
+                                VALUES (%s,%s,%s,%s)"""
+                cursor.execute(query, [request.form['NAME'],
+                                       request.form['DESCRIPTION'],request.form['DATE'],placeId])
+                connection.commit()
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
         query = ("SELECT * FROM EVENT ")
         cursor.execute(query)
         eventTable = cursor.fetchall()
+        query = ("SELECT * FROM PLACES ")
+        cursor.execute(query)
+        Place = cursor.fetchall()
+        query = ("SELECT * FROM MEETING")
+        cursor.execute(query)
+        meetingTable = cursor.fetchall()
         connection.commit()
-        return render_template('events.html', event = eventTable)
+        return render_template('events.html', Event = eventTable, Meeting = meetingTable, Place = Place)
 
+@app.route('/add_participant_event',  methods=['GET', 'POST'])
+def add_participant_event():
+    if request.method == 'POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            id = request.form['button']
+            token = request.form['participant']
+            cursor = connection.cursor()
+            query = "SELECT USER_ID FROM USERS WHERE USER_NAME = %s"
+            cursor.execute(query, (token))
+            token = cursor.fetchone()
+            Token = token[0]
+            query = "INSERT INTO EVENT_PARTICIPANTS (USER_ID, EVENT_ID) VALUES (%s, %s)"
+            cursor.execute(query, (Token, id))
+    return redirect(url_for('events_page'))
+
+@app.route('/add_participant_meeting',  methods=['GET', 'POST'])
+def add_participant_meeting():
+    if request.method == 'POST':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            id = request.form['button']
+            token = request.form['participant']
+            cursor = connection.cursor()
+            query = "SELECT USER_ID FROM USERS WHERE USER_NAME = %s"
+            cursor.execute(query, (token))
+            token = cursor.fetchone()
+            Token = token[0]
+            query = "INSERT INTO MEETING_PARTICIPANTS (USER_ID, MEETING_ID) VALUES (%s, %s)"
+            cursor.execute(query, (Token, id))
+    return redirect(url_for('events_page'))
+	
 
 @app.route('/initdb')
 def initDataBase():
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
-        query = """DROP TABLE IF EXISTS EVENT"""
-        cursor.execute(query)
-        query = """CREATE TABLE EVENT (
-                EVENT_ID SERIAL  PRIMARY KEY,
-                NAME VARCHAR(50) NOT NULL,
-                SHORT_DESCRIPTION VARCHAR(200) NOT NULL,
-                DESCRIPTION VARCHAR(2000) NOT NULL,
-                STARTING_DATE VARCHAR(50),
-                ENDING_DATE VARCHAR(50),
-                FOREIGN KEY PLACE REFERENCES PLACES (PLACES_ID)
-                )"""
-        cursor.execute(query)
-        query = """DROP TABLE IF EXISTS MEETING"""
-        cursor.execute(query)
-        query = """CREATE TABLE MEETING (
-                MEETING_ID SERIAL  PRIMARY KEY,
-                NAME VARCHAR(50) NOT NULL,
-                DESCRIPTION VARCHAR(500) NOT NULL,
-                DATE VARCHAR(50),
-                FOREIGN KEY PLACE REFERENCES PLACES (PLACES_ID)
-                )"""
-        cursor.execute(query)
-        query = """DROP TABLE IF EXISTS EVENT_PARTICIPANTS"""
-        cursor.execute(query)
-        query = """CREATE TABLE EVENT_PARTICIPANTS (
-                FOREIGN KEY EVENT_ID REFERENCES EVENT (EVENT_ID)
-                FOREIGN KEY USER_ID REFERENCES USERS (USER_ID)
-                )"""
-        cursor.execute(query)
-        query = """DROP TABLE IF EXISTS MEETING_PARTICIPANTS"""
-        cursor.execute(query)
-        query = """CREATE TABLE MEETING_PARTICIPANTS (
-                FOREIGN KEY MEETING_ID REFERENCES MEETING (MEETING_ID)
-                FOREIGN KEY USER_ID REFERENCES USERS (USER_ID)
-                )"""
-        cursor.execute(query)
         ###################################################################
         # Creating Places Table In Database, and filling it with a sample #
         ###################################################################
-        query = """DROP TABLE IF EXISTS PLACES"""
+        query = """DROP TABLE IF EXISTS PLACES CASCADE """
         cursor.execute(query)
         # !! ADDED PLACES_ID AS PRIMARY KEY, REMOVED PRIMARY_KEY ATTR. FROM NAME
         query = """CREATE TABLE PLACES (
-                PLACES_ID SERIAL PRIMARY_KEY,
+                PLACES_ID SERIAL PRIMARY KEY,
                 NAME VARCHAR(50) NOT NULL,
                 INFORMATION VARCHAR(300) NOT NULL,
                 ADDRESS VARCHAR(1000) NOT NULL,
@@ -337,6 +466,31 @@ def initDataBase():
             """
             cursor.execute(statement, item)
             connection.commit()
+        ############################
+        # Event and Meeting Tabels #
+        ############################
+        query = """DROP TABLE IF EXISTS EVENT CASCADE """
+        cursor.execute(query)
+        query = """CREATE TABLE EVENT (
+                EVENT_ID SERIAL  PRIMARY KEY,
+                NAME VARCHAR(50) NOT NULL,
+                SHORT_DESCRIPTION VARCHAR(200) NOT NULL,
+                DESCRIPTION VARCHAR(2000) NOT NULL,
+                STARTING_DATE VARCHAR(50),
+                ENDING_DATE VARCHAR(50),
+                PLACE INT REFERENCES PLACES (PLACES_ID)
+                )"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS MEETING CASCADE """
+        cursor.execute(query)
+        query = """CREATE TABLE MEETING (
+                MEETING_ID SERIAL  PRIMARY KEY,
+                NAME VARCHAR(50) NOT NULL,
+                DESCRIPTION VARCHAR(200) NOT NULL,
+                DATE VARCHAR(50),
+                PLACE INT REFERENCES PLACES (PLACES_ID)
+                )"""
+        cursor.execute(query)
         #
         # Creating friends table and filling it with sample data
         #
@@ -351,7 +505,8 @@ def initDataBase():
                 )"""
         cursor.execute(query)
 
-        query = """DROP TABLE IF EXISTS USERS"""
+		# Added CASCADE because participant tables has dependency on it, i dont think it will break anything
+        query = """DROP TABLE IF EXISTS USERS CASCADE"""
         cursor.execute(query)
         query = """ CREATE TABLE USERS
             (
@@ -362,6 +517,25 @@ def initDataBase():
             OCUPATION varchar(50) NOT NULL,
             INTERESTS varchar(100) NOT NULL
             )"""
+        cursor.execute(query)
+		################################$$
+        # Event and Meeting participants #
+        ##################################
+        query = """DROP TABLE IF EXISTS EVENT_PARTICIPANTS"""
+        cursor.execute(query)
+        query = """CREATE TABLE EVENT_PARTICIPANTS(
+            EVENT_ID INT REFERENCES EVENT (EVENT_ID),
+            USER_ID INT REFERENCES USERS (USER_ID)
+        )
+        """
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS MEETING_PARTICIPANTS"""
+        cursor.execute(query)
+        query = """CREATE TABLE MEETING_PARTICIPANTS(
+            MEETING_ID INT REFERENCES MEETING (MEETING_ID),
+            USER_ID INT REFERENCES USERS (USER_ID)
+        )
+        """
         cursor.execute(query)
         connection.commit()
         return redirect(url_for('home_page'))

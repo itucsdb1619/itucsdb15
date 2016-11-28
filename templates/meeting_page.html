@@ -1,40 +1,28 @@
 {% extends "base_new.html" %}
 	{%- block body %}
-		<div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
+	<div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
 	  <div class="mdl-tabs__tab-bar">
 	      <a href="#Information-panel" class="mdl-tabs__tab is-active">Information</a>
 	      <a href="#Participants-panel" class="mdl-tabs__tab">Participants</a>
 	  </div>
-	  <div class="mdl-tabs__panel is-active" id="Information-panel">
+	  <div class="mdl-tabs__panel" id="Information-panel">
 	<div class="mdl-grid">
-		<!-- Simple list -->
-			<style>
-			.demo-list-item {
-			  width: 600px;
-			}
-			</style>
 			<ul class="demo-list-item mdl-list">
 			  <li class="mdl-list__item">
 			    <span class="mdl-list__item-primary-content">
-			      {{Event[1]}}
+			     {{Meeting[1]}}
 			    </span>
 			  </li>
 			  <li class="mdl-list__item">
 			    <span class="mdl-list__item-primary-content">
-			     {{Event[4]}} - {{Event[5]}}
+			      {{Meeting[2]}}
 			    </span>
 			  </li>
 			  <li class="mdl-list__item">
 			    <span class="mdl-list__item-primary-content">
-			      {{Event[2]}}
+			      {{Meeting[3]}}
 			    </span>
 			  </li>
-			  <li class="mdl-list__item">
-			    <span class="mdl-list__item-primary-content">
-			      {{Event[3]}}
-			    </span>
-			  </li>
-			</ul>
 			<ul class="demo-list-item mdl-list">
 			  <li class="mdl-list__item">
 			    <span class="mdl-list__item-primary-content">
@@ -44,7 +32,6 @@
 			  <li class="mdl-list__item">
 			    <span class="mdl-list__item-primary-content">
 			      {{Place[3]}}
-			    </span>
 			  </li>
 			  <li class="mdl-list__item">
 			    <span class="mdl-list__item-primary-content">
@@ -52,9 +39,11 @@
 			    </span>
 			  </li>
 			</ul>
-		</div>
-		</div>
-		<div class="mdl-tabs__panel" id="Participants-panel">
+			</ul>
+			</div>
+			</div>
+
+					<div class="mdl-tabs__panel" id="Participants-panel">
 		<div class="mdl-grid">
 		<h5>Participants:</h5>
 		</div>
@@ -87,7 +76,7 @@
 			<h5>Add Participant</h5>
 			</div>
 			<div class="mdl-grid">
-			<form action="add_participant_event" enctype="multipart/form-data" method="post">
+			<form action="add_participant_meeting" enctype="multipart/form-data" method="post">
 				<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
 			    <input class="mdl-textfield__input" type="text" name="participant">
 			    <label class="mdl-textfield__label" for="sample3">Name:</label>
@@ -96,4 +85,7 @@
 			</form>
 			</div>
 		</div>
-	{% endblock %}
+
+	</div>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base_new.html" %}
+	{%- block body %}
+		<div class="mdl-grid">
+		<style>
+			.demo-list-item {
+			  width: 300px;
+			}
+		</style>
+
+		<ul class="demo-list-item mdl-list">
+		  <li class="mdl-list__item">
+		    <span class="mdl-list__item-primary-content">
+		      {{EventNAME}}
+		    </span>
+		 </li>
+		</ul>
+
+
+		<form action="updateEvent"
+        enctype="multipart/form-data" method="post">
+        		<ul class="demo-list-item mdl-list">
+				  <li class="mdl-list__item">
+				    <span class="mdl-list__item-primary-content">
+				      {{Event[1]}}
+				    </span>
+				 </li>
+				</ul>
+ 			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			    <input class="mdl-textfield__input" type="text" name="NAME">
+			    <label class="mdl-textfield__label" for="sample3">Name of the event:</label>
+		  	</div>
+		  	<ul class="demo-list-item mdl-list">
+				  <li class="mdl-list__item">
+				    <span class="mdl-list__item-primary-content">
+				      {{Event[2]}}
+				    </span>
+				 </li>
+				</ul>
+			<div class="mdl-textfield mdl-js-textfield">
+			  <textarea class="mdl-textfield__input" type="text" rows="2" maxrows="4"
+			   name="SHORT_DESCRIPTION"></textarea>
+			  <label class="mdl-textfield__label" for="schools">Short Description</label>
+			</div>
+			<ul class="demo-list-item mdl-list">
+				  <li class="mdl-list__item">
+				    <span class="mdl-list__item-primary-content">
+				      {{Event[3]}}
+				    </span>
+				 </li>
+			</ul>
+			<div class="mdl-textfield mdl-js-textfield">
+			  <textarea class="mdl-textfield__input" type="text" rows="6" maxrows="10"
+			   name="DESCRIPTION"></textarea>
+			  <label class="mdl-textfield__label" for="schools">Description</label>
+			</div>
+			<ul class="demo-list-item mdl-list">
+				  <li class="mdl-list__item">
+				    <span class="mdl-list__item-primary-content">
+				      {{Event[4]}}
+				    </span>
+				 </li>
+			</ul>
+		  	<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			    <input class="mdl-textfield__input" type="text" name="STARTING_DATE">
+			    <label class="mdl-textfield__label" for="sample3">Starting Date:</label>
+		  	</div>
+		  	<ul class="demo-list-item mdl-list">
+				  <li class="mdl-list__item">
+				    <span class="mdl-list__item-primary-content">
+				      {{Event[5]}}
+				    </span>
+				 </li>
+			</ul>
+		  	<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			    <input class="mdl-textfield__input" type="text" name="ENDING_DATE">
+			    <label class="mdl-textfield__label" for="sample3">Ending date:</label>
+		  	</div>
+		  	<button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{Event[0]}}">UPDATE</button>
+		  	</form>
+		</div>
+
+{% endblock %}

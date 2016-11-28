@@ -1,0 +1,53 @@
+{% extends "base_new.html" %}
+	{%- block body %}
+		<div class="mdl-grid">
+		<style>
+			.demo-list-item {
+			  width: 300px;
+			}
+		</style>
+
+
+
+		<form action="meeting_update"
+        enctype="multipart/form-data" method="post">
+        		<ul class="demo-list-item mdl-list">
+				  <li class="mdl-list__item">
+				    <span class="mdl-list__item-primary-content">
+				      {{Meeting[1]}}
+				    </span>
+				 </li>
+				</ul>
+ 			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			    <input class="mdl-textfield__input" type="text" name="NAME">
+			    <label class="mdl-textfield__label" for="sample3">Name of the Meeting:</label>
+		  	</div>
+			<ul class="demo-list-item mdl-list">
+				  <li class="mdl-list__item">
+				    <span class="mdl-list__item-primary-content">
+				      {{Meeting[2]}}
+				    </span>
+				 </li>
+			</ul>
+			<div class="mdl-textfield mdl-js-textfield">
+			  <textarea class="mdl-textfield__input" type="text" rows="6" maxrows="10"
+			   name="DESCRIPTION"></textarea>
+			  <label class="mdl-textfield__label" for="schools">Description</label>
+			</div>
+		  	<ul class="demo-list-item mdl-list">
+				  <li class="mdl-list__item">
+				    <span class="mdl-list__item-primary-content">
+				      {{Meeting[3]}}
+				    </span>
+				 </li>
+			</ul>
+		  	<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+			    <input class="mdl-textfield__input" type="text" name="DATE">
+			    <label class="mdl-textfield__label" for="sample3">Date:</label>
+		  	</div>
+		  	<button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{Meeting[0]}}">UPDATE</button>
+		  	</form>
+		</div>	.
+
+
+{% endblock %}
