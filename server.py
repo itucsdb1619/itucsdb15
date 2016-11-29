@@ -463,7 +463,6 @@ def add_participant_event():
             Token = token[0]
             query = "INSERT INTO EVENT_PARTICIPANTS (USER_ID, EVENT_ID) VALUES (%s, %s)"
             cursor.execute(query, (Token, id))
-			connection.commit()
     return redirect(url_for('events_page'))
 
 @app.route('/add_participant_meeting',  methods=['GET', 'POST'])
@@ -479,7 +478,6 @@ def add_participant_meeting():
             Token = token[0]
             query = "INSERT INTO MEETING_PARTICIPANTS (USER_ID, MEETING_ID) VALUES (%s, %s)"
             cursor.execute(query, (Token, id))
-			connection.commit()
     return redirect(url_for('events_page'))
 
 
