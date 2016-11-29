@@ -1,0 +1,40 @@
+{% extends "base_new.html" %}
+{% block body %}
+<div align="center" style="width: 350px;">
+    <div class="left" align="center">
+        <form action="/addplace" method="POST">
+            <div class="mdl-textfield mdl-js-textfield">
+                <input class="mdl-textfield__input" type="text" id="pname" name="PlaceName">
+                <label class="mdl-textfield__label" for="pname">Place Name...</label>
+            </div>
+
+       
+            <div class="mdl-textfield mdl-js-textfield">
+                <input class="mdl-textfield__input" type="text" id="description" name="description">
+                <label class="mdl-textfield__label" for="description">Description...</label>
+            </div>
+
+            <div class="mdl-textfield mdl-js-textfield">
+                <input class="mdl-textfield__input" type="text" id="adress" name="address">
+                <label class="mdl-textfield__label" for="adress">Adress...</label>
+            </div>
+
+            <div class="mdl-textfield mdl-js-textfield">
+                <input class="mdl-textfield__input" type="text" id="phone" name="phone">
+                <label class="mdl-textfield__label" for="phone">PhoneNumber...</label>
+            </div>
+
+            <select name="getphotoid">
+                {% for row in test %}
+                <option value={{row[0]}}>{{row[1]}}</option>
+                {% endfor %}
+            </select>
+
+            <button class="mdl-button mdl-js-button mdl-button--primary"
+                    name="add_button">
+                ADD
+            </button>
+        </form>
+    </div>
+</div>
+    {% endblock %}
