@@ -696,46 +696,6 @@ def friends_init():
             return redirect('/friends')
 
 
-@app.route('/friends_init', methods=['POST', 'GET'])
-def friends_init():
-    if request.args.get('action') == 'drop':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            query = """ DROP TABLE IF EXISTS FRIENDS"""
-            cursor.execute(query)
-            connection.commit()
-        return render_template('friends.html')
-    elif request.args.get('action') == 'create':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            query = """ DROP TABLE IF EXISTS FRIENDS"""
-            cursor.execute(query)
-            query = """CREATE TABLE FRIENDS (
-                       PERSON_ID INT NOT NULL,
-                       FRIEND_ID INT NOT NULL,
-                       FRIEND_STATUS INT,
-                       primary key (PERSON_ID, FRIEND_ID)
-                       )"""
-            cursor.execute(query)
-            connection.commit()
-            return redirect('/friends')
-    else:
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            query = """INSERT INTO FRIENDS VALUES (0, 1, 1)"""
-            cursor.execute(query)
-            query = """INSERT INTO FRIENDS VALUES (0, 2, 1)"""
-            cursor.execute(query)
-            query = """INSERT INTO FRIENDS VALUES (0, 3, 2)"""
-            cursor.execute(query)
-            query = """INSERT INTO FRIENDS VALUES (1, 3, 2)"""
-            cursor.execute(query)
-            query = """INSERT INTO FRIENDS VALUES (1, 5, 3)"""
-            cursor.execute(query)
-            connection.commit()
-            return redirect('/friends')
-
-
 if __name__ == '__main__':
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
     if VCAP_APP_PORT is not None:
