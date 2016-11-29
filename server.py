@@ -53,46 +53,84 @@ def my_page():
 def places_page():
     with dbapi2.connect(app.config['dsn']) as connection:
         with connection.cursor() as cursor:
-            statement = """SELECT NAME, INFORMATION, ADDRESS, PHONENUMBER
-                        FROM PLACES"""
+            statement = """SELECT PLACES_ID, PLACES.NAME, PLACES.INFORMATION, ADDRESS, PHONENUMBER, PHOTOURL 
+                        FROM PLACES, PHOTOS
+                            WHERE (PROFILEPHOTO = ID)"""
             cursor.execute(statement)
             test = cursor.fetchall()
     return render_template('places.html', test = test)
 @app.route('/places', methods=['POST'])
 def my_form_post():
     if 'add_button' in request.form:
-        PlaceName = request.form['PlaceName']
-        description = request.form['description']
-        address = request.form['address']
-        phone = request.form['phone']
-        with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-                statement = """
-                   INSERT INTO PLACES (NAME, INFORMATION, ADDRESS, PHONENUMBER)
-                      VALUES (%s, %s, %s, %s)
-                """
-                cursor.execute(statement, [PlaceName, description, address, phone])
-                connection.commit()
+       return add_place_page()
     elif 'update_button' in request.form:
-        PlaceName = request.form['PlaceName']
-        description = request.form['description']
-        address = request.form['address']
-        phone = request.form['phone']
-        with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-                statement = """
-                    UPDATE PLACES
-                        SET INFORMATION = %s, ADDRESS = %s, PHONENUMBER = %s
-                            WHERE NAME = %s"""
-                cursor.execute(statement, [description, address, phone, PlaceName])
-                connection.commit()
+       id = request.form['place_to_delete'];
+       return update_place_page(id)
     elif 'delete_button' in request.form:
-        PlaceName = request.form['PlaceName']
+        id = request.form['place_to_delete'];
         with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
                 statement = """ DELETE FROM PLACES
-                                    WHERE NAME = %s """
-                cursor.execute(statement, [PlaceName])
+                                    WHERE PLACES_ID = %s """
+                cursor.execute(statement, [id])
+                connection.commit()
+    return places_page()
+@app.route('/addplace')
+def add_place_page():
+    with dbapi2.connect(app.config['dsn']) as connection:
+        with connection.cursor() as cursor:
+            statement = """SELECT ID, NAME 
+                        FROM PHOTOS"""
+            cursor.execute(statement)
+            test = cursor.fetchall()
+    return render_template('add_place.html', test = test)
+@app.route('/addplace', methods=['POST'])
+def add_place():
+    if 'add_button' in request.form:
+        PlaceName = request.form['PlaceName']
+        description = request.form['description']
+        address = request.form['address']
+        phone = request.form['phone']
+        profilephoto = request.form['getphotoid']
+
+        with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                statement = """
+                   INSERT INTO PLACES (NAME, INFORMATION, ADDRESS, PHONENUMBER, PROFILEPHOTO)
+                      VALUES (%s, %s, %s, %s, %s)
+                """
+                cursor.execute(statement, [PlaceName, description, address, phone, profilephoto])
+                connection.commit()
+    return places_page()
+
+@app.route('/updateplace')
+def update_place_page(id):
+    with dbapi2.connect(app.config['dsn']) as connection:
+        with connection.cursor() as cursor:
+            statement = """SELECT ID, NAME 
+                        FROM PHOTOS"""
+            cursor.execute(statement)
+            test = cursor.fetchall()
+    return render_template('update_place.html', test = test, id = id)
+
+@app.route('/updateplace', methods=['POST'])
+def update_place():
+    if 'add_button' in request.form:
+        id = request.form['place_to_delete']
+        PlaceName = request.form['PlaceName']
+        description = request.form['description']
+        address = request.form['address']
+        phone = request.form['phone']
+        profilephoto = request.form['getphotoid']
+
+        with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                statement = """
+                   UPDATE PLACES 
+                        SET NAME=%s, INFORMATION=%s, ADDRESS=%s, PHONENUMBER=%s, PROFILEPHOTO=%s
+                   WHERE (%s = PLACES_ID)
+                """
+                cursor.execute(statement, [PlaceName, description, address, phone, profilephoto, id])
                 connection.commit()
     return places_page()
 
