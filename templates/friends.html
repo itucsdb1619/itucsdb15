@@ -1,132 +1,24 @@
-<!DOCTYPE html>
-<html lang="en-US">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <script src="https://code.getmdl.io/1.2.1/material.min.js"></script>
-    <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.blue_grey-orange.min.css"/>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
-    <title>Friends</title>
-    <style>
-        .mdl-layout__header--transparent {
-            background: url(http://web.itu.edu.tr/karagozah/csdb/header_bg.jpg) center;
-        }
-
-        .mdl-layout__header {
-            overflow: visible;
-        }
-
-        .mdl-layout__header-row {
-            min-height: 160px;
-            padding: 0 40px;
-        }
-
-        .mdl-layout__header.is-compact .mdl-layout__header-row {
-            min-height: 0;
-        }
-
-        .header-row_container {
-            width: 100%;
-        }
-
-        .header-row_left {
-            float: left;
-            width: 40%;
-        }
-
-        .header-row_right {
-            float: right;
-            width: 40%;
-            text-align: right;
-        }
-
-        .header-row_center {
-            margin: 0 auto;
-            width: 150px;
-        }
-
-        .mdl-layout__tab-bar {
-            background-color: rgba(96, 125, 139, 0.5);
-            justify-content: center;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-        }
-
-        .mdl-layout__tab {
-            width: 100px;
-        }
-
-        .mdl-layout__tab-bar-right-button {
-            display: none;
-        }
-
-        .mdl-layout__tab-bar-left-button {
-            display: none;
-        }
-
-        .mdl-layout__header.is-compact .logo {
-            color: rgb(255, 171, 64);
-        }
-
-        .mdl-layout__header.is-compact .mdl-layout__tab-bar-container {
-            display: none;
-        }
-
-        .nav_icons {
-            overflow: visible;
-            vertical-align: middle;
-        }
-
-        .mdl-button .mdl-badge[data-badge]:after {
-            color: white;
-        }
-
-        .list_icon {
-            display: inline-flex;
-            vertical-align: middle;
-            margin-bottom: 4px;
-            margin-right: 8px;
-        }
-
-        .logo {
-            background: url(http://web.itu.edu.tr/karagozah/csdb/logo.png) 50% no-repeat;
-            background-size: cover;
-            height: 150px;
-            width: 150px;
-        }
-
-        .mdl-layout__header.is-compact .logo {
-            background: url(http://web.itu.edu.tr/karagozah/csdb/logo_small.png) no-repeat;
-            background-size: 56px;
-            height: 56px;
-            width: 56px;
-            margin: 4px auto 0 auto;
-        }
-
-        .logo a {
-            display: inline-block;
-            height: 100%;
-            width: 100%;
-        }
-
-        .footer_container {
-            background: url(http://web.itu.edu.tr/karagozah/csdb/footer_bg.jpg) center;
-        }
-
-        .mdl-mini-footer {
-            background-color: rgba(66, 66, 66, 0.9);
-        }
-    </style>
+{% extends "base_new.html" %}
+{% block body %}
     <script>
+        function getUrlVars() {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                vars[key] = value;
+            });
+            return vars;
+        }
+        function set_name(name, id) {
+            //document.getElementById('select_user').innerText = name;
+            window.location = "?user=" + id
+        }
         window.onload = function () {
             var radios = document.getElementsByName('options');
             for (var i = 1; i < radios.length; i++) {
                 radios[i].onclick = function () {
                     document.getElementById('actionData').value = this.value;
                     document.getElementById('delete').disabled = false;
-                    document.getElementById('update').disabled = false;
+                    document.getElementById('update').disabled = true;
                 }
             }
             radios[0].onclick = function () {
@@ -134,201 +26,99 @@
                 document.getElementById('delete').disabled = true;
                 document.getElementById('update').disabled = true;
             }
+            if (getUrlVars().user == null) {
+                document.getElementById('select_user').innerText = 'Select a user';
+            }
         };
+
     </script>
-</head>
 
-<body>
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-    <header class="mdl-layout__header mdl-layout__header--waterfall mdl-layout__header--transparent">
-        <div class="mdl-layout__header-row">
+    <div style="margin: 20px 0;text-align: center;width: 400px;display:inline-block">
+        <button style="width: 88px; margin: 8px;" id="create"
+                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                onclick="window.location.href = 'friends_init?action=create'">
+            Create
+        </button>
+        <button style="width: 88px; margin: 8px;" id="fill" disabled
+                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                onclick="window.location.href = 'friends_init?action=fill'">
+            Fill
+        </button>
+        <button style="width: 88px; margin: 8px;" id="drop"
+                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                onclick="window.location.href = 'friends_init?action=drop'">
+            Drop
+        </button>
+        <button id="select_user"
+                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+                style="width: 302px;margin-top: 20px;">
+            Select a user
+        </button>
 
-            <div class="header-row_container">
-                <div class="header-row_left"></div>
-                <div class="header-row_right">
-                    <div class="nav_icons_container">
-                        <button id="notifications_button" class="mdl-button mdl-js-button mdl-button--icon nav_icons">
-                            <div class="material-icons mdl-badge mdl-badge--overlap badge_icons" data-badge="2">
-                                notifications
-                            </div>
-                        </button>
-                        <div class="mdl-tooltip" data-mdl-for="notifications_button">Notifications</div>
-                        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-                            for="notifications_button">
-                            <li class="mdl-menu__item">Notification</li>
-                            <li class="mdl-menu__item">Another Action</li>
-                            <li disabled class="mdl-menu__item">Disabled Action</li>
-                            <li class="mdl-menu__item">Yet Another Action</li>
-                        </ul>
+        <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
+            for="select_user">
+            {% for t in users %}
+                <li class="mdl-menu__item" onclick="set_name('{{ t[0] }}', {{ t[1] }})">{{ t[0] }}</li>
+            {% endfor %}
+        </ul>
 
-                        <button id="friends_button" class="mdl-button mdl-js-button mdl-button--icon nav_icons"
-                                onclick="window.location.href = 'friends'">
-                            <div class="material-icons mdl-badge mdl-badge--overlap badge_icons">people</div>
-                        </button>
-                        <div class="mdl-tooltip" data-mdl-for="friends_button">Friends</div>
-
-                        <button id="account_button" class="mdl-button mdl-js-button mdl-button--icon nav_icons">
-                            <div class="material-icons mdl-badge mdl-badge--overlap badge_icons">account_circle</div>
-                        </button>
-                        <div class="mdl-tooltip" data-mdl-for="account_button">Account</div>
-                        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
-                            for="account_button">
-                            <li class="mdl-menu__item"><i class="material-icons list_icon">settings</i>Settings</li>
-                            <li class="mdl-menu__item"><i class="material-icons list_icon">power_settings_new</i>Log Off
-                            </li>
-                        </ul>
-                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
-                            <label class="mdl-button mdl-js-button mdl-button--icon" for="waterfall-exp">
-                                <i class="material-icons">search</i>
-                            </label>
-                            <div class="mdl-textfield__expandable-holder">
-                                <input class="mdl-textfield__input" type="text" name="sample" id="waterfall-exp">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="header-row_center">
-                    <div class="mdl-layout__title">
-                        <div class="logo"><a href="#"></a></div>
-                    </div>
-                </div>
+        <form class="login_form" method="POST" action="/friends">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text"
+                       id="newfriend" name="Search Name">
+                <label class="mdl-textfield__label" for="newfriend">Add a new Friend by Name</label>
             </div>
 
-
-        </div>
-
-
-        <div class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-layout--large-screen-only">
-            <a class="mdl-layout__tab" href="mypage">Events</a>
-            <a class="mdl-layout__tab" href="mypage">Places</a>
-            <a class="mdl-layout__tab" href="mypage">Photos</a>
-            <a class="mdl-layout__tab" href="mypage">Interests</a>
-        </div>
-
-
-    </header>
-
-
-    <div class="mdl-layout__drawer mdl-layout--small-screen-only">
-        <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href="mypage">Events</a>
-            <a class="mdl-navigation__link" href="mypage">Places</a>
-            <a class="mdl-navigation__link" href="mypage">Photos</a>
-            <a class="mdl-navigation__link" href="mypage">Interests</a>
-        </nav>
-    </div>
-
-    <main class="mdl-layout__content">
-        <div style="contain: content;width: 800px;min-height:700px; margin: 0 auto;">
-            <div style="margin: 20px 0;text-align: center;width: 400px;display:inline-block">
-                <button style="width: 88px; margin: 8px;" id="create"
-                        class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                        onclick="window.location.href = 'friends_init?action=create'">
-                    Create
-                </button>
-                <button style="width: 88px; margin: 8px;" id="fill"
-                        class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                        onclick="window.location.href = 'friends_init?action=fill'">
-                    Fill
-                </button>
-                <button style="width: 88px; margin: 8px;" id="drop"
-                        class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                        onclick="window.location.href = 'friends_init?action=drop'">
-                    Drop
-                </button>
-                <form class="login_form" method="POST" action="/friends">
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input class="mdl-textfield__input" type="text"
-                               pattern="-?[0-9]*(\.[0-9]+)?" id="personID" name="personID">
-                        <label class="mdl-textfield__label" for="personID">Person ID</label>
-                        <span class="mdl-textfield__error">Input is not a number!</span>
-                    </div>
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input class="mdl-textfield__input" type="text"
-                               pattern="-?[0-9]*(\.[0-9]+)?" id="friendID" name="friendID">
-                        <label class="mdl-textfield__label" for="friendID">Person ID of friend</label>
-                        <span class="mdl-textfield__error">Input is not a number!</span>
-                    </div>
-                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input class="mdl-textfield__input" type="text"
-                               pattern="-?[0-9]*(\.[0-9]+)?" id="friendStatus" name="friendStatus">
-                        <label class="mdl-textfield__label" for="friendStatus">Relation Status</label>
-                        <span class="mdl-textfield__error">Input is not a number!</span>
-                    </div>
-                    <input style="display:none;" type="text" id="actionType" name="actionType" value="add">
-                    <input style="display:none;" type="text" id="actionData" name="actionData" value="0">
-                    <input id="add" style="width:140px;margin:10px;"
-                           class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit"
-                           value="Add" onclick="document.getElementById('actionType').value = 'add'
+            <input style="display:none;" type="text" id="actionType" name="actionType" value="add">
+            <input style="display:none;" type="text" id="actionData" name="actionData" value="0">
+            <input id="add" style="width:140px;margin:10px;"
+                   class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit"
+                   value="Add" onclick="document.getElementById('actionType').value = 'add'
                                                  document.forms[0].method = 'POST';">
-                    <input id="select" style="width:140px;margin:10px;"
-                           class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit"
-                           value="Select" onclick="document.getElementById('actionType').value = 'select';
+            <input id="select" style="width:140px;margin:10px;"
+                   class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit"
+                   value="Select" onclick="document.getElementById('actionType').value = 'select';
                                                    document.forms[0].method = 'GET';">
-                    <input id="update" style="width:140px;margin:10px;"
-                           class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit"
-                           value="Update" disabled onclick="document.getElementById('actionType').value = 'update'
+            <input id="update" style="width:140px;margin:10px;"
+                   class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit"
+                   value="Update" disabled onclick="document.getElementById('actionType').value = 'update'
                                                             document.forms[0].method = 'POST';">
-                    <input id="delete" style="width:140px;margin:10px;"
-                           class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit"
-                           value="Delete" disabled onclick="document.getElementById('actionType').value = 'delete'
+            <input id="delete" style="width:140px;margin:10px;"
+                   class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit"
+                   value="Delete" disabled onclick="document.getElementById('actionType').value = 'delete'
                                                             document.forms[0].method = 'POST';">
-                </form>
+        </form>
 
-            </div>
-            <ul style="width:400px;display:inline-block;float:right;margin: 20px 0;padding:0">
-                <li class="mdl-list__item">
+    </div>
+    <ul style="width:400px;display:inline-block;float:right;margin: 20px 0;padding:0">
+        <li class="mdl-list__item">
                     <span class="mdl-list__item-primary-content">
-                        People
+                        {{ user[0][0] }}'s friends
                     </span>
-                    <span>
+            <span>
                         Select none
                     </span>
-                    <span style="margin-top: -30px;" class="mdl-list__item-secondary-action">
+            <span style="margin-top: -30px;" class="mdl-list__item-secondary-action">
                         <label class="demo-list-radio mdl-radio mdl-js-radio mdl-js-ripple-effect"
                                for="list-option--1"/>
                         <input style="display: inline;" type="radio" id="list-option--1"
                                class="mdl-radio__button" name="options" value="add" checked/>
                     </span>
-                </li>
-                {% for t in rows %}
-                    <li class="mdl-list__item">
+        </li>
+        {% for t in rows %}
+            <li class="mdl-list__item">
                     <span class="mdl-list__item-primary-content">
                         <i class="material-icons  mdl-list__item-avatar">person</i>
                         p_{{ t[0] }}'s relation with p_{{ t[1] }} is {{ t[2] }}
                     </span>
-                        <span style="margin-top: -30px;" class="mdl-list__item-secondary-action">
+                <span style="margin-top: -30px;" class="mdl-list__item-secondary-action">
                         <label class="demo-list-radio mdl-radio mdl-js-radio mdl-js-ripple-effect"
                                for="list-option-{{ t[0] }},{{ t[1] }}"/>
                         <input style="display: inline;" type="radio" id="list-option-{{ t[0] }},{{ t[1] }}"
                                class="mdl-radio__button" name="options"
                                value="{{ t[0] }},{{ t[1] }}"/>
                     </span>
-                    </li>
-                {% endfor %}
-
-            </ul>
-
-
-        </div>
-
-
-        <div class="footer_container">
-            <footer class="mdl-mini-footer">
-                <div class="mdl-mini-footer__left-section">
-                    <div class="mdl-logo">itucsdb1619</div>
-                </div>
-                <div class="mdl-mini-footer__right-section">
-                    <ul class="mdl-mini-footer__link-list">
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Privacy & Terms</a></li>
-                    </ul>
-                </div>
-            </footer>
-        </div>
-    </main>
-</div>
-</body>
-</html>
-
-	  
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
