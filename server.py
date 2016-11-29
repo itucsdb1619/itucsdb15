@@ -200,6 +200,15 @@ def user_page():
             user_all = cursor.fetchall()
     return render_template('home.html', user_all = user_all)
 
+@app.route('/users/<pk>/favourites')
+def favourite_places(pk):
+    with dbapi2.connect(app.config['dsn']) as connection:
+        with connection.cursor() as cursor:
+            statement = """SELECT * FROM USER_FAVS WHERE USER_ID = %(user_id)s"""
+            cursor.execute(statement)
+            fav_places = cursor.fetchall()
+    return render_template('favourites.html', favourite_places=fav_places, user_pk=pk)
+
 @app.route('/users', methods=['POST'])
 def operation():
     if 'add_button' in request.form:
@@ -555,6 +564,21 @@ def initDataBase():
             OCUPATION varchar(50) NOT NULL,
             INTERESTS varchar(100) NOT NULL
             )"""
+        cursor.execute(query)
+        query = """DROP TABLE IF EXISTS USER_FAVS CASCADE;"""
+        cursor.execute(query)
+        query = """CREATE TABLE USER_FAVS
+            (
+            ID SERIAL NOT NULL PRIMARY KEY,
+            USER_ID INT NOT NULL,
+            PLACE_ID INT NOT NULL
+            );"""
+        cursor.execute(query)
+        query = """ALTER TABLE ONLY USER_FAVS ADD CONSTRAINT user_favs_fk_user_id FOREIGN KEY (USER_ID)
+                REFERENCES USERS(USER_ID) DEFERRABLE INITIALLY DEFERRED"""
+        cursor.execute(query)
+        query = """ALTER TABLE ONLY USER_FAVS ADD CONSTRAINT user_favs_fk_place_id FOREIGN KEY (PLACE_ID)
+                REFERENCES PLACES(PLACES_ID) DEFERRABLE INITIALLY DEFERRED"""
         cursor.execute(query)
 		################################$$
         # Event and Meeting participants #
