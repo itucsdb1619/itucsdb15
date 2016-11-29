@@ -536,8 +536,8 @@ def initDataBase():
         cursor.execute(query)
         query = """
                 CREATE TABLE FRIENDS (
-                PERSON_ID INT NOT NULL,
-                FRIEND_ID INT NOT NULL,
+                PERSON_ID INT NOT NULL REFERENCES USERS (USER_ID),
+                FRIEND_ID INT NOT NULL REFERENCES USERS (USER_ID),
                 FRIEND_STATUS INT,
                 primary key (PERSON_ID, FRIEND_ID)
                 )"""
@@ -581,13 +581,15 @@ def initDataBase():
 
 @app.route('/friends', methods=['POST', 'GET'])
 def friends_page():
-    last_query = "SELECT * FROM FRIENDS"
-    if request.method == 'POST':
-        personID = request.form['personID']
+    last_query = ""
+    personID = None
+    if request.method == 'POST' and request.args.get('user') is not None:
+        personID = request.args.get('user')
         friendID = request.form['friendID']
         actionType = request.form['actionType']
         actionData = request.form['actionData']
         friendStatus = request.form['friendStatus']
+        friendName = request.form['newfriend']
         if friendStatus == '':
             friendStatus = '0'
         if actionType == 'delete':
@@ -603,9 +605,15 @@ def friends_page():
         elif actionType == 'add':
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
+                query = """SELECT USER_ID FROM USERS WHERE USER_NAME = """ + friendName
+                cursor.execute(query)
+                newfriend = cursor.fetchall()
+                if newfriend is None:
+                    return """<script> alert('Fill the necessary inputs');
+                                       window.location = '/friends';</script>"""
                 query = """INSERT INTO FRIENDS
                            (PERSON_ID, FRIEND_ID, FRIEND_STATUS) VALUES (%s, %s, %s)"""
-                data = (personID, friendID, friendStatus)
+                data = (personID, newfriend[0], 1)
                 cursor.execute(query, data)
                 connection.commit()
         else:
@@ -616,20 +624,14 @@ def friends_page():
                            WHERE PERSON_ID = %s AND FRIEND_ID=%s"""
                 cursor.execute(query, (personID, friendID, friendStatus, pid, fid))
                 connection.commit()
-    if request.method == 'GET':
-        personID = request.args.get('personID')
-        friendID = request.args.get('friendID')
-        friendStatus = request.args.get('friendStatus')
+    if request.method == 'GET' and request.args.get('user') is not None:
+        personID = request.args.get('user')
         query = """SELECT * FROM FRIENDS"""
         if personID != '' or friendID != '' or friendStatus != '':
             query += """ WHERE """
             addquery = []
             if personID != '' and personID is not None:
                 addquery.append('PERSON_ID = ' + format(personID))
-            if friendID != '' and friendID is not None:
-                addquery.append("""FRIEND_ID = """ + format(friendID))
-            if friendStatus != '' and friendStatus is not None:
-                addquery.append(""" FRIEND_STATUS = """ + format(friendStatus))
             for s in addquery:
                 query += s
                 query += """ AND """
@@ -637,10 +639,61 @@ def friends_page():
             last_query = query
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
-        cursor.execute(last_query)
-        rows = cursor.fetchall()
+        if last_query != "":
+            cursor.execute(last_query)
+            rows = cursor.fetchall()
+        else:
+            rows = []
+        cursor.execute("""SELECT USER_NAME, USER_ID FROM USERS""")
+        users = cursor.fetchall()
+        if personID is not None:
+            query = """SELECT USER_NAME FROM USERS WHERE USER_ID = """ + format(personID)
+            cursor.execute(query)
+            user = cursor.fetchall()
+        else:
+            user = [['User']]
         connection.commit()
-    return render_template('friends.html', rows=rows)
+    return render_template('friends.html', rows=rows, users=users, user=user)
+
+
+@app.route('/friends_init', methods=['POST', 'GET'])
+def friends_init():
+    if request.args.get('action') == 'drop':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """ DROP TABLE IF EXISTS FRIENDS"""
+            cursor.execute(query)
+            connection.commit()
+        return render_template('friends.html')
+    elif request.args.get('action') == 'create':
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """ DROP TABLE IF EXISTS FRIENDS"""
+            cursor.execute(query)
+            query = """CREATE TABLE FRIENDS (
+                       PERSON_ID INT NOT NULL REFERENCES USERS (USER_ID),
+                       FRIEND_ID INT NOT NULL REFERENCES USERS (USER_ID),
+                       FRIEND_STATUS INT,
+                       primary key (PERSON_ID, FRIEND_ID)
+                       )"""
+            cursor.execute(query)
+            connection.commit()
+            return redirect('/friends')
+    else:
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """INSERT INTO FRIENDS VALUES (0, 1, 1)"""
+            cursor.execute(query)
+            query = """INSERT INTO FRIENDS VALUES (0, 2, 1)"""
+            cursor.execute(query)
+            query = """INSERT INTO FRIENDS VALUES (0, 3, 2)"""
+            cursor.execute(query)
+            query = """INSERT INTO FRIENDS VALUES (1, 3, 2)"""
+            cursor.execute(query)
+            query = """INSERT INTO FRIENDS VALUES (1, 5, 3)"""
+            cursor.execute(query)
+            connection.commit()
+            return redirect('/friends')
 
 
 @app.route('/friends_init', methods=['POST', 'GET'])
