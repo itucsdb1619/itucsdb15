@@ -1,60 +1,77 @@
+{% extends "base_new.html" %}
 <html>
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.indigo-blue.min.css" />
+    <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+</head>
 <body>
+   {% block body %}
 
-    <div align="center">
-        <div class="left" align="center">
-            <form action="/places" method="POST">
-                <label for="pname">Place Name:</label><p> </p>
-                <input type="text" id="pname" name="PlaceName"><p> </p>
-
-                <label for="description">Description:</label><p> </p>
-                <input type="text" id="description" name="description"><p> </p>
-
-                <label for="address">Address:</label><p> </p>
-                <input type="text" id="address" name="address"><p> </p>
-
-                <label for="phone">Phone Number:</label><p> </p>
-                <input type="text" id="phone" name="phone"><p> </p>
-
-                <input type="submit" name="add_button" value="Create" class='button'>
-                <input type="submit" name="update_button" value="Update" class='button'>
-                <input type="submit" name="delete_button" value="Delete" class='button'>
-            </form>
-        </div>
-    </div>
-    <div>
-        <table>
+    <table class="mdl-data-table mdl-js-data-table">
+        <thead>
             <tr>
+                <th>Photo</th>
                 <th>Place Name</th>
                 <th>Information</th>
                 <th>Address</th>
                 <th>Phone Number</th>
+                <th>Operations</th>
             </tr>
-
+        </thead>
+        <tbody>
             {% for row in test %}
             <tr>
-                <td> {{row[0]}}</td>
-                <td> {{row[1]}}</td>
-                <td> {{row[2]}}</td>
-                <td> {{row[3]}}</td>
+                <td class="thclass"> <div><img src="{{row[5]}}" height="100" width="100" /></div></td>
+                <td class="thclass"> {{row[1]}}</td>
+                <td class="thclass"> {{row[2]}}</td>
+                <td class="thclass"> {{row[3]}}</td>
+                <td class="thclass"> {{row[4]}}</td>
+                <td class="thclass">
+                    <form action="/places" method="post">
+                        <input type=hidden value="{{row[0]}}" name="place_to_delete"></input>
+                        <button class="mdl-button mdl-js-button "name="delete_button" value="Update">
+                            Delete
+                        </button>
+                        <button class="mdl-button mdl-js-button " name="update_button" value="Delete">
+                            Update
+                        </button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
-        </table>
+            <tr>
+                <td></td><td></td><td></td>
+                <td><form action="/places" method="post">
+                    <div align="center">
+                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored"
+                            type="submit" name="add_button">
+                            <i class="material-icons">add</i>
+                        </button>
+                    </div>
+                    </form>
+                </td>
+                <td></td><td></td>
+            </tr>
+        </tbody>
+    </table>
+        
     </div>
-
-
-
-
+    <!-- Colored FAB button with ripple -->
+    <form action="/places" method="post"
+    
+    </input>
+    </form>
 
 </body>
 
 <style>
-    table {
+    .tableclass {
         border-collapse: collapse;
         width: 100%;
     }
 
-    th, td {
+    .thclass {
         text-align: left;
         padding: 8px;
     }
@@ -63,8 +80,8 @@
         background-color: #ffd1b3;
     }
 
-    th {
-        background-color: #ff751a;
+    .thclass {
+        background-color: #0066ff;
         color: white;
     }
 
@@ -76,7 +93,7 @@
     .button {
         display: inline-block;
         padding: 15px 25px;
-        font-size: 24px;
+        font-size: 12px;
         cursor: pointer;
         text-align: center;
         text-decoration: none;
@@ -85,7 +102,7 @@
         background-color: #ff6600;
         border: none;
         border-radius: 15px;
-        box-shadow: 0 9px #999;
+        box-shadow: 0 3px #999;
     }
 
         .button:hover {
@@ -94,7 +111,7 @@
 
         .button:active {
             background-color: #e65c00;
-            box-shadow: 0 5px #666;
+            box-shadow: 0 2px #666;
             transform: translateY(4px);
         }
 
@@ -110,7 +127,7 @@
         box-sizing: border-box;
     }
 
-    div {
+    .divclass {
         border-radius: 5px;
         background-color: #f2f2f2;
         padding: 20px;
@@ -122,4 +139,5 @@
         border: #4d1f00 solid 1px;
     }
 </style>
+{% endblock %}
 </html>
