@@ -79,7 +79,6 @@ def my_form_post():
                 statement = """ DELETE FROM PLACES
                                     WHERE PLACES_ID = %s """
                 cursor.execute(statement, [id])
-                connection.commit()
                 cursor.close()
                 connection.close()
     return places_page()
@@ -110,7 +109,6 @@ def add_place():
                       VALUES (%s, %s, %s, %s, %s)
                 """
                 cursor.execute(statement, [PlaceName, description, address, phone, profilephoto])
-                connection.commit()
                 cursor.close()
                 connection.close()
     return places_page()
@@ -145,7 +143,6 @@ def update_place():
                    WHERE (%s = PLACES_ID)
                 """
                 cursor.execute(statement, [PlaceName, description, address, phone, profilephoto, id])
-                connection.commit()
                 cursor.close()
                 connection.close()
     return places_page()
@@ -194,7 +191,6 @@ def photos_post():
                 statement = """ DELETE FROM PHOTOS
                                     WHERE ID = %s """
                 cursor.execute(statement,[id])
-        connection.commit()
     return photos_page()
 @app.route('/init_phdb')
 def initilize_photos_db():
@@ -256,7 +252,6 @@ def operation():
                         WHERE
                         USER_ID = %s """
                 cursor.execute(statement, [name, birthday, location, ocupation, interests])
-                connection.commit()
     elif 'delete_button' in request.form:
         user_id = request.form['user_id']
         with dbapi2.connect(app.config['dsn']) as connection:
@@ -264,7 +259,6 @@ def operation():
             statement = """ DELETE FROM USERS
                                     WHERE USER_ID = %s"""
             cursor.execute(statement, [user_id])
-            connection.commit()
             cursor.close()
             connection.close()
     return users()
@@ -285,7 +279,6 @@ def useradd():
                 query = """
                 INSERT INTO USER (NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s, %s, %s)"""
                 cursor.execute(query, [name, birthday, location, ocupation, interests])
-                connection.commit()
                 cursor.close()
                 connection.close()
     return render_template('home.html')
@@ -300,7 +293,6 @@ def delete_event():
             query = ("DELETE FROM EVENT WHERE EVENT_ID = %s")
             id = request.form['button']
             cursor.execute(query, str(id))
-            connection.commit()
             cursor.close()
             connection.close()
     return redirect(url_for('events_page'))
@@ -313,7 +305,6 @@ def meeting_delete():
             query = ("DELETE FROM MEETING WHERE MEETING_ID = %s")
             id = request.form['button']
             cursor.execute(query, str(id))
-            connection.commit()
             cursor.close()
             connection.close()
     return redirect(url_for('events_page'))
@@ -335,7 +326,6 @@ def eventPage():
         id = Event[6]
         cursor.execute(query, (str(id)))
         Place = cursor.fetchone()
-        connection.commit()
         cursor.close()
         connection.close()
     return render_template('eventPage.html', Event = Event,  Place = Place, Participants = Participants, Users = Users)
@@ -357,7 +347,6 @@ def meeting_page():
         id = Meeting[4]
         cursor.execute(query, (str(id)))
         Place = cursor.fetchone()
-        connection.commit()
         cursor.close()
         connection.close()
     return render_template('meeting_page.html', Meeting = Meeting,  Place = Place,Participants = Participants, Users = Users)
@@ -375,10 +364,9 @@ def update_event_page():
             id = Event[6]
             cursor.execute(query, (str(id)))
             Place = cursor.fetchone()
-            connection.commit()
-            return render_template('event_update.html', Event = Event, Place = Place)
             cursor.close()
             connection.close()
+            return render_template('event_update.html', Event = Event, Place = Place)
     return redirect(url_for('events_page'))
 
 
@@ -408,7 +396,6 @@ def update_event():
             if request.form['ENDING_DATE'] is not "":
                 query = "UPDATE EVENT SET ENDING_DATE = %s WHERE EVENT_ID = %s"
                 cursor.execute(query, [request.form['ENDING_DATE'], str(id)])
-            connection.commit()
             cursor.close()
             connection.close()
             return redirect(url_for('events_page'))
@@ -425,7 +412,6 @@ def meeting_update_page():
         id = Meeting[4]
         cursor.execute(query, (str(id)))
         Place = cursor.fetchone()
-        connection.commit()
         cursor.close()
         connection.close()
         return render_template('meeting_update.html', Meeting = Meeting, Place = Place)
@@ -453,7 +439,6 @@ def meeting_update():
                 query = "UPDATE MEETING SET DATE = %s WHERE MEETING_ID = %s"
                 token = request.form['DATE']
                 cursor.execute(query, (token, str(id)))
-            connection.commit()
             cursor.close()
             connection.close()
             return redirect(url_for('events_page'))
@@ -472,7 +457,6 @@ def events_page():
                                 VALUES (%s,%s,%s,%s,%s,%s)"""
                 cursor.execute(query, [request.form['NAME'], request.form['SHORT_DESCRIPTION'],
                                        request.form['DESCRIPTION'],request.form['STARTING_DATE'],request.form['ENDING_DATE'],placeId])
-                connection.commit()
             if request.form['button'] == "meeting":
                 cursor = connection.cursor()
                 query = "SELECT * FROM PLACES WHERE (NAME = %s)"
@@ -483,7 +467,7 @@ def events_page():
                                 VALUES (%s,%s,%s,%s)"""
                 cursor.execute(query, [request.form['NAME'],
                                        request.form['DESCRIPTION'],request.form['DATE'],placeId])
-                connection.commit()
+                
                 cursor.close()
                 connection.close()
     with dbapi2.connect(app.config['dsn']) as connection:
@@ -497,7 +481,6 @@ def events_page():
         query = ("SELECT * FROM MEETING")
         cursor.execute(query)
         meetingTable = cursor.fetchall()
-        connection.commit()
         cursor.close()
         connection.close()
         return render_template('events.html', Event = eventTable, Meeting = meetingTable, Place = Place)
@@ -655,7 +638,6 @@ def initDataBase():
         )
         """
         cursor.execute(query)
-        connection.commit()
         cursor.close()
         connection.close()
         return redirect(url_for('home_page'))
@@ -680,7 +662,6 @@ def friends_page():
                 pid, fid = actionData.split(',')
                 query = """DELETE FROM FRIENDS WHERE PERSON_ID = %s AND FRIEND_ID=%s"""
                 cursor.execute(query, (pid, fid))
-                connection.commit()
                 cursor.close()
                 connection.close()
         elif personID == '' or friendID == '':
@@ -699,7 +680,6 @@ def friends_page():
                            (PERSON_ID, FRIEND_ID, FRIEND_STATUS) VALUES (%s, %s, %s)"""
                 data = (personID, newfriend[0], 1)
                 cursor.execute(query, data)
-                connection.commit()
                 cursor.close()
                 connection.close()
         else:
@@ -709,7 +689,6 @@ def friends_page():
                 query = """UPDATE FRIENDS SET PERSON_ID = %s, FRIEND_ID = %s, FRIEND_STATUS = %s
                            WHERE PERSON_ID = %s AND FRIEND_ID=%s"""
                 cursor.execute(query, (personID, friendID, friendStatus, pid, fid))
-                connection.commit()
                 cursor.close()
                 connection.close()
     if request.method == 'GET' and request.args.get('user') is not None:
@@ -740,7 +719,6 @@ def friends_page():
             user = cursor.fetchall()
         else:
             user = [['User']]
-        connection.commit()
         cursor.close()
         connection.close()
     return render_template('friends.html', rows=rows, users=users, user=user)
@@ -753,7 +731,6 @@ def friends_init():
             cursor = connection.cursor()
             query = """ DROP TABLE IF EXISTS FRIENDS"""
             cursor.execute(query)
-            connection.commit()
             cursor.close()
             connection.close()
         return render_template('friends.html')
@@ -769,7 +746,6 @@ def friends_init():
                        primary key (PERSON_ID, FRIEND_ID)
                        )"""
             cursor.execute(query)
-            connection.commit()
             cursor.close()
             connection.close()
             return redirect('/friends')
@@ -786,7 +762,6 @@ def friends_init():
             cursor.execute(query)
             query = """INSERT INTO FRIENDS VALUES (1, 5, 3)"""
             cursor.execute(query)
-            connection.commit()
             cursor.close()
             connection.close()
             return redirect('/friends')
