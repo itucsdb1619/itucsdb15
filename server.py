@@ -119,8 +119,7 @@ def add_place():
         address = request.form['address']
         phone = request.form['phone']
         profilephoto = request.form['getphotoid']
-        
-	try:    
+        try:    
             connection = dbapi2.connect(app.config['dsn'])
             cursor = connection.cursor()
             statement = """
