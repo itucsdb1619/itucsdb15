@@ -34,6 +34,8 @@ def eventcreation_page():
         query = ("SELECT * FROM PLACES")
         cursor.execute(query)
         Places = cursor.fetchall()
+        cursor.close()
+        connection.close()
     return render_template('EventCreation.html', Places = Places)
 
 @app.route('/create_meeting')
@@ -43,6 +45,8 @@ def createmeeting_page():
         query = ("SELECT * FROM PLACES")
         cursor.execute(query)
         Places = cursor.fetchall()
+        cursor.close()
+        connection.close()
     return render_template('create_meeting.html',Places = Places)
 
 @app.route('/mypage')
@@ -58,6 +62,8 @@ def places_page():
                             WHERE (PROFILEPHOTO = ID)"""
             cursor.execute(statement)
             test = cursor.fetchall()
+            cursor.close()
+            connection.close()
     return render_template('places.html', test = test)
 @app.route('/places', methods=['POST'])
 def my_form_post():
@@ -74,6 +80,8 @@ def my_form_post():
                                     WHERE PLACES_ID = %s """
                 cursor.execute(statement, [id])
                 connection.commit()
+                cursor.close()
+                connection.close()
     return places_page()
 @app.route('/addplace')
 def add_place_page():
@@ -83,6 +91,8 @@ def add_place_page():
                         FROM PHOTOS"""
             cursor.execute(statement)
             test = cursor.fetchall()
+            cursor.close()
+            connection.close()
     return render_template('add_place.html', test = test)
 @app.route('/addplace', methods=['POST'])
 def add_place():
@@ -101,6 +111,8 @@ def add_place():
                 """
                 cursor.execute(statement, [PlaceName, description, address, phone, profilephoto])
                 connection.commit()
+                cursor.close()
+                connection.close()
     return places_page()
 
 @app.route('/updateplace')
@@ -111,6 +123,8 @@ def update_place_page(id):
                         FROM PHOTOS"""
             cursor.execute(statement)
             test = cursor.fetchall()
+            cursor.close()
+            connection.close()
     return render_template('update_place.html', test = test, id = id)
 
 @app.route('/updateplace', methods=['POST'])
@@ -132,6 +146,8 @@ def update_place():
                 """
                 cursor.execute(statement, [PlaceName, description, address, phone, profilephoto, id])
                 connection.commit()
+                cursor.close()
+                connection.close()
     return places_page()
 
 @app.route('/photos')
@@ -142,6 +158,8 @@ def photos_page():
                         FROM PHOTOS"""
             cursor.execute(statement)
             photo_db = cursor.fetchall()
+            cursor.close()
+            connection.close()
     return render_template ('meetings.html', photo_db = photo_db)
 @app.route('/photos', methods=['POST'])
 def photos_post():
@@ -154,6 +172,8 @@ def photos_post():
                 statement = """INSERT INTO PHOTOS (INFORMATION, URL, USERNAME)
                       VALUES (%s, %s, %s)"""
                 cursor.execute(statement, [info, url, username])
+                cursor.close()
+                connection.close()
     elif 'update_button' in request.form:
         id = request.form['id']
         info = request.form['info']
@@ -165,6 +185,8 @@ def photos_post():
                         SET INFORMATION = %s, URL = %s, USERNAME = %s
                             WHERE ID = %s"""
                 cursor.execute(statement, [info, url, username, id])
+                cursor.close()
+                connection.close()
     elif 'delete_button' in request.form:
         id = request.form['id']
         with dbapi2.connect(app.config['dsn']) as connection:
@@ -198,6 +220,8 @@ def user_page():
             statement = """SELECT * FROM USERS"""
             cursor.execute(statement)
             user_all = cursor.fetchall()
+            cursor.close()
+        connection.close()
     return render_template('home.html', user_all = user_all)
 
 @app.route('/users/<pk>/favourites')
@@ -207,6 +231,8 @@ def favourite_places(pk):
             statement = """SELECT * FROM USER_FAVS WHERE USER_ID = %(user_id)s"""
             cursor.execute(statement)
             fav_places = cursor.fetchall()
+            cursor.close()
+        connection.close()
     return render_template('favourites.html', favourite_places=fav_places, user_pk=pk)
 
 @app.route('/users', methods=['POST'])
@@ -239,6 +265,8 @@ def operation():
                                     WHERE USER_ID = %s"""
             cursor.execute(statement, [user_id])
             connection.commit()
+            cursor.close()
+            connection.close()
     return users()
 
 @app.route('/user_add')
@@ -258,7 +286,11 @@ def useradd():
                 INSERT INTO USER (NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s, %s, %s)"""
                 cursor.execute(query, [name, birthday, location, ocupation, interests])
                 connection.commit()
+                cursor.close()
+                connection.close()
     return render_template('home.html')
+
+
 ''' end of USERs part'''
 @app.route('/deleteEvent',  methods=['GET', 'POST'])
 def delete_event():
@@ -269,6 +301,8 @@ def delete_event():
             id = request.form['button']
             cursor.execute(query, str(id))
             connection.commit()
+            cursor.close()
+            connection.close()
     return redirect(url_for('events_page'))
 
 @app.route('/meeting_delete',  methods=['GET', 'POST'])
@@ -280,6 +314,8 @@ def meeting_delete():
             id = request.form['button']
             cursor.execute(query, str(id))
             connection.commit()
+            cursor.close()
+            connection.close()
     return redirect(url_for('events_page'))
 
 @app.route('/eventPage',  methods=['GET', 'POST'])
@@ -300,6 +336,8 @@ def eventPage():
         cursor.execute(query, (str(id)))
         Place = cursor.fetchone()
         connection.commit()
+        cursor.close()
+        connection.close()
     return render_template('eventPage.html', Event = Event,  Place = Place, Participants = Participants, Users = Users)
 
 @app.route('/meeting_page',  methods=['GET', 'POST'])
@@ -320,6 +358,8 @@ def meeting_page():
         cursor.execute(query, (str(id)))
         Place = cursor.fetchone()
         connection.commit()
+        cursor.close()
+        connection.close()
     return render_template('meeting_page.html', Meeting = Meeting,  Place = Place,Participants = Participants, Users = Users)
 
 @app.route('/update_event_page',  methods=['GET', 'POST'])
@@ -337,6 +377,8 @@ def update_event_page():
             Place = cursor.fetchone()
             connection.commit()
             return render_template('event_update.html', Event = Event, Place = Place)
+            cursor.close()
+            connection.close()
     return redirect(url_for('events_page'))
 
 
@@ -367,6 +409,8 @@ def update_event():
                 query = "UPDATE EVENT SET ENDING_DATE = %s WHERE EVENT_ID = %s"
                 cursor.execute(query, [request.form['ENDING_DATE'], str(id)])
             connection.commit()
+            cursor.close()
+            connection.close()
             return redirect(url_for('events_page'))
 
 @app.route('/meeting_update_page',  methods=['GET', 'POST'])
@@ -382,6 +426,8 @@ def meeting_update_page():
         cursor.execute(query, (str(id)))
         Place = cursor.fetchone()
         connection.commit()
+        cursor.close()
+        connection.close()
         return render_template('meeting_update.html', Meeting = Meeting, Place = Place)
 
 @app.route('/meeting_update',  methods=['GET', 'POST'])
@@ -408,6 +454,8 @@ def meeting_update():
                 token = request.form['DATE']
                 cursor.execute(query, (token, str(id)))
             connection.commit()
+            cursor.close()
+            connection.close()
             return redirect(url_for('events_page'))
 
 @app.route('/events', methods=['POST', 'GET'])
@@ -436,6 +484,8 @@ def events_page():
                 cursor.execute(query, [request.form['NAME'],
                                        request.form['DESCRIPTION'],request.form['DATE'],placeId])
                 connection.commit()
+                cursor.close()
+                connection.close()
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
         query = ("SELECT * FROM EVENT ")
@@ -448,6 +498,8 @@ def events_page():
         cursor.execute(query)
         meetingTable = cursor.fetchall()
         connection.commit()
+        cursor.close()
+        connection.close()
         return render_template('events.html', Event = eventTable, Meeting = meetingTable, Place = Place)
 
 @app.route('/add_participant_event',  methods=['GET', 'POST'])
@@ -463,6 +515,8 @@ def add_participant_event():
             Token = token[0]
             query = "INSERT INTO EVENT_PARTICIPANTS (USER_ID, EVENT_ID) VALUES (%s, %s)"
             cursor.execute(query, (Token, id))
+            cursor.close()
+            connection.close()
     return redirect(url_for('events_page'))
 
 @app.route('/add_participant_meeting',  methods=['GET', 'POST'])
@@ -478,6 +532,8 @@ def add_participant_meeting():
             Token = token[0]
             query = "INSERT INTO MEETING_PARTICIPANTS (USER_ID, MEETING_ID) VALUES (%s, %s)"
             cursor.execute(query, (Token, id))
+            cursor.close()
+            connection.close()
     return redirect(url_for('events_page'))
 
 
@@ -600,6 +656,8 @@ def initDataBase():
         """
         cursor.execute(query)
         connection.commit()
+        cursor.close()
+        connection.close()
         return redirect(url_for('home_page'))
 
 
@@ -623,6 +681,8 @@ def friends_page():
                 query = """DELETE FROM FRIENDS WHERE PERSON_ID = %s AND FRIEND_ID=%s"""
                 cursor.execute(query, (pid, fid))
                 connection.commit()
+                cursor.close()
+                connection.close()
         elif personID == '' or friendID == '':
             return """<script> alert('Fill the necessary inputs');
                    window.location = '/friends';</script>"""
@@ -640,6 +700,8 @@ def friends_page():
                 data = (personID, newfriend[0], 1)
                 cursor.execute(query, data)
                 connection.commit()
+                cursor.close()
+                connection.close()
         else:
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
@@ -648,6 +710,8 @@ def friends_page():
                            WHERE PERSON_ID = %s AND FRIEND_ID=%s"""
                 cursor.execute(query, (personID, friendID, friendStatus, pid, fid))
                 connection.commit()
+                cursor.close()
+                connection.close()
     if request.method == 'GET' and request.args.get('user') is not None:
         personID = request.args.get('user')
         query = """SELECT * FROM FRIENDS"""
@@ -677,6 +741,8 @@ def friends_page():
         else:
             user = [['User']]
         connection.commit()
+        cursor.close()
+        connection.close()
     return render_template('friends.html', rows=rows, users=users, user=user)
 
 
@@ -688,6 +754,8 @@ def friends_init():
             query = """ DROP TABLE IF EXISTS FRIENDS"""
             cursor.execute(query)
             connection.commit()
+            cursor.close()
+            connection.close()
         return render_template('friends.html')
     elif request.args.get('action') == 'create':
         with dbapi2.connect(app.config['dsn']) as connection:
@@ -702,6 +770,8 @@ def friends_init():
                        )"""
             cursor.execute(query)
             connection.commit()
+            cursor.close()
+            connection.close()
             return redirect('/friends')
     else:
         with dbapi2.connect(app.config['dsn']) as connection:
@@ -717,6 +787,8 @@ def friends_init():
             query = """INSERT INTO FRIENDS VALUES (1, 5, 3)"""
             cursor.execute(query)
             connection.commit()
+            cursor.close()
+            connection.close()
             return redirect('/friends')
 
 
@@ -730,6 +802,6 @@ if __name__ == '__main__':
     if VCAP_SERVICES is not None:
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
-        app.config['dsn'] = """user='vagrant' password='vagrant'
-                               host='localhost' port=5432 dbname='itucsdb'"""
+        app.config['dsn'] = """user='eksqrjod' password='xcROOnh3iC9DwH18zw_ACXUbCBk8PINU'
+                               host='jumbo.db.elephantsql.com' port=5432 dbname='eksqrjod'"""
     app.run(host='0.0.0.0', port=port, debug=debug)
