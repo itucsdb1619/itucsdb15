@@ -237,7 +237,7 @@ def initilize_photos_db():
                     )"""
         cursor.execute(statement)
         cursor.close()
-        return photos_page()
+        return home_page()
     except dbapi2.DatabaseError:
         connection.rollback()
         return render_template('error_page.html')
