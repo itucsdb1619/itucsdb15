@@ -202,7 +202,6 @@ def photos_page():
             cursor.execute(statement)
             photo_db = cursor.fetchall()
             cursor.close()
-            connection.close()
     return render_template ('meetings.html', photo_db = photo_db)
 @app.route('/photos', methods=['POST'])
 def photos_post():
@@ -216,7 +215,6 @@ def photos_post():
                       VALUES (%s, %s, %s)"""
                 cursor.execute(statement, [info, url, username])
                 cursor.close()
-                connection.close()
     elif 'update_button' in request.form:
         id = request.form['id']
         info = request.form['info']
@@ -229,7 +227,6 @@ def photos_post():
                             WHERE ID = %s"""
                 cursor.execute(statement, [info, url, username, id])
                 cursor.close()
-                connection.close()
     elif 'delete_button' in request.form:
         id = request.form['id']
         with dbapi2.connect(app.config['dsn']) as connection:
@@ -271,7 +268,6 @@ def user_page():
             cursor.execute(statement)
             user_all = cursor.fetchall()
             cursor.close()
-        connection.close()
     return render_template('home.html', user_all = user_all)
 
 @app.route('/users/<pk>/favourites')
@@ -282,7 +278,6 @@ def favourite_places(pk):
             cursor.execute(statement)
             fav_places = cursor.fetchall()
             cursor.close()
-        connection.close()
     return render_template('favourites.html', favourite_places=fav_places, user_pk=pk)
 
 @app.route('/users', methods=['POST'])
@@ -314,7 +309,6 @@ def operation():
                                     WHERE USER_ID = %s"""
             cursor.execute(statement, [user_id])
             cursor.close()
-            connection.close()
     return users()
 
 @app.route('/user_add')
@@ -334,7 +328,6 @@ def useradd():
                 INSERT INTO USER (NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s, %s, %s)"""
                 cursor.execute(query, [name, birthday, location, ocupation, interests])
                 cursor.close()
-                connection.close()
     return render_template('home.html')
 
 
@@ -768,7 +761,6 @@ def friends_page():
                 query = """DELETE FROM FRIENDS WHERE PERSON_ID = %s AND FRIEND_ID=%s"""
                 cursor.execute(query, (pid, fid))
                 cursor.close()
-                connection.close()
         elif personID == '' or friendID == '':
             return """<script> alert('Fill the necessary inputs');
                    window.location = '/friends';</script>"""
@@ -786,7 +778,6 @@ def friends_page():
                 data = (personID, newfriend[0], 1)
                 cursor.execute(query, data)
                 cursor.close()
-                connection.close()
         else:
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
@@ -795,7 +786,6 @@ def friends_page():
                            WHERE PERSON_ID = %s AND FRIEND_ID=%s"""
                 cursor.execute(query, (personID, friendID, friendStatus, pid, fid))
                 cursor.close()
-                connection.close()
     if request.method == 'GET' and request.args.get('user') is not None:
         personID = request.args.get('user')
         query = """SELECT * FROM FRIENDS"""
@@ -825,7 +815,6 @@ def friends_page():
         else:
             user = [['User']]
         cursor.close()
-        connection.close()
     return render_template('friends.html', rows=rows, users=users, user=user)
 
 
@@ -837,7 +826,6 @@ def friends_init():
             query = """ DROP TABLE IF EXISTS FRIENDS"""
             cursor.execute(query)
             cursor.close()
-            connection.close()
         return render_template('friends.html')
     elif request.args.get('action') == 'create':
         with dbapi2.connect(app.config['dsn']) as connection:
@@ -852,7 +840,6 @@ def friends_init():
                        )"""
             cursor.execute(query)
             cursor.close()
-            connection.close()
             return redirect('/friends')
     else:
         with dbapi2.connect(app.config['dsn']) as connection:
@@ -868,7 +855,6 @@ def friends_init():
             query = """INSERT INTO FRIENDS VALUES (1, 5, 3)"""
             cursor.execute(query)
             cursor.close()
-            connection.close()
             return redirect('/friends')
 
 
