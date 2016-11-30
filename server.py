@@ -62,7 +62,6 @@ def places_page():
                     FROM PLACES, PHOTOS
                     WHERE (PROFILEPHOTO = ID)"""
         cursor.execute(statement)
-	connection.commit()
         test = cursor.fetchall()
         cursor.close()
         return render_template('places.html', test = test)
@@ -87,7 +86,6 @@ def my_form_post():
         statement = """ DELETE FROM PLACES
                     WHERE PLACES_ID = %s """
         cursor.execute(statement, [id])
-	connection.commit()
         cursor.close()
         return places_page()
     except dbapi2.DatabaseError:
@@ -104,7 +102,6 @@ def add_place_page():
         statement = """SELECT ID, NAME 
                     FROM PHOTOS"""
         cursor.execute(statement)
-	connection.commit()
         test = cursor.fetchall()
         cursor.close()
         return render_template('add_place.html', test = test)
@@ -129,8 +126,7 @@ def add_place():
             INSERT INTO PLACES (NAME, INFORMATION, ADDRESS, PHONENUMBER, PROFILEPHOTO)
             VALUES (%s, %s, %s, %s, %s)"""
             cursor.execute(statement, [PlaceName, description, address, phone, profilephoto])
-	    connection.commit()	
-	    cursor.close()
+            cursor.close()
             return places_page()    
         except dbapi2.DatabaseError:
             connection.rollback()
@@ -146,7 +142,6 @@ def update_place_page(id):
         statement = """SELECT ID, NAME 
                     FROM PHOTOS"""
         cursor.execute(statement)
-	connection.commit()
         test = cursor.fetchall()
         cursor.close()
         return render_template('update_place.html', test = test, id = id)
@@ -174,7 +169,6 @@ def update_place():
                         SET NAME=%s, INFORMATION=%s, ADDRESS=%s, PHONENUMBER=%s, PROFILEPHOTO=%s
                         WHERE (%s = PLACES_ID)"""
             cursor.execute(statement, [PlaceName, description, address, phone, profilephoto, id])
-	    connection.commit()
             cursor.close()
             return places_page()
         except dbapi2.DatabaseError:
@@ -830,3 +824,4 @@ if __name__ == '__main__':
         app.config['dsn'] = """user='eksqrjod' password='xcROOnh3iC9DwH18zw_ACXUbCBk8PINU'
                                host='jumbo.db.elephantsql.com' port=5432 dbname='eksqrjod'"""
     app.run(host='0.0.0.0', port=port, debug=debug)
+
