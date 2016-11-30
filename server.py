@@ -55,16 +55,22 @@ def my_page():
 
 @app.route('/places')
 def places_page():
-    with dbapi2.connect(app.config['dsn']) as connection:
-        with connection.cursor() as cursor:
-            statement = """SELECT PLACES_ID, PLACES.NAME, PLACES.INFORMATION, ADDRESS, PHONENUMBER, PHOTOURL 
-                        FROM PLACES, PHOTOS
-                            WHERE (PROFILEPHOTO = ID)"""
-            cursor.execute(statement)
-            test = cursor.fetchall()
-            cursor.close()
-            connection.close()
-    return render_template('places.html', test = test)
+    try: 
+        connection = dbapi2.connect(app.config['dsn'])
+        cursor = connection.cursor()
+        statement = """SELECT PLACES_ID, PLACES.NAME, PLACES.INFORMATION, ADDRESS, PHONENUMBER, PHOTOURL 
+                    FROM PLACES, PHOTOS
+                    WHERE (PROFILEPHOTO = ID)"""
+        cursor.execute(statement)
+        test = cursor.fetchall()
+        cursor.close()
+        return render_template('places.html', test = test)
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
+        connection.close()
+
 @app.route('/places', methods=['POST'])
 def my_form_post():
     if 'add_button' in request.form:
@@ -74,56 +80,77 @@ def my_form_post():
        return update_place_page(id)
     elif 'delete_button' in request.form:
         id = request.form['place_to_delete'];
-        with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-                statement = """ DELETE FROM PLACES
-                                    WHERE PLACES_ID = %s """
-                cursor.execute(statement, [id])
-                cursor.close()
-                connection.close()
-    return places_page()
+    try:    
+        connection = dbapi2.connect(app.config['dsn'])
+        cursor = connection.cursor()
+        statement = """ DELETE FROM PLACES
+                    WHERE PLACES_ID = %s """
+        cursor.execute(statement, [id])
+        cursor.close()
+        return places_page()
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
+        connection.close()
+
 @app.route('/addplace')
 def add_place_page():
-    with dbapi2.connect(app.config['dsn']) as connection:
-        with connection.cursor() as cursor:
-            statement = """SELECT ID, NAME 
-                        FROM PHOTOS"""
-            cursor.execute(statement)
-            test = cursor.fetchall()
-            cursor.close()
-            connection.close()
-    return render_template('add_place.html', test = test)
+    try:    
+        connection = dbapi2.connect(app.config['dsn'])
+        cursor = connection.cursor()
+        statement = """SELECT ID, NAME 
+                    FROM PHOTOS"""
+        cursor.execute(statement)
+        test = cursor.fetchall()
+        cursor.close()
+        return render_template('add_place.html', test = test)
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
+        connection.close()
+
 @app.route('/addplace', methods=['POST'])
 def add_place():
-    if 'add_button' in request.form:
+    if  'add_button' in request.form:
         PlaceName = request.form['PlaceName']
         description = request.form['description']
         address = request.form['address']
         phone = request.form['phone']
         profilephoto = request.form['getphotoid']
-
-        with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-                statement = """
-                   INSERT INTO PLACES (NAME, INFORMATION, ADDRESS, PHONENUMBER, PROFILEPHOTO)
-                      VALUES (%s, %s, %s, %s, %s)
-                """
-                cursor.execute(statement, [PlaceName, description, address, phone, profilephoto])
-                cursor.close()
-                connection.close()
-    return places_page()
+        
+	try:    
+            connection = dbapi2.connect(app.config['dsn'])
+            cursor = connection.cursor()
+            statement = """
+            INSERT INTO PLACES (NAME, INFORMATION, ADDRESS, PHONENUMBER, PROFILEPHOTO)
+            VALUES (%s, %s, %s, %s, %s)"""
+            cursor.execute(statement, [PlaceName, description, address, phone, profilephoto])
+            cursor.close()
+            return places_page()    
+        except dbapi2.DatabaseError:
+            connection.rollback()
+            return render_template('error_page.html')
+        finally:
+            connection.close()    
 
 @app.route('/updateplace')
 def update_place_page(id):
-    with dbapi2.connect(app.config['dsn']) as connection:
-        with connection.cursor() as cursor:
-            statement = """SELECT ID, NAME 
-                        FROM PHOTOS"""
-            cursor.execute(statement)
-            test = cursor.fetchall()
-            cursor.close()
+    try:    
+        connection = dbapi2.connect(app.config['dsn'])
+        cursor = connection.cursor()
+        statement = """SELECT ID, NAME 
+                    FROM PHOTOS"""
+        cursor.execute(statement)
+        test = cursor.fetchall()
+        cursor.close()
+        return render_template('update_place.html', test = test, id = id)
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
             connection.close()
-    return render_template('update_place.html', test = test, id = id)
 
 @app.route('/updateplace', methods=['POST'])
 def update_place():
@@ -135,17 +162,21 @@ def update_place():
         phone = request.form['phone']
         profilephoto = request.form['getphotoid']
 
-        with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-                statement = """
-                   UPDATE PLACES 
+        try:    
+            connection = dbapi2.connect(app.config['dsn'])
+            cursor = connection.cursor()
+            statement = """
+                        UPDATE PLACES 
                         SET NAME=%s, INFORMATION=%s, ADDRESS=%s, PHONENUMBER=%s, PROFILEPHOTO=%s
-                   WHERE (%s = PLACES_ID)
-                """
-                cursor.execute(statement, [PlaceName, description, address, phone, profilephoto, id])
-                cursor.close()
-                connection.close()
-    return places_page()
+                        WHERE (%s = PLACES_ID)"""
+            cursor.execute(statement, [PlaceName, description, address, phone, profilephoto, id])
+            cursor.close()
+            return places_page()
+        except dbapi2.DatabaseError:
+            connection.rollback()
+            return render_template('error_page.html')
+        finally:
+            connection.close()
 
 @app.route('/photos')
 def photos_page():
@@ -194,17 +225,25 @@ def photos_post():
     return photos_page()
 @app.route('/init_phdb')
 def initilize_photos_db():
-    with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-                statement = """CREATE TABLE PHOTOS (
-                ID SERIAL PRIMARY KEY,
-                INFORMATION VARCHAR(300) NOT NULL,
-                URL VARCHAR(1000) NOT NULL,
-                USERNAME VARCHAR(20)
-                )"""
-                cursor.execute(statement)
-                connection.commit()
-    return photos_page()
+    try:    
+        connection = dbapi2.connect(app.config['dsn'])
+        cursor = connection.cursor()
+        statement = "DROP TABLE IF EXISTS PHOTOS CASCADE"
+        cursor.execute(statement)
+        statement = """CREATE TABLE PHOTOS (
+                    ID SERIAL PRIMARY KEY,
+                    INFORMATION VARCHAR(300) NOT NULL,
+                    PHOTOURL VARCHAR(1000) NOT NULL,
+                    USERNAME VARCHAR(20)
+                    )"""
+        cursor.execute(statement)
+        cursor.close()
+        return photos_page()
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
+        connection.close()
 
 ''' USERS '''
 
@@ -522,7 +561,8 @@ def add_participant_meeting():
 
 @app.route('/initdb')
 def initDataBase():
-    with dbapi2.connect(app.config['dsn']) as connection:
+    try:    
+        connection = dbapi2.connect(app.config['dsn'])
         cursor = connection.cursor()
         ###################################################################
         # Creating Places Table In Database, and filling it with a sample #
@@ -535,7 +575,8 @@ def initDataBase():
                 NAME VARCHAR(50) NOT NULL,
                 INFORMATION VARCHAR(300) NOT NULL,
                 ADDRESS VARCHAR(1000) NOT NULL,
-                PHONENUMBER VARCHAR(20)
+                PHONENUMBER VARCHAR(20),
+                PROFILEPHOTO INTEGER REFERENCES PHOTOS(ID)
                 )"""
         cursor.execute(query)
         place_data = [
@@ -547,11 +588,11 @@ def initDataBase():
 
         for item in place_data:
             statement = """
-               INSERT INTO PLACES (NAME, INFORMATION, ADDRESS, PHONENUMBER)
-                  VALUES (%(name)s, %(info)s, %(address)s, %(phonenum)s)
-            """
+                        INSERT INTO PLACES (NAME, INFORMATION, ADDRESS, PHONENUMBER)
+                        VALUES (%(name)s, %(info)s, %(address)s, %(phonenum)s)
+                        """
             cursor.execute(statement, item)
-            connection.commit()
+  
         ############################
         # Event and Meeting Tabels #
         ############################
@@ -639,8 +680,12 @@ def initDataBase():
         """
         cursor.execute(query)
         cursor.close()
-        connection.close()
         return redirect(url_for('home_page'))
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
+        connection.close()
 
 
 @app.route('/friends', methods=['POST', 'GET'])
