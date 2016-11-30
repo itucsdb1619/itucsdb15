@@ -29,25 +29,35 @@ def home_page():
 
 @app.route('/EventCreation')
 def eventcreation_page():
-    with dbapi2.connect(app.config['dsn']) as connection:
-        cursor = connection.cursor()
-        query = ("SELECT * FROM PLACES")
-        cursor.execute(query)
-        Places = cursor.fetchall()
-        cursor.close()
-        connection.close()
-    return render_template('EventCreation.html', Places = Places)
+    try:
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = ("SELECT * FROM PLACES")
+            cursor.execute(query)
+            Places = cursor.fetchall()
+            cursor.close()
+        return render_template('EventCreation.html', Places = Places)
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
+            connection.close()
 
 @app.route('/create_meeting')
 def createmeeting_page():
-    with dbapi2.connect(app.config['dsn']) as connection:
-        cursor = connection.cursor()
-        query = ("SELECT * FROM PLACES")
-        cursor.execute(query)
-        Places = cursor.fetchall()
-        cursor.close()
-        connection.close()
-    return render_template('create_meeting.html',Places = Places)
+    try:
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = ("SELECT * FROM PLACES")
+            cursor.execute(query)
+            Places = cursor.fetchall()
+            cursor.close()
+        return render_template('create_meeting.html',Places = Places)
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
+            connection.close()
 
 @app.route('/mypage')
 def my_page():
@@ -55,10 +65,10 @@ def my_page():
 
 @app.route('/places')
 def places_page():
-    try: 
+    try:
         connection = dbapi2.connect(app.config['dsn'])
         cursor = connection.cursor()
-        statement = """SELECT PLACES_ID, PLACES.NAME, PLACES.INFORMATION, ADDRESS, PHONENUMBER, PHOTOURL 
+        statement = """SELECT PLACES_ID, PLACES.NAME, PLACES.INFORMATION, ADDRESS, PHONENUMBER, PHOTOURL
                     FROM PLACES, PHOTOS
                     WHERE (PROFILEPHOTO = ID)"""
         cursor.execute(statement)
@@ -80,7 +90,7 @@ def my_form_post():
        return update_place_page(id)
     elif 'delete_button' in request.form:
         id = request.form['place_to_delete'];
-    try:    
+    try:
         connection = dbapi2.connect(app.config['dsn'])
         cursor = connection.cursor()
         statement = """ DELETE FROM PLACES
@@ -96,10 +106,10 @@ def my_form_post():
 
 @app.route('/addplace')
 def add_place_page():
-    try:    
+    try:
         connection = dbapi2.connect(app.config['dsn'])
         cursor = connection.cursor()
-        statement = """SELECT ID, NAME 
+        statement = """SELECT ID, NAME
                     FROM PHOTOS"""
         cursor.execute(statement)
         test = cursor.fetchall()
@@ -119,7 +129,7 @@ def add_place():
         address = request.form['address']
         phone = request.form['phone']
         profilephoto = request.form['getphotoid']
-        try:    
+        try:
             connection = dbapi2.connect(app.config['dsn'])
             cursor = connection.cursor()
             statement = """
@@ -127,19 +137,19 @@ def add_place():
             VALUES (%s, %s, %s, %s, %s)"""
             cursor.execute(statement, [PlaceName, description, address, phone, profilephoto])
             cursor.close()
-            return places_page()    
+            return places_page()
         except dbapi2.DatabaseError:
             connection.rollback()
             return render_template('error_page.html')
         finally:
-            connection.close()    
+            connection.close()
 
 @app.route('/updateplace')
 def update_place_page(id):
-    try:    
+    try:
         connection = dbapi2.connect(app.config['dsn'])
         cursor = connection.cursor()
-        statement = """SELECT ID, NAME 
+        statement = """SELECT ID, NAME
                     FROM PHOTOS"""
         cursor.execute(statement)
         test = cursor.fetchall()
@@ -161,11 +171,11 @@ def update_place():
         phone = request.form['phone']
         profilephoto = request.form['getphotoid']
 
-        try:    
+        try:
             connection = dbapi2.connect(app.config['dsn'])
             cursor = connection.cursor()
             statement = """
-                        UPDATE PLACES 
+                        UPDATE PLACES
                         SET NAME=%s, INFORMATION=%s, ADDRESS=%s, PHONENUMBER=%s, PROFILEPHOTO=%s
                         WHERE (%s = PLACES_ID)"""
             cursor.execute(statement, [PlaceName, description, address, phone, profilephoto, id])
@@ -224,7 +234,7 @@ def photos_post():
     return photos_page()
 @app.route('/init_phdb')
 def initilize_photos_db():
-    try:    
+    try:
         connection = dbapi2.connect(app.config['dsn'])
         cursor = connection.cursor()
         statement = "DROP TABLE IF EXISTS PHOTOS CASCADE"
@@ -325,161 +335,199 @@ def useradd():
 ''' end of USERs part'''
 @app.route('/deleteEvent',  methods=['GET', 'POST'])
 def delete_event():
-    if request.method == 'POST':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            query = ("DELETE FROM EVENT WHERE EVENT_ID = %s")
-            id = request.form['button']
-            cursor.execute(query, str(id))
-            cursor.close()
+    try:
+        if request.method == 'POST':
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                query = ("DELETE FROM EVENT WHERE EVENT_ID = %s")
+                id = request.form['button']
+                cursor.execute(query, str(id))
+                cursor.close()
+        return redirect(url_for('events_page'))
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
             connection.close()
-    return redirect(url_for('events_page'))
 
 @app.route('/meeting_delete',  methods=['GET', 'POST'])
 def meeting_delete():
-    if request.method == 'POST':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            query = ("DELETE FROM MEETING WHERE MEETING_ID = %s")
-            id = request.form['button']
-            cursor.execute(query, str(id))
-            cursor.close()
+    try:
+        if request.method == 'POST':
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                query = ("DELETE FROM MEETING WHERE MEETING_ID = %s")
+                id = request.form['button']
+                cursor.execute(query, str(id))
+                cursor.close()
+            return redirect(url_for('events_page'))
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
             connection.close()
-    return redirect(url_for('events_page'))
 
 @app.route('/eventPage',  methods=['GET', 'POST'])
 def eventPage():
-    with dbapi2.connect(app.config['dsn']) as connection:
-        cursor = connection.cursor()
-        query = ("SELECT * FROM EVENT WHERE EVENT_ID = %s")
-        id = request.form['button']
-        cursor.execute(query, str(id))
-        Event = cursor.fetchone()
-        query = ("SELECT EVENT_PARTICIPANTS.USER_ID FROM EVENT_PARTICIPANTS  JOIN USERS ON EVENT_ID = %s ")
-        cursor.execute(query, str(id))
-        Participants = cursor.fetchall()
-        query = ("SELECT * FROM USERS")
-        Users = cursor.fetchall()
-        query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
-        id = Event[6]
-        cursor.execute(query, (str(id)))
-        Place = cursor.fetchone()
-        cursor.close()
-        connection.close()
-    return render_template('eventPage.html', Event = Event,  Place = Place, Participants = Participants, Users = Users)
-
-@app.route('/meeting_page',  methods=['GET', 'POST'])
-def meeting_page():
-    with dbapi2.connect(app.config['dsn']) as connection:
-        cursor = connection.cursor()
-        query = ("SELECT * FROM MEETING WHERE MEETING_ID = %s")
-        id = request.form['button']
-        cursor.execute(query, (id))
-        Meeting = cursor.fetchone()
-        query = ("SELECT MEETING_PARTICIPANTS.USER_ID FROM MEETING_PARTICIPANTS  JOIN USERS ON MEETING_ID = %s ")
-        cursor.execute(query, str(id))
-        Participants = cursor.fetchall()
-        query = ("SELECT * FROM USERS")
-        Users = cursor.fetchall()
-        query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
-        id = Meeting[4]
-        cursor.execute(query, (str(id)))
-        Place = cursor.fetchone()
-        cursor.close()
-        connection.close()
-    return render_template('meeting_page.html', Meeting = Meeting,  Place = Place,Participants = Participants, Users = Users)
-
-@app.route('/update_event_page',  methods=['GET', 'POST'])
-def update_event_page():
-    if request.method == 'POST':
+    try:
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
             query = ("SELECT * FROM EVENT WHERE EVENT_ID = %s")
             id = request.form['button']
-            cursor.execute(query,(str(id)))
+            cursor.execute(query, str(id))
             Event = cursor.fetchone()
+            query = ("SELECT EVENT_PARTICIPANTS.USER_ID FROM EVENT_PARTICIPANTS  JOIN USERS ON EVENT_ID = %s ")
+            cursor.execute(query, str(id))
+            Participants = cursor.fetchall()
+            query = ("SELECT * FROM USERS")
+            Users = cursor.fetchall()
             query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
             id = Event[6]
             cursor.execute(query, (str(id)))
             Place = cursor.fetchone()
             cursor.close()
+        return render_template('eventPage.html', Event = Event,  Place = Place, Participants = Participants, Users = Users)
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
             connection.close()
-            return render_template('event_update.html', Event = Event, Place = Place)
-    return redirect(url_for('events_page'))
+@app.route('/meeting_page',  methods=['GET', 'POST'])
+def meeting_page():
+    try:
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = ("SELECT * FROM MEETING WHERE MEETING_ID = %s")
+            id = request.form['button']
+            cursor.execute(query, (id))
+            Meeting = cursor.fetchone()
+            query = ("SELECT MEETING_PARTICIPANTS.USER_ID FROM MEETING_PARTICIPANTS  JOIN USERS ON MEETING_ID = %s ")
+            cursor.execute(query, str(id))
+            Participants = cursor.fetchall()
+            query = ("SELECT * FROM USERS")
+            Users = cursor.fetchall()
+            query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
+            id = Meeting[4]
+            cursor.execute(query, (str(id)))
+            Place = cursor.fetchone()
+            cursor.close()
+        return render_template('meeting_page.html', Meeting = Meeting,  Place = Place,Participants = Participants, Users = Users)
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
+            connection.close()
+@app.route('/update_event_page',  methods=['GET', 'POST'])
+def update_event_page():
+    try:
+        if request.method == 'POST':
+            with dbapi2.connect(app.config['dsn']) as connection:
+                cursor = connection.cursor()
+                query = ("SELECT * FROM EVENT WHERE EVENT_ID = %s")
+                id = request.form['button']
+                cursor.execute(query,(str(id)))
+                Event = cursor.fetchone()
+                query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
+                id = Event[6]
+                cursor.execute(query, (str(id)))
+                Place = cursor.fetchone()
+                cursor.close()
+                return render_template('event_update.html', Event = Event, Place = Place)
+        return redirect(url_for('events_page'))
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
+            connection.close()
 
 
 @app.route('/updateEvent',  methods=['GET', 'POST'])
 def update_event():
-    if request.method == 'POST':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            id = request.form['button']
-            cursor = connection.cursor()
-            query = "SELECT EVENT_ID FROM EVENT WHERE EVENT_ID = %s"
-            cursor.execute(query, (str(id)))
-            if cursor.fetchall is "":
-                connection.commit()
+    try:
+        if request.method == 'POST':
+            with dbapi2.connect(app.config['dsn']) as connection:
+                id = request.form['button']
+                cursor = connection.cursor()
+                query = "SELECT EVENT_ID FROM EVENT WHERE EVENT_ID = %s"
+                cursor.execute(query, (str(id)))
+                if cursor.fetchall is "":
+                    connection.commit()
+                    return redirect(url_for('events_page'))
+                if request.form['NAME'] is not "":
+                    query = "UPDATE EVENT SET NAME = %s WHERE EVENT_ID = %s"
+                    cursor.execute(query, [request.form['NAME'], str(id)])
+                if request.form['SHORT_DESCRIPTION'] is not "":
+                    query = "UPDATE EVENT SET SHORT_DESCRIPTION = %s WHERE EVENT_ID = %s"
+                    cursor.execute(query, [request.form['SHORT_DESCRIPTION'], str(id)])
+                if request.form['DESCRIPTION'] is not "":
+                    query = "UPDATE EVENT SET DESCRIPTION = %s WHERE EVENT_ID = %s"
+                    cursor.execute(query, [request.form['DESCRIPTION'], str(id)])
+                if request.form['STARTING_DATE'] is not "":
+                    query = "UPDATE EVENT SET STARTING_DATE = %s WHERE EVENT_ID = %s"
+                    cursor.execute(query, [request.form['STARTING_DATE'], str(id)])
+                if request.form['ENDING_DATE'] is not "":
+                    query = "UPDATE EVENT SET ENDING_DATE = %s WHERE EVENT_ID = %s"
+                    cursor.execute(query, [request.form['ENDING_DATE'], str(id)])
+                cursor.close()
                 return redirect(url_for('events_page'))
-            if request.form['NAME'] is not "":
-                query = "UPDATE EVENT SET NAME = %s WHERE EVENT_ID = %s"
-                cursor.execute(query, [request.form['NAME'], str(id)])
-            if request.form['SHORT_DESCRIPTION'] is not "":
-                query = "UPDATE EVENT SET SHORT_DESCRIPTION = %s WHERE EVENT_ID = %s"
-                cursor.execute(query, [request.form['SHORT_DESCRIPTION'], str(id)])
-            if request.form['DESCRIPTION'] is not "":
-                query = "UPDATE EVENT SET DESCRIPTION = %s WHERE EVENT_ID = %s"
-                cursor.execute(query, [request.form['DESCRIPTION'], str(id)])
-            if request.form['STARTING_DATE'] is not "":
-                query = "UPDATE EVENT SET STARTING_DATE = %s WHERE EVENT_ID = %s"
-                cursor.execute(query, [request.form['STARTING_DATE'], str(id)])
-            if request.form['ENDING_DATE'] is not "":
-                query = "UPDATE EVENT SET ENDING_DATE = %s WHERE EVENT_ID = %s"
-                cursor.execute(query, [request.form['ENDING_DATE'], str(id)])
-            cursor.close()
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
             connection.close()
-            return redirect(url_for('events_page'))
 
 @app.route('/meeting_update_page',  methods=['GET', 'POST'])
 def meeting_update_page():
-    with dbapi2.connect(app.config['dsn']) as connection:
-        cursor = connection.cursor()
-        query = ("SELECT * FROM MEETING WHERE MEETING_ID = %s")
-        id = request.form['button']
-        cursor.execute(query, (str(id)))
-        Meeting = cursor.fetchone()
-        query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
-        id = Meeting[4]
-        cursor.execute(query, (str(id)))
-        Place = cursor.fetchone()
-        cursor.close()
-        connection.close()
-        return render_template('meeting_update.html', Meeting = Meeting, Place = Place)
+    try:
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = ("SELECT * FROM MEETING WHERE MEETING_ID = %s")
+            id = request.form['button']
+            cursor.execute(query, (str(id)))
+            Meeting = cursor.fetchone()
+            query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
+            id = Meeting[4]
+            cursor.execute(query, (str(id)))
+            Place = cursor.fetchone()
+            cursor.close()
+            return render_template('meeting_update.html', Meeting = Meeting, Place = Place)
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
+            connection.close()
 
 @app.route('/meeting_update',  methods=['GET', 'POST'])
 def meeting_update():
-    if request.method == 'POST':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            id = request.form['button']
-            cursor = connection.cursor()
-            query = "SELECT MEETING_ID FROM MEETING WHERE MEETING_ID = %s"
-            cursor.execute(query, (str(id)))
-            if cursor.fetchall is "":
-                connection.commit()
+    try:
+        if request.method == 'POST':
+            with dbapi2.connect(app.config['dsn']) as connection:
+                id = request.form['button']
+                cursor = connection.cursor()
+                query = "SELECT MEETING_ID FROM MEETING WHERE MEETING_ID = %s"
+                cursor.execute(query, (str(id)))
+                if cursor.fetchall is "":
+                    connection.commit()
+                    return redirect(url_for('events_page'))
+                if request.form['NAME'] is not "":
+                    query = "UPDATE MEETING SET NAME = %s WHERE MEETING_ID = %s"
+                    token = request.form['NAME']
+                    cursor.execute(query, (token, str(id)))
+                if request.form['DESCRIPTION'] is not "":
+                    query = "UPDATE MEETING SET DESCRIPTION = %s WHERE MEETING_ID = %s"
+                    token = request.form['DESCRIPTION']
+                    cursor.execute(query, (token, str(id)))
+                if request.form['DATE'] is not "":
+                    query = "UPDATE MEETING SET DATE = %s WHERE MEETING_ID = %s"
+                    token = request.form['DATE']
+                    cursor.execute(query, (token, str(id)))
+                cursor.close()
                 return redirect(url_for('events_page'))
-            if request.form['NAME'] is not "":
-                query = "UPDATE MEETING SET NAME = %s WHERE MEETING_ID = %s"
-                token = request.form['NAME']
-                cursor.execute(query, (token, str(id)))
-            if request.form['DESCRIPTION'] is not "":
-                query = "UPDATE MEETING SET DESCRIPTION = %s WHERE MEETING_ID = %s"
-                token = request.form['DESCRIPTION']
-                cursor.execute(query, (token, str(id)))
-            if request.form['DATE'] is not "":
-                query = "UPDATE MEETING SET DATE = %s WHERE MEETING_ID = %s"
-                token = request.form['DATE']
-                cursor.execute(query, (token, str(id)))
-            cursor.close()
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
             connection.close()
-            return redirect(url_for('events_page'))
 
 @app.route('/events', methods=['POST', 'GET'])
 def events_page():
@@ -505,9 +553,7 @@ def events_page():
                                 VALUES (%s,%s,%s,%s)"""
                 cursor.execute(query, [request.form['NAME'],
                                        request.form['DESCRIPTION'],request.form['DATE'],placeId])
-                
                 cursor.close()
-                connection.close()
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
         query = ("SELECT * FROM EVENT ")
@@ -520,47 +566,56 @@ def events_page():
         cursor.execute(query)
         meetingTable = cursor.fetchall()
         cursor.close()
-        connection.close()
         return render_template('events.html', Event = eventTable, Meeting = meetingTable, Place = Place)
 
 @app.route('/add_participant_event',  methods=['GET', 'POST'])
 def add_participant_event():
-    if request.method == 'POST':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            id = request.form['button']
-            token = request.form['participant']
-            cursor = connection.cursor()
-            query = "SELECT USER_ID FROM USERS WHERE USER_NAME = %s"
-            cursor.execute(query, (token))
-            token = cursor.fetchone()
-            Token = token[0]
-            query = "INSERT INTO EVENT_PARTICIPANTS (USER_ID, EVENT_ID) VALUES (%s, %s)"
-            cursor.execute(query, (Token, id))
-            cursor.close()
+    try:
+        if request.method == 'POST':
+            with dbapi2.connect(app.config['dsn']) as connection:
+                id = request.form['button']
+                token = request.form['participant']
+                cursor = connection.cursor()
+                query = "SELECT USER_ID FROM USERS WHERE USER_NAME = %s"
+                cursor.execute(query, (token))
+                token = cursor.fetchone()
+                Token = token[0]
+                query = "INSERT INTO EVENT_PARTICIPANTS (USER_ID, EVENT_ID) VALUES (%s, %s)"
+                cursor.execute(query, (Token, id))
+                cursor.close()
+        return redirect(url_for('events_page'))
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
             connection.close()
-    return redirect(url_for('events_page'))
 
 @app.route('/add_participant_meeting',  methods=['GET', 'POST'])
 def add_participant_meeting():
-    if request.method == 'POST':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            id = request.form['button']
-            token = request.form['participant']
-            cursor = connection.cursor()
-            query = "SELECT USER_ID FROM USERS WHERE USER_NAME = %s"
-            cursor.execute(query, (token))
-            token = cursor.fetchone()
-            Token = token[0]
-            query = "INSERT INTO MEETING_PARTICIPANTS (USER_ID, MEETING_ID) VALUES (%s, %s)"
-            cursor.execute(query, (Token, id))
-            cursor.close()
+    try:
+        if request.method == 'POST':
+            with dbapi2.connect(app.config['dsn']) as connection:
+                id = request.form['button']
+                token = request.form['participant']
+                cursor = connection.cursor()
+                query = "SELECT USER_ID FROM USERS WHERE USER_NAME = %s"
+                cursor.execute(query, (token))
+                token = cursor.fetchone()
+                Token = token[0]
+                query = "INSERT INTO MEETING_PARTICIPANTS (USER_ID, MEETING_ID) VALUES (%s, %s)"
+                cursor.execute(query, (Token, id))
+                cursor.close()
+        return redirect(url_for('events_page'))
+    except dbapi2.DatabaseError:
+        connection.rollback()
+        return render_template('error_page.html')
+    finally:
             connection.close()
-    return redirect(url_for('events_page'))
 
 
 @app.route('/initdb')
 def initDataBase():
-    try:    
+    try:
         connection = dbapi2.connect(app.config['dsn'])
         cursor = connection.cursor()
         ###################################################################
@@ -591,7 +646,7 @@ def initDataBase():
                         VALUES (%(name)s, %(info)s, %(address)s, %(phonenum)s)
                         """
             cursor.execute(statement, item)
-  
+
         ############################
         # Event and Meeting Tabels #
         ############################
@@ -824,4 +879,3 @@ if __name__ == '__main__':
         app.config['dsn'] = """user='eksqrjod' password='xcROOnh3iC9DwH18zw_ACXUbCBk8PINU'
                                host='jumbo.db.elephantsql.com' port=5432 dbname='eksqrjod'"""
     app.run(host='0.0.0.0', port=port, debug=debug)
-
