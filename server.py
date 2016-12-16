@@ -325,7 +325,7 @@ def useradd():
         with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
                 query = """
-                INSERT INTO USER (NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s, %s, %s)"""
+                INSERT INTO USERS (USER_NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s, %s, %s)"""
                 cursor.execute(query, [name, birthday, location, ocupation, interests])
                 cursor.close()
     return render_template('home.html')
@@ -868,6 +868,6 @@ if __name__ == '__main__':
     if VCAP_SERVICES is not None:
         app.config['dsn'] = get_elephantsql_dsn(VCAP_SERVICES)
     else:
-        app.config['dsn'] = """user='eksqrjod' password='xcROOnh3iC9DwH18zw_ACXUbCBk8PINU'
-                               host='jumbo.db.elephantsql.com' port=5432 dbname='eksqrjod'"""
+        app.config['dsn'] = """user='vagrant' password='vagrant'
+                                        host='localhost' port=5432 dbname='itucsdb'"""
     app.run(host='0.0.0.0', port=port, debug=debug)
