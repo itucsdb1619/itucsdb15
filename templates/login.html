@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <script src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+    <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.blue_grey-orange.min.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
+    <!-- <link rel="stylesheet" href="styles.css" /> -->
+    <title>login</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0
+        }
+
+        .container {
+            display: flex;
+            flex-flow: column;
+            height: 100%;
+        }
+
+        .content {
+            display: flex;
+            overflow: overlay;
+            flex: 1 1 auto;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .footer {
+            flex: 0 1 64px;
+        }
+
+        .mdl-mini-footer {
+            height: 32px;
+            padding: 16px
+        }
+
+        .mdl-card {
+            width: 300px;
+            background-color: whitesmoke;
+        }
+
+        .logo_title {
+            background: url(static/logo_small.png) no-repeat;
+            background-size: 150px;
+            height: 150px;
+            width: 150px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            color: #1b96fe;
+        }
+
+        .mdl-card__title {
+            padding: 16px 75px;
+        }
+
+        .mdl-textfield__input {
+            text-align: center;
+        }
+
+        .mdl-textfield {
+            width: 230px;
+            margin: 0 20px;
+            padding: 20px 0;
+        }
+
+        .mdl-textfield__label {
+            text-align: center;
+        }
+
+        .mdl-textfield__input {
+            padding: 8px 0;
+        }
+
+        .mdl-button {
+            margin: 20px;
+            width: 90px;
+            color: dodgerblue;
+        }
+
+        .mdl-button.mdl-js-button.mdl-button--raised.mdl-js-ripple-effect.mdl-button--accent {
+            color: white;
+        }
+
+        .forget_link {
+            display: block;
+            font-size: 0.8em;
+            text-align: center;
+        }
+
+        .login_error {
+            color: #D50000;
+            display: block;
+            text-align: center;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="content">
+        <div class="mdl-card mdl-shadow--4dp">
+            <div class="mdl-card__title mdl-card--border">
+                <span class="logo_title">advmeet</span>
+            </div>
+            <div class="mdl-card__supporting-text">
+                <form class="login_form" action="" method="post">
+                    {% if invalid_login %}<span class="login_error">Invalid Credentials</span>{% endif %}
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input class="mdl-textfield__input" type="text" id="name_field" name="name" required>
+                        <label class="mdl-textfield__label" for="name_field"><i
+                                class="material-icons">person</i></label>
+                    </div>
+                    <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="password_div">
+                        <input class="mdl-textfield__input" type="password" id="password_field" name="password"
+                               disabled>
+                        <label class="mdl-textfield__label" for="password_field"><i
+                                class="material-icons">lock</i></label>
+                    </div>
+                    <div class="mdl-tooltip" for="password_div">
+                        Password functionality<br>not yet implemented
+                    </div>
+                    <!--<a class="forget_link" href="#">Forget Password</a>-->
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
+                        Sign Up
+                    </button>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+                            type="submit" name="sign_in">
+                        Sign In
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <footer class="mdl-mini-footer">
+            <div class="mdl-mini-footer__left-section">
+                <div class="mdl-logo">itucsdb1619</div>
+            </div>
+            <div class="mdl-mini-footer__right-section">
+                <ul class="mdl-mini-footer__link-list">
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Privacy & Terms</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>
+</div>
+</body>
+</html>
