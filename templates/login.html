@@ -99,6 +99,29 @@
         }
 
     </style>
+    <script>
+        function post(path, params, method) {
+        method = method || "post"; // Set method to post by default if not specified.
+
+        var form = document.createElement("form");
+        form.setAttribute("method", method);
+        form.setAttribute("action", path);
+
+        for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", key);
+        hiddenField.setAttribute("value", params[key]);
+
+        form.appendChild(hiddenField);
+        }
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+        }
+    </script>
 </head>
 
 <body>
@@ -126,7 +149,9 @@
                         Password functionality<br>not yet implemented
                     </div>
                     <!--<a class="forget_link" href="#">Forget Password</a>-->
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" onclick="window.location = '/users'">
+                    <button style="display:none" name="add_button"></button>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                            onclick="post('/users',{add_button: 'Add user'})">
                         Sign Up
                     </button>
                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
