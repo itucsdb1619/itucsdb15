@@ -688,10 +688,11 @@ def initDataBase():
 		# Added CASCADE because participant tables has dependency on it, i dont think it will break anything
         query = """DROP TABLE IF EXISTS USERS CASCADE"""
         cursor.execute(query)
+        # Added unique constraint, to be able to use username as login name
         query = """ CREATE TABLE USERS
             (
             USER_ID serial NOT NULL PRIMARY KEY,
-            USER_NAME varchar(100) NOT NULL,
+            USER_NAME varchar(100) NOT NULL UNIQUE,
             BIRTHDAY date NOT NULL,
             LOCATION varchar(50) NOT NULL,
             OCUPATION varchar(50) NOT NULL,
