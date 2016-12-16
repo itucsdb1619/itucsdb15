@@ -8,6 +8,7 @@ from flask import redirect
 from flask import request
 from flask.helpers import url_for
 from flask import render_template
+from flask import session
 from users import User, Users
 
 
@@ -25,7 +26,37 @@ def get_elephantsql_dsn(vcap_services):
 
 @app.route('/')
 def home_page():
-    return render_template('home.html')
+    if 'logged_in' in session:
+        return render_template('home.html')
+    return redirect(url_for('login'))
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if 'logged_in' in session:
+        return render_template('home.html')
+    if request.method == 'POST':
+        attempted_name = request.form['name']
+        with dbapi2.connect(app.config['dsn']) as connection:
+            cursor = connection.cursor()
+            query = """ SELECT * FROM USERS WHERE USER_NAME=%s"""
+            cursor.execute(query, [attempted_name])
+            fetched_user = cursor.fetchone()
+            if fetched_user is not None:
+                session['logged_in'] = True
+                session['username'] = attempted_name
+                return redirect(url_for('home_page'))
+            else:
+                return render_template('login.html', invalid_login=True)
+    return render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('logged_in', None)
+    session.pop('username', None)
+    return redirect(url_for('login'))
+
 
 @app.route('/EventCreation')
 def eventcreation_page():
@@ -860,6 +891,7 @@ def friends_init():
 
 
 if __name__ == '__main__':
+    app.secret_key = 'itucsdb1619'
     VCAP_APP_PORT = os.getenv('VCAP_APP_PORT')
     if VCAP_APP_PORT is not None:
         port, debug = int(VCAP_APP_PORT), True
