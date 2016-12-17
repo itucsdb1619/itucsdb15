@@ -45,6 +45,7 @@ def login():
             if fetched_user is not None:
                 session['logged_in'] = True
                 session['username'] = attempted_name
+                session['USER_ID'] = fetched_user[0]
                 return redirect(url_for('home_page'))
             else:
                 return render_template('login.html', invalid_login=True)
@@ -55,6 +56,7 @@ def login():
 def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
+    session.pop('USER_ID', None)
     return redirect(url_for('login'))
 
 
@@ -406,17 +408,24 @@ def eventPage():
             id = request.form['button']
             cursor.execute(query, str(id))
             Event = cursor.fetchone()
-            query = ("SELECT EVENT_PARTICIPANTS.USER_ID FROM EVENT_PARTICIPANTS  JOIN USERS ON EVENT_ID = %s ")
+            query = """SELECT * FROM EVENT_PARTICIPANTS JOIN USERS
+            ON EVENT_PARTICIPANTS.USER_ID = USERS.USER_ID
+            WHERE EVENT_PARTICIPANTS.EVENT_ID = %s"""
             cursor.execute(query, str(id))
             Participants = cursor.fetchall()
-            query = ("SELECT * FROM USERS")
-            Users = cursor.fetchall()
             query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
             id = Event[6]
             cursor.execute(query, (str(id)))
             Place = cursor.fetchone()
+            personID = session['USER_ID']
+            query = """
+            SELECT * FROM FRIENDS JOIN USERS
+            ON FRIENDS.FRIEND_ID = USERS.USER_ID
+            WHERE PERSON_ID = %s"""
+            cursor.execute(query, [str(personID)])
+            Friends = cursor.fetchall()
             cursor.close()
-        return render_template('eventPage.html', Event = Event,  Place = Place, Participants = Participants, Users = Users)
+        return render_template('eventPage.html', Event = Event,  Place = Place, Participants = Participants, Friends = Friends)
     except dbapi2.DatabaseError:
         connection.rollback()
         return render_template('error_page.html')
@@ -431,17 +440,24 @@ def meeting_page():
             id = request.form['button']
             cursor.execute(query, (id))
             Meeting = cursor.fetchone()
-            query = ("SELECT MEETING_PARTICIPANTS.USER_ID FROM MEETING_PARTICIPANTS  JOIN USERS ON MEETING_ID = %s ")
+            query = """SELECT * FROM MEETING_PARTICIPANTS JOIN USERS
+            ON MEETING_PARTICIPANTS.USER_ID = USERS.USER_ID
+            WHERE MEETING_PARTICIPANTS.MEETING_ID = %s"""
             cursor.execute(query, str(id))
             Participants = cursor.fetchall()
-            query = ("SELECT * FROM USERS")
-            Users = cursor.fetchall()
+            personID = session['USER_ID']
+            query = """
+            SELECT * FROM FRIENDS JOIN USERS
+            ON FRIENDS.FRIEND_ID = USERS.USER_ID
+            WHERE PERSON_ID = %s"""
+            cursor.execute(query, [str(personID)])
+            Friends = cursor.fetchall()
             query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
             id = Meeting[4]
             cursor.execute(query, (str(id)))
             Place = cursor.fetchone()
             cursor.close()
-        return render_template('meeting_page.html', Meeting = Meeting,  Place = Place,Participants = Participants, Users = Users)
+        return render_template('meeting_page.html', Meeting = Meeting,  Place = Place,Participants = Participants, Friends = Friends)
     except dbapi2.DatabaseError:
         connection.rollback()
         return render_template('error_page.html')
@@ -604,14 +620,10 @@ def add_participant_event():
         if request.method == 'POST':
             with dbapi2.connect(app.config['dsn']) as connection:
                 id = request.form['button']
-                token = request.form['participant']
+                USER_ID = request.form['participant']
                 cursor = connection.cursor()
-                query = "SELECT USER_ID FROM USERS WHERE USER_NAME = %s"
-                cursor.execute(query, (token))
-                token = cursor.fetchone()
-                Token = token[0]
                 query = "INSERT INTO EVENT_PARTICIPANTS (USER_ID, EVENT_ID) VALUES (%s, %s)"
-                cursor.execute(query, (Token, id))
+                cursor.execute(query, [str(USER_ID), str(id)])
                 cursor.close()
         return redirect(url_for('events_page'))
     except dbapi2.DatabaseError:
@@ -626,14 +638,10 @@ def add_participant_meeting():
         if request.method == 'POST':
             with dbapi2.connect(app.config['dsn']) as connection:
                 id = request.form['button']
-                token = request.form['participant']
+                USER_ID = request.form['participant']
                 cursor = connection.cursor()
-                query = "SELECT USER_ID FROM USERS WHERE USER_NAME = %s"
-                cursor.execute(query, (token))
-                token = cursor.fetchone()
-                Token = token[0]
                 query = "INSERT INTO MEETING_PARTICIPANTS (USER_ID, MEETING_ID) VALUES (%s, %s)"
-                cursor.execute(query, (Token, id))
+                cursor.execute(query, [str(USER_ID), str(id)])
                 cursor.close()
         return redirect(url_for('events_page'))
     except dbapi2.DatabaseError:
@@ -679,7 +687,6 @@ def initDataBase():
          'address': "Istanbul",
          'phonenum':"05458965896"}
         ]
-        print("qsada")
         for item in place_data:
             statement = """
                         INSERT INTO PLACES (NAME, INFORMATION, ADDRESS, PHONENUMBER)
