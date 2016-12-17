@@ -62,6 +62,8 @@ def logout():
 
 @app.route('/EventCreation')
 def eventcreation_page():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     try:
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
@@ -78,6 +80,8 @@ def eventcreation_page():
 
 @app.route('/create_meeting')
 def createmeeting_page():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     try:
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
@@ -366,6 +370,8 @@ def useradd():
 ''' end of USERs part'''
 @app.route('/deleteEvent',  methods=['GET', 'POST'])
 def delete_event():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     try:
         if request.method == 'POST':
             with dbapi2.connect(app.config['dsn']) as connection:
@@ -396,6 +402,8 @@ def delete_event():
 
 @app.route('/meeting_delete',  methods=['GET', 'POST'])
 def meeting_delete():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     try:
         if request.method == 'POST':
             with dbapi2.connect(app.config['dsn']) as connection:
@@ -426,6 +434,8 @@ def meeting_delete():
 
 @app.route('/eventPage',  methods=['GET', 'POST'])
 def eventPage():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     try:
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
@@ -458,6 +468,8 @@ def eventPage():
             connection.close()
 @app.route('/meeting_page',  methods=['GET', 'POST'])
 def meeting_page():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     try:
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
@@ -490,6 +502,8 @@ def meeting_page():
             connection.close()
 @app.route('/update_event_page',  methods=['GET', 'POST'])
 def update_event_page():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     try:
         if request.method == 'POST':
             with dbapi2.connect(app.config['dsn']) as connection:
@@ -514,6 +528,8 @@ def update_event_page():
 
 @app.route('/updateEvent',  methods=['GET', 'POST'])
 def update_event():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     try:
         if request.method == 'POST':
             with dbapi2.connect(app.config['dsn']) as connection:
@@ -549,6 +565,8 @@ def update_event():
 
 @app.route('/meeting_update_page',  methods=['GET', 'POST'])
 def meeting_update_page():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     try:
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
@@ -570,6 +588,8 @@ def meeting_update_page():
 
 @app.route('/meeting_update',  methods=['GET', 'POST'])
 def meeting_update():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     try:
         if request.method == 'POST':
             with dbapi2.connect(app.config['dsn']) as connection:
@@ -602,6 +622,8 @@ def meeting_update():
 
 @app.route('/events', methods=['POST', 'GET'])
 def events_page():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     if request.method == 'POST':
         with dbapi2.connect(app.config['dsn']) as connection:
             if request.form['button'] == "event":
@@ -662,6 +684,8 @@ def events_page():
 
 @app.route('/add_participant_event',  methods=['GET', 'POST'])
 def add_participant_event():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     try:
         if request.method == 'POST':
             with dbapi2.connect(app.config['dsn']) as connection:
@@ -680,6 +704,8 @@ def add_participant_event():
 
 @app.route('/add_participant_meeting',  methods=['GET', 'POST'])
 def add_participant_meeting():
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
     try:
         if request.method == 'POST':
             with dbapi2.connect(app.config['dsn']) as connection:
