@@ -43,44 +43,33 @@
 			</div>
 			</div>
 
-					<div class="mdl-tabs__panel" id="Participants-panel">
+	<div class="mdl-tabs__panel" id="Participants-panel">
 		<div class="mdl-grid">
-		<h5>Participants:</h5>
+		<h6>Participants:</h6>
 		</div>
 		<div class="mdl-grid">
 		<ul class="demo-list-item mdl-list">
 			{% for part in Participants %}
 				<li class="mdl-list__item">
 			    <span class="mdl-list__item-primary-content">
-			      {{Participants[2]}}
+			      {{part[3]}}, {{part[5]}}
 			    </span>
 			  </li>
 			{% endfor %}
 			</ul>
 		</div>
-		<div class="mdl-grid">
-		<h5>List of all users:</h5>
-		</div>
-		<div class="mdl-grid">
-		<ul class="demo-list-item mdl-list">
-			{% for user in Users %}
-				<li class="mdl-list__item">
-			    <span class="mdl-list__item-primary-content">
-			      {{user[1]}}
-			    </span>
-			  </li>
-			{% endfor %}
-			</ul>
-			</div>
-			<div class="mdl-grid">
-			<h5>Add Participant</h5>
-			</div>
 			<div class="mdl-grid">
 			<form action="add_participant_meeting" enctype="multipart/form-data" method="post">
-				<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-			    <input class="mdl-textfield__input" type="text" name="participant">
-			    <label class="mdl-textfield__label" for="sample3">Name:</label>
-		  	</div>
+				<div class="mdl-grid">
+		    		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+					  <select id="participant" name="participant" class="mdl-textfield__input">
+							{% for friend in Friends %}
+								<option value="{{friend[1]}}">{{friend[4]}}</option>
+							{% endfor %}
+					  </select>
+					<label class="mdl-textfield__label" for="place">Your Friends</label>
+					</div>
+				</div>
 		  	<button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{Meeting[0]}}">ADD</button>
 			</form>
 			</div>
