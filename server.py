@@ -363,7 +363,6 @@ def useradd():
                 cursor.close()
     return render_template('home.html')
 
-
 ''' end of USERs part'''
 @app.route('/deleteEvent',  methods=['GET', 'POST'])
 def delete_event():
@@ -371,9 +370,22 @@ def delete_event():
         if request.method == 'POST':
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
-                query = ("DELETE FROM EVENT WHERE EVENT_ID = %s")
+                query = """DELETE FROM EVENT_PARTICIPANTS
+                WHERE EVENT_ID = %s AND USER_ID = %s"""
                 id = request.form['button']
+                event_id = session['USER_ID']
+                cursor.execute(query, [str(id), str(event_id)])
+                query = """SELECT * FROM EVENT_PARTICIPANTS
+                WHERE EVENT_ID = %s"""
                 cursor.execute(query, str(id))
+                isExist = cursor.fetchall()
+                flag = True
+                for isexist in isExist:
+                    flag = False
+                if flag:
+                    query = """DELETE FROM EVENT
+                    WHERE EVENT_ID = %s"""
+                    cursor.execute(query, str(id))
                 cursor.close()
         return redirect(url_for('events_page'))
     except dbapi2.DatabaseError:
@@ -388,11 +400,24 @@ def meeting_delete():
         if request.method == 'POST':
             with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
-                query = ("DELETE FROM MEETING WHERE MEETING_ID = %s")
+                query = """DELETE FROM MEETING_PARTICIPANTS
+                WHERE MEETING_ID = %s AND USER_ID = %s"""
                 id = request.form['button']
+                event_id = session['USER_ID']
+                cursor.execute(query, [str(id), str(event_id)])
+                query = """SELECT * FROM MEETING_PARTICIPANTS
+                WHERE MEETING_ID = %s"""
                 cursor.execute(query, str(id))
+                isExist = cursor.fetchall()
+                flag = True
+                for isexist in isExist:
+                    flag = False
+                if flag:
+                    query = """DELETE FROM MEETING
+                    WHERE MEETING_ID = %s"""
+                    cursor.execute(query, str(id))
                 cursor.close()
-            return redirect(url_for('events_page'))
+        return redirect(url_for('events_page'))
     except dbapi2.DatabaseError:
         connection.rollback()
         return render_template('error_page.html')
