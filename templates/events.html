@@ -1,4 +1,24 @@
 {% extends "base_new.html" %}
+{%- block style %}
+	<style>
+	.demo-card-wide.mdl-card {
+	  width: 512px;
+	}
+	.demo-card-wide > .mdl-card__title {
+	  color: #aaa;
+	  height: 176px;
+	  background: url('static/event_background.jpg') center / cover;
+	}
+	.demo-card-wide > .mdl-card__title_meeting {
+	  color: #aaa;
+	  height: 176px;
+	  background: url('static/meeting_background.jpg') center / cover;
+	}
+	.demo-card-wide > .mdl-card__menu {
+	  color: #fff;
+	}
+	</style>
+	{% endblock %}
   {%- block body %}
 <div class="mdl-grid">
   <form action="EventCreation" method="GET">
@@ -12,73 +32,70 @@
     </button>
   </form>
 </div>
-
 <div class="mdl-grid">
-    <table width="600"; class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
-      <thead>
-        <tr>
-          <th class="mdl-data-table__cell--non-numeric">Event Name</th>
-          <th class="mdl-data-table__cell--non-numeric">Description</th>
-          <th class="mdl-data-table__cell--non-numeric">Date</th>
-          <th class="mdl-data-table__cell--non-numeric">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for event in Event %}
-        <tr>
-            <td class="mdl-data-table__cell--non-numeric">{{event[1]}}</td>
-            <td class="mdl-data-table__cell--non-numeric"> {{event[2]}}</td>
-            <td class="mdl-data-table__cell--non-numeric">{{event[4]}} - {{event[5]}}</td>
-            <td class="mdl-data-table__cell--non-numeric">
-          <form action="eventPage" method="post">
-            <button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{ event[0] }}">Select</button>
-           </form>
-           <form action="update_event_page" method="post">
-            <button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{ event[0] }}">Update</button>
-           </form>
-           <form action="deleteEvent" method="post">
-            <button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{ event[0] }}">Delete</button>
-           </form>
-        </td>
-        </tr>
-         {% endfor %}
-      </tbody>
-    </table>
-        </div>
-        <div class="mdl-grid">
-    <table width="600"; class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
-      <thead>
-        <tr>
-          <th class="mdl-data-table__cell--non-numeric">Meeting Name</th>
-          <th class="mdl-data-table__cell--non-numeric">Description</th>
-          <th class="mdl-data-table__cell--non-numeric">Date</th>
-          <th class="mdl-data-table__cell--non-numeric">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-
-      {% for meeting in Meeting %}
-        <tr>
-
-            <td class="mdl-data-table__cell--non-numeric">{{meeting[1]}}</td>
-            <td class="mdl-data-table__cell--non-numeric"> {{meeting[2]}}</td>
-            <td class="mdl-data-table__cell--non-numeric">{{meeting[3]}}</td>
-            <td class="mdl-data-table__cell--non-numeric">
-          <form action="meeting_page" method="post">
-            <button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{ meeting[0] }}">Select</button>
-           </form>
-           <form action="meeting_update_page" method="post">
-            <button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{ meeting[0] }}">Update</button>
-           </form>
-           <form action="meeting_delete" method="post">
-            <button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="{{ meeting[0] }}">Delete</button>
-           </form>
-        </td>
-        </tr>
-         {% endfor %}
-      </tbody>
-    </table>
-        </div>
-
-
+	{% for event in Event %}
+		<div class="mdl-grid">
+			<div class="demo-card-wide mdl-card mdl-shadow--2dp">
+			  <div class="mdl-card__title">
+			  <h2 class="mdl-card__title-text">{{ event[1] }}</h2>
+			  </div>
+			  <div class="mdl-card__supporting-text">
+			    {{ event[2] }}
+			  </div>
+			<div class="mdl-card__supporting-text">
+				  {{ event[3] }} - {{ event[4] }}
+			</div>
+			  <div class="mdl-card__actions mdl-card--border">
+	          <form action="eventPage" method="post">
+	            <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" name="button" type="submit" value="{{ event[0] }}">Select</button>
+	           </form>
+			  </div>
+			  <div class="mdl-card__menu">
+			    <form action="deleteEvent" method="post">
+		            <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" name="button" type="submit" value="{{ event[0] }}">
+				      <i class="material-icons">delete</i>
+				    </button>
+		        </form>
+			   <form action="update_event_page" method="post">
+	            <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect"  name="button" type="submit" value="{{ event[0] }}">
+			      <i class="material-icons">edit</i>
+			    </button>
+	           </form>
+			  </div>
+			</div>
+		</div>
+	{% endfor %}
+	{% for meeting in Meeting %}
+		<div class="mdl-grid">
+			<div class="demo-card-wide mdl-card mdl-shadow--2dp">
+			  <div class="mdl-card__title_meeting">
+			  <h2 class="mdl-card__title-text">{{ meeting[1] }}</h2>
+			  </div>
+			  <div class="mdl-card__supporting-text">
+			    {{ meeting[2] }}
+			  </div>
+			<div class="mdl-card__supporting-text">
+				  {{ meeting[3] }}
+			</div>
+			  <div class="mdl-card__actions mdl-card--border">
+	          <form action="meeting_page" method="post">
+		          <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" name="button" type="submit" value="{{ meeting[0] }}">Select</button>
+		      </form>
+			  </div>
+			  <div class="mdl-card__menu">
+			    <form action="meeting_delete" method="post">
+		            <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" name="button" type="submit" value="{{ meeting[0] }}">
+				      <i class="material-icons">delete</i>
+				    </button>
+		        </form>
+			   <form action="meeting_update_page" method="post">
+	            <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" name="button" type="submit" value="{{ meeting[0] }}">
+			      <i class="material-icons">edit</i>
+			    </button>
+	           </form>
+			  </div>
+			</div>
+		</div>
+	{% endfor %}
+	</div>
 {% endblock %}

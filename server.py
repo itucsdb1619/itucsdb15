@@ -589,6 +589,14 @@ def events_page():
                                 VALUES (%s,%s,%s,%s,%s,%s)"""
                 cursor.execute(query, [request.form['NAME'], request.form['SHORT_DESCRIPTION'],
                                        request.form['DESCRIPTION'],request.form['STARTING_DATE'],request.form['ENDING_DATE'],placeId])
+
+                query = "SELECT *FROM EVENT WHERE NAME = %s AND STARTING_DATE = %s"
+                cursor.execute(query,[request.form['NAME'],request.form['STARTING_DATE']])
+                EVENT_ID = cursor.fetchone()
+                query = "INSERT INTO EVENT_PARTICIPANTS (EVENT_ID, USER_ID) VALUES (%s, %s)"
+                cursor.execute(query,[str(EVENT_ID[0]) ,str(session['USER_ID'])])
+                #
+                cursor.close()
             if request.form['button'] == "meeting":
                 cursor = connection.cursor()
                 query = "SELECT * FROM PLACES WHERE (NAME = %s)"
@@ -599,17 +607,30 @@ def events_page():
                                 VALUES (%s,%s,%s,%s)"""
                 cursor.execute(query, [request.form['NAME'],
                                        request.form['DESCRIPTION'],request.form['DATE'],placeId])
+                #
+                query = "SELECT *FROM MEETING WHERE NAME = %s AND DATE = %s"
+                cursor.execute(query,[request.form['NAME'],request.form['DATE']])
+                MEETING_ID = cursor.fetchone()
+                query = "INSERT INTO MEETING_PARTICIPANTS (MEETING_ID, USER_ID) VALUES (%s, %s)"
+                cursor.execute(query,[str(MEETING_ID[0]) ,str(session['USER_ID'])])
+                #
                 cursor.close()
     with dbapi2.connect(app.config['dsn']) as connection:
         cursor = connection.cursor()
-        query = ("SELECT * FROM EVENT ")
-        cursor.execute(query)
+        query = """SELECT * FROM EVENT JOIN EVENT_PARTICIPANTS
+        ON EVENT_PARTICIPANTS.EVENT_ID = EVENT.EVENT_ID
+        WHERE EVENT_PARTICIPANTS.USER_ID = %s
+        """
+        cursor.execute(query,[str(session['USER_ID'])])
         eventTable = cursor.fetchall()
         query = ("SELECT * FROM PLACES ")
         cursor.execute(query)
         Place = cursor.fetchall()
-        query = ("SELECT * FROM MEETING")
-        cursor.execute(query)
+        query = """SELECT * FROM MEETING JOIN MEETING_PARTICIPANTS
+        ON MEETING_PARTICIPANTS.MEETING_ID = MEETING.MEETING_ID
+        WHERE MEETING_PARTICIPANTS.USER_ID = %s
+        """
+        cursor.execute(query,[str(session['USER_ID'])])
         meetingTable = cursor.fetchall()
         cursor.close()
         return render_template('events.html', Event = eventTable, Meeting = meetingTable, Place = Place)
