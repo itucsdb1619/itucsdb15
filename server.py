@@ -648,11 +648,21 @@ def initDataBase():
     try:
         connection = dbapi2.connect(app.config['dsn'])
         cursor = connection.cursor()
+        cursor = connection.cursor()
+        statement = "DROP TABLE IF EXISTS PHOTOS CASCADE"
+        cursor.execute(statement)
+        statement = """CREATE TABLE PHOTOS (
+                    ID SERIAL PRIMARY KEY,
+                    INFORMATION VARCHAR(300) NOT NULL,
+                    PHOTOURL VARCHAR(1000) NOT NULL,
+                    USERNAME VARCHAR(20)
+                    )"""
+        cursor.execute(statement)
+        query = """DROP TABLE IF EXISTS PLACES CASCADE """
+        cursor.execute(query)
         ###################################################################
         # Creating Places Table In Database, and filling it with a sample #
         ###################################################################
-        query = """DROP TABLE IF EXISTS PLACES CASCADE """
-        cursor.execute(query)
         # !! ADDED PLACES_ID AS PRIMARY KEY, REMOVED PRIMARY_KEY ATTR. FROM NAME
         query = """CREATE TABLE PLACES (
                 PLACES_ID SERIAL PRIMARY KEY,
@@ -669,7 +679,7 @@ def initDataBase():
          'address': "Istanbul",
          'phonenum':"05458965896"}
         ]
-
+        print("qsada")
         for item in place_data:
             statement = """
                         INSERT INTO PLACES (NAME, INFORMATION, ADDRESS, PHONENUMBER)
@@ -702,21 +712,6 @@ def initDataBase():
                 PLACE INT REFERENCES PLACES (PLACES_ID)
                 )"""
         cursor.execute(query)
-        #
-        # Creating friends table and filling it with sample data
-        #
-        query = """ DROP TABLE IF EXISTS FRIENDS"""
-        cursor.execute(query)
-        query = """
-                CREATE TABLE FRIENDS (
-                PERSON_ID INT NOT NULL REFERENCES USERS (USER_ID),
-                FRIEND_ID INT NOT NULL REFERENCES USERS (USER_ID),
-                FRIEND_STATUS INT,
-                primary key (PERSON_ID, FRIEND_ID)
-                )"""
-        cursor.execute(query)
-
-		# Added CASCADE because participant tables has dependency on it, i dont think it will break anything
         query = """DROP TABLE IF EXISTS USERS CASCADE"""
         cursor.execute(query)
         # Added unique constraint, to be able to use username as login name
@@ -745,6 +740,20 @@ def initDataBase():
         query = """ALTER TABLE ONLY USER_FAVS ADD CONSTRAINT user_favs_fk_place_id FOREIGN KEY (PLACE_ID)
                 REFERENCES PLACES(PLACES_ID) DEFERRABLE INITIALLY DEFERRED"""
         cursor.execute(query)
+        #
+        # Creating friends table and filling it with sample data
+        #
+        query = """ DROP TABLE IF EXISTS FRIENDS"""
+        cursor.execute(query)
+        query = """
+                CREATE TABLE FRIENDS (
+                PERSON_ID INT NOT NULL REFERENCES USERS (USER_ID),
+                FRIEND_ID INT NOT NULL REFERENCES USERS (USER_ID),
+                FRIEND_STATUS INT,
+                primary key (PERSON_ID, FRIEND_ID)
+                )"""
+        cursor.execute(query)
+
 		################################$$
         # Event and Meeting participants #
         ##################################
@@ -765,6 +774,7 @@ def initDataBase():
         """
         cursor.execute(query)
         cursor.close()
+        connection.commit()
         return redirect(url_for('home_page'))
     except dbapi2.DatabaseError:
         connection.rollback()
