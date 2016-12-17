@@ -23,28 +23,16 @@
 		  	</div>
 		  	</div>
 				<div class="mdl-grid">
-				<ul class="demo-list-item mdl-list">
-				<h3> Places </h3>
-					{% for places in Places %}
-				  <li class="mdl-list__item">
-				    <span class="mdl-list__item-primary-content">
-				     <i class="material-icons mdl-list__item-avatar">place</i>
-				     <span> {{places[1]}} <br/> </span>
-				     <span class="mdl-list__item-sub-title">
-						{{places[3]}}
-					</span>
-				    </span>
-				  </li>
-					{% endfor %}
-			</ul>
-			</div>
-			<div class="mdl-grid">
-			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-			    <input class="mdl-textfield__input" type="text" name="PLACE_NAME">
-			    <label class="mdl-textfield__label" for="sample3">Place:</label>
-		  	</div>
+		    		<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+					  <select id="place" name="PLACE_NAME" class="mdl-textfield__input">
+							{% for places in Places %}
+								<option value="{{places[1]}}">{{places[1]}}</option>
+							{% endfor %}
+					  </select>
+					<label class="mdl-textfield__label" for="place">Place</label>
+					</div>
+				</div>
 			<button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="meeting">CREATE</button>
-    		</div>
     	</form>
     </div>
 {% endblock %}
