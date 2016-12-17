@@ -383,7 +383,7 @@ def delete_event():
                 cursor.execute(query, [str(id), str(event_id)])
                 query = """SELECT * FROM EVENT_PARTICIPANTS
                 WHERE EVENT_ID = %s"""
-                cursor.execute(query, str(id))
+                cursor.execute(query, [str(id)])
                 isExist = cursor.fetchall()
                 flag = True
                 for isexist in isExist:
@@ -391,7 +391,7 @@ def delete_event():
                 if flag:
                     query = """DELETE FROM EVENT
                     WHERE EVENT_ID = %s"""
-                    cursor.execute(query, str(id))
+                    cursor.execute(query, [str(id)])
                 cursor.close()
         return redirect(url_for('events_page'))
     except dbapi2.DatabaseError:
@@ -415,7 +415,7 @@ def meeting_delete():
                 cursor.execute(query, [str(id), str(event_id)])
                 query = """SELECT * FROM MEETING_PARTICIPANTS
                 WHERE MEETING_ID = %s"""
-                cursor.execute(query, str(id))
+                cursor.execute(query, [str(id)])
                 isExist = cursor.fetchall()
                 flag = True
                 for isexist in isExist:
@@ -423,7 +423,7 @@ def meeting_delete():
                 if flag:
                     query = """DELETE FROM MEETING
                     WHERE MEETING_ID = %s"""
-                    cursor.execute(query, str(id))
+                    cursor.execute(query, [str(id)])
                 cursor.close()
         return redirect(url_for('events_page'))
     except dbapi2.DatabaseError:
@@ -441,16 +441,16 @@ def eventPage():
             cursor = connection.cursor()
             query = ("SELECT * FROM EVENT WHERE EVENT_ID = %s")
             id = request.form['button']
-            cursor.execute(query, str(id))
+            cursor.execute(query, [str(id)])
             Event = cursor.fetchone()
             query = """SELECT * FROM EVENT_PARTICIPANTS JOIN USERS
             ON EVENT_PARTICIPANTS.USER_ID = USERS.USER_ID
             WHERE EVENT_PARTICIPANTS.EVENT_ID = %s"""
-            cursor.execute(query, str(id))
+            cursor.execute(query, [str(id)])
             Participants = cursor.fetchall()
             query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
             id = Event[6]
-            cursor.execute(query, (str(id)))
+            cursor.execute(query, [str(id)])
             Place = cursor.fetchone()
             personID = session['USER_ID']
             query = """
@@ -475,12 +475,12 @@ def meeting_page():
             cursor = connection.cursor()
             query = ("SELECT * FROM MEETING WHERE MEETING_ID = %s")
             id = request.form['button']
-            cursor.execute(query, (id))
+            cursor.execute(query, [str(id)])
             Meeting = cursor.fetchone()
             query = """SELECT * FROM MEETING_PARTICIPANTS JOIN USERS
             ON MEETING_PARTICIPANTS.USER_ID = USERS.USER_ID
             WHERE MEETING_PARTICIPANTS.MEETING_ID = %s"""
-            cursor.execute(query, str(id))
+            cursor.execute(query, [str(id)])
             Participants = cursor.fetchall()
             personID = session['USER_ID']
             query = """
@@ -491,7 +491,7 @@ def meeting_page():
             Friends = cursor.fetchall()
             query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
             id = Meeting[4]
-            cursor.execute(query, (str(id)))
+            cursor.execute(query, [str(id)])
             Place = cursor.fetchone()
             cursor.close()
         return render_template('meeting_page.html', Meeting = Meeting,  Place = Place,Participants = Participants, Friends = Friends)
@@ -510,11 +510,11 @@ def update_event_page():
                 cursor = connection.cursor()
                 query = ("SELECT * FROM EVENT WHERE EVENT_ID = %s")
                 id = request.form['button']
-                cursor.execute(query,(str(id)))
+                cursor.execute(query,[str(id)])
                 Event = cursor.fetchone()
                 query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
                 id = Event[6]
-                cursor.execute(query, (str(id)))
+                cursor.execute(query, [str(id)])
                 Place = cursor.fetchone()
                 cursor.close()
                 return render_template('event_update.html', Event = Event, Place = Place)
@@ -536,7 +536,7 @@ def update_event():
                 id = request.form['button']
                 cursor = connection.cursor()
                 query = "SELECT EVENT_ID FROM EVENT WHERE EVENT_ID = %s"
-                cursor.execute(query, (str(id)))
+                cursor.execute(query, [str(id)])
                 if cursor.fetchall is "":
                     connection.commit()
                     return redirect(url_for('events_page'))
@@ -572,11 +572,11 @@ def meeting_update_page():
             cursor = connection.cursor()
             query = ("SELECT * FROM MEETING WHERE MEETING_ID = %s")
             id = request.form['button']
-            cursor.execute(query, (str(id)))
+            cursor.execute(query, [str(id)])
             Meeting = cursor.fetchone()
             query = ("SELECT * FROM PLACES WHERE PLACES_ID = %s")
             id = Meeting[4]
-            cursor.execute(query, (str(id)))
+            cursor.execute(query, [str(id)])
             Place = cursor.fetchone()
             cursor.close()
             return render_template('meeting_update.html', Meeting = Meeting, Place = Place)
@@ -596,22 +596,22 @@ def meeting_update():
                 id = request.form['button']
                 cursor = connection.cursor()
                 query = "SELECT MEETING_ID FROM MEETING WHERE MEETING_ID = %s"
-                cursor.execute(query, (str(id)))
+                cursor.execute(query, [str(id)])
                 if cursor.fetchall is "":
                     connection.commit()
                     return redirect(url_for('events_page'))
                 if request.form['NAME'] is not "":
                     query = "UPDATE MEETING SET NAME = %s WHERE MEETING_ID = %s"
                     token = request.form['NAME']
-                    cursor.execute(query, (token, str(id)))
+                    cursor.execute(query, [token, str(id)])
                 if request.form['DESCRIPTION'] is not "":
                     query = "UPDATE MEETING SET DESCRIPTION = %s WHERE MEETING_ID = %s"
                     token = request.form['DESCRIPTION']
-                    cursor.execute(query, (token, str(id)))
+                    cursor.execute(query, [token, str(id)])
                 if request.form['DATE'] is not "":
                     query = "UPDATE MEETING SET DATE = %s WHERE MEETING_ID = %s"
                     token = request.form['DATE']
-                    cursor.execute(query, (token, str(id)))
+                    cursor.execute(query, [token, str(id)])
                 cursor.close()
                 return redirect(url_for('events_page'))
     except dbapi2.DatabaseError:

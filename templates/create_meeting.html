@@ -1,5 +1,6 @@
 {% extends "base_new.html" %}
 	{%- block body %}
+	<div class="mdl-layout">
 	<div class="mdl-grid">
       <form action="events"
         enctype="multipart/form-data" method="post">
@@ -34,5 +35,6 @@
 				</div>
 			<button class="mdl-button mdl-js-button mdl-button--raised" name="button" type="submit" value="meeting">CREATE</button>
     	</form>
+    </div>
     </div>
 {% endblock %}

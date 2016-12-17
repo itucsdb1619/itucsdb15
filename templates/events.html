@@ -26,6 +26,7 @@
 	</style>
 	{% endblock %}
   {%- block body %}
+  <div class="mdl-layout">
 <div class="mdl-grid">
   <form action="EventCreation" method="GET">
     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect">
@@ -40,7 +41,7 @@
 </div>
 <div class="mdl-grid">
 	{% for event in Event %}
-		<div class="mdl-grid">
+	<div class="mdl-grid">
 			<div class="demo-card-wide mdl-card mdl-shadow--2dp">
 			  <div class="mdl-card__title">
 			  <h2 class="mdl-card__title-text">{{ event[1] }}</h2>
@@ -105,5 +106,6 @@
 			</div>
 		</div>
 	{% endfor %}
-</div>
+	</div>
+	</div>
 {% endblock %}
