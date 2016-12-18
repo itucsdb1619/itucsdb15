@@ -1,4 +1,6 @@
 import os
+
+import datetime
 import psycopg2 as dbapi2
 import json
 import re
@@ -1005,8 +1007,11 @@ def messages():
                 cursor.execute(query, (str(session['USER_ID'])))
                 u_messages = cursor.fetchall()
             elif action == 'select_recent':
-                query = """SELECT * FROM MESSAGES WHERE TO_ID=%s"""
-                cursor.execute(query, (str(session['USER_ID'])))
+                dt = datetime.datetime.now().date()
+                dt = dt - datetime.timedelta(days=2)
+                query = """SELECT * FROM MESSAGES WHERE TO_ID=%s AND SEND_TIME>%s"""
+
+                cursor.execute(query, (str(session['USER_ID']), dt))
                 u_messages = cursor.fetchall()
 
         if u_messages is None:
