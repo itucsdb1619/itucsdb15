@@ -988,19 +988,19 @@ def messages():
                 for m in selected_messages:
                     if m.isdigit():
                         query = """DELETE FROM MESSAGES WHERE MESSAGE_ID=%s"""
-                        cursor.execute(query, m)
+                        cursor.execute(query, (m, ))
                         connection.commit()
             elif action == 'mark_read':
                 for m in selected_messages:
                     if m.isdigit():
                         query = """UPDATE MESSAGES SET SEEN=TRUE WHERE MESSAGE_ID=%s"""
-                        cursor.execute(query, m)
+                        cursor.execute(query, (m, ))
                         connection.commit()
             elif action == 'mark_unread':
                 for m in selected_messages:
                     if m.isdigit():
                         query = """UPDATE MESSAGES SET SEEN=FALSE WHERE MESSAGE_ID=%s"""
-                        cursor.execute(query, m)
+                        cursor.execute(query, (m, ))
                         connection.commit()
             elif action == 'select_unread':
                 query = """SELECT * FROM MESSAGES WHERE TO_ID=%s AND SEEN=FALSE"""
