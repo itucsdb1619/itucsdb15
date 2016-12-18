@@ -820,7 +820,7 @@ def initDataBase():
                 REFERENCES PLACES(PLACES_ID) DEFERRABLE INITIALLY DEFERRED"""
         cursor.execute(query)
         #
-        # Creating friends table and filling it with sample data
+        # Create friends table
         #
         query = """ DROP TABLE IF EXISTS FRIENDS"""
         cursor.execute(query)
@@ -831,6 +831,21 @@ def initDataBase():
                 FRIEND_STATUS INT,
                 primary key (PERSON_ID, FRIEND_ID)
                 )"""
+        cursor.execute(query)
+        #
+        # Create messages table
+        #
+        query = """ DROP TABLE IF EXISTS MESSAGES"""
+        cursor.execute(query)
+        query = """CREATE TABLE MESSAGES (
+                   MESSAGE_ID SERIAL NOT NULL PRIMARY KEY,
+                   FROM_ID INT NOT NULL REFERENCES USERS (USER_ID),
+                   TO_ID INT NOT NULL REFERENCES USERS (USER_ID),
+                   TITLE VARCHAR(50) NOT NULL,
+                   CONTENT VARCHAR(200),
+                   SEND_TIME TIMESTAMP NOT NULL DEFAULT NOW(),
+                   SEEN BOOLEAN NOT NULL DEFAULT FALSE
+                   );"""
         cursor.execute(query)
 
 		################################$$
@@ -904,7 +919,23 @@ def friends_page():
 
 @app.route('/send_message', methods=['POST'])
 def send_message():
-    session['friend_message'] = 'Message titled ' + request.form['title'] + 'will be sent'
+    try:
+        title = request.form['title']
+        if title is None or title is "":
+            title = "Title"
+
+        connection = dbapi2.connect(app.config['dsn'])
+        cursor = connection.cursor()
+        query = """INSERT INTO MESSAGES (FROM_ID, TO_ID, TITLE, CONTENT) VALUES (%s,%s,%s,%s)"""
+        cursor.execute(query, (session['USER_ID'], request.form['id'], title, request.form['message']))
+        connection.commit()
+        cursor.close()
+        session['friend_message'] = 'Message sent'
+    except dbapi2.DatabaseError as error:
+        connection.rollback()
+        return error.pgerror
+    finally:
+        connection.close()
     return redirect(url_for('friends_page'))
 
 

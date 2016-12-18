@@ -23,10 +23,12 @@
 					<div class="header-row_right">
 						<div class="nav_icons_container">
                             {% if session['logged_in']%}
-                            <button id="notifications_button" class="mdl-button mdl-js-button mdl-button--icon nav_icons">
-								<div class="material-icons mdl-badge mdl-badge--overlap badge_icons" data-badge="2">notifications</div>
+                            <button id="notifications_button" class="mdl-button mdl-js-button mdl-button--icon nav_icons"
+                                    onclick="window.location='/messages'">
+								<div class="material-icons mdl-badge mdl-badge--overlap badge_icons"
+                                     {% if session['notify']%}data-badge="{{ session['notify'] }}"{% endif %}>sms</div>
 							</button>
-							<div class="mdl-tooltip" data-mdl-for="notifications_button">Notifications</div>
+							<div class="mdl-tooltip" data-mdl-for="notifications_button">Messages</div>
 							{#<button id="friends_button" class="mdl-button mdl-js-button mdl-button--icon nav_icons">
 								<div class="material-icons mdl-badge mdl-badge--overlap badge_icons">people</div>
 							</button>
