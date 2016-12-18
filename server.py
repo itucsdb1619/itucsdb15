@@ -975,23 +975,45 @@ def add_friend():
 
 @app.route('/messages', methods=['GET', 'POST'])
 def messages():
-    session['notify'] = None
+    u_messages = None
     try:
         connection = dbapi2.connect(app.config['dsn'])
         cursor = connection.cursor()
         if request.method == 'POST':
-            messages_to_delete = request.form['delete'].split(',')
-            for m in messages_to_delete:
-                if m.isdigit():
-                    query = """DELETE FROM MESSAGES WHERE MESSAGE_ID=%s"""
-                    cursor.execute(query, m)
-                    connection.commit()
-        query = """SELECT * FROM MESSAGES WHERE TO_ID=%s"""
-        cursor.execute(query, (str(session['USER_ID'])))
-        u_messages = cursor.fetchall()
-        query = """UPDATE MESSAGES SET SEEN=TRUE WHERE SEEN=FALSE"""
-        cursor.execute(query)
-        connection.commit()
+            selected_messages = request.form['messages'].split(',')
+            action = request.form['action']
+            if action == 'delete':
+                for m in selected_messages:
+                    if m.isdigit():
+                        query = """DELETE FROM MESSAGES WHERE MESSAGE_ID=%s"""
+                        cursor.execute(query, m)
+                        connection.commit()
+            elif action == 'mark_read':
+                for m in selected_messages:
+                    if m.isdigit():
+                        query = """UPDATE MESSAGES SET SEEN=TRUE WHERE MESSAGE_ID=%s"""
+                        cursor.execute(query, m)
+                        connection.commit()
+            elif action == 'mark_unread':
+                for m in selected_messages:
+                    if m.isdigit():
+                        query = """UPDATE MESSAGES SET SEEN=FALSE WHERE MESSAGE_ID=%s"""
+                        cursor.execute(query, m)
+                        connection.commit()
+            elif action == 'select_unread':
+                query = """SELECT * FROM MESSAGES WHERE TO_ID=%s AND SEEN=FALSE"""
+                cursor.execute(query, (str(session['USER_ID'])))
+                u_messages = cursor.fetchall()
+            elif action == 'select_recent':
+                query = """SELECT * FROM MESSAGES WHERE TO_ID=%s"""
+                cursor.execute(query, (str(session['USER_ID'])))
+                u_messages = cursor.fetchall()
+
+        if u_messages is None:
+            query = """SELECT * FROM MESSAGES WHERE TO_ID=%s"""
+            cursor.execute(query, (str(session['USER_ID'])))
+            u_messages = cursor.fetchall()
+
         n_messages = []
         for message in u_messages:
             query = """SELECT USER_NAME FROM USERS WHERE USER_ID=%s"""
@@ -999,6 +1021,10 @@ def messages():
             name = cursor.fetchone()[0]
             message += (name, )
             n_messages.append(message)
+
+        query = """SELECT COUNT(MESSAGE_ID) FROM MESSAGES WHERE TO_ID=%s AND SEEN=FALSE"""
+        cursor.execute(query, str(session['USER_ID']))
+        session['notify'] = cursor.fetchone()[0]
     except dbapi2.DatabaseError as error:
         connection.rollback()
         return error.pgerror
