@@ -37,8 +37,14 @@
 							<div class="mdl-tooltip" data-mdl-for="account_button">Account</div>
 							<ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="account_button">
 								<li class="mdl-menu__item"><i class="material-icons list_icon">settings</i>Settings</li>
-								<li class="mdl-menu__item" onclick="window.location = '/logout'"><i class="material-icons list_icon">power_settings_new</i>Log Off</li>
+								<li class="mdl-menu__item" onclick="window.location = '/logout'"><i class="material-icons list_icon">power_settings_new</i>Log Out</li>
 							</ul>
+                            {% else %}
+                            <button id="account_button" class="mdl-button mdl-js-button mdl-button--icon nav_icons"
+                                    onclick="window.location='/login'">
+								<div class="material-icons mdl-badge mdl-badge--overlap badge_icons">account_circle</div>
+							</button>
+                            <div class="mdl-tooltip" data-mdl-for="account_button">Log In</div>
                             {% endif %}
 							<div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
 								<label class="mdl-button mdl-js-button mdl-button--icon" for="waterfall-exp">
