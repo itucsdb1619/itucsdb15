@@ -910,6 +910,9 @@ def send_message():
 
 @app.route('/add_friend', methods=['POST'])
 def add_friend():
+    if session['username'] == request.form['searched_name']:
+        session['friend_message'] = "You cant be friends with yourself"
+        return redirect(url_for('friends_page'))
     connection = None
     try:
         connection = dbapi2.connect(app.config['dsn'])
@@ -918,7 +921,7 @@ def add_friend():
         cursor.execute(query, [request.form['searched_name']])
         new_friend = cursor.fetchone()
         if new_friend is None:
-            session['friend_message'] = 'No user named: ' + request.form['searched_name']
+            session['friend_message'] = 'There is no user named ' + request.form['searched_name']
             return redirect(url_for('friends_page'))
         else:
             query = """INSERT INTO FRIENDS
