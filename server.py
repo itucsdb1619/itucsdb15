@@ -973,12 +973,19 @@ def add_friend():
     return redirect(url_for('friends_page'))
 
 
-@app.route('/messages')
+@app.route('/messages', methods=['GET', 'POST'])
 def messages():
     session['notify'] = None
     try:
         connection = dbapi2.connect(app.config['dsn'])
         cursor = connection.cursor()
+        if request.method == 'POST':
+            messages_to_delete = request.form['delete'].split(',')
+            for m in messages_to_delete:
+                if m.isdigit():
+                    query = """DELETE FROM MESSAGES WHERE MESSAGE_ID=%s"""
+                    cursor.execute(query, m)
+                    connection.commit()
         query = """SELECT * FROM MESSAGES WHERE TO_ID=%s"""
         cursor.execute(query, (str(session['USER_ID'])))
         u_messages = cursor.fetchall()

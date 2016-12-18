@@ -17,6 +17,19 @@
         document.body.appendChild(form);
         form.submit();
         }
+        function del_messages() {
+            var ms = document.getElementsByTagName('tr')
+            var dm = ''
+            var postm = {}
+            for (var i = 1; i < ms.length; i++) {
+
+                if (ms[i].children[0].children[0].children[0].checked){
+                    dm += ms[i].id.toString() + ','
+                }
+            }
+            postm['delete'] = dm
+            post('/messages', postm)
+        }
         {% if show_message %}
         window.onload = function() {
             var notification = document.querySelector('.mdl-js-snackbar');
@@ -25,6 +38,7 @@
         {% endif %}
     </script>
 
+    <div id="message_table" style="margin: 10px 20px; height: 100%;">
     {% if messages%}
         <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
             <thead>
@@ -46,6 +60,29 @@
             {% endfor %}
             </tbody>
         </table>
+    {% else %}
+        No Message
+    {% endif %}
+    </div>
+
+
+    {% if messages%}
+        <div class="mdl-card mdl-shadow--4dp" id="send_message" style="margin: 10px 20px; height: 100%;">
+            <div class="mdl-card__title mdl-card--border">
+                <h4 class="mdl-card__title-text" id="receiver">Actions</h4>
+            </div>
+            <div class="mdl-card__supporting-text">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                        onclick="window.location='/friends'" style="margin: 10px; width: 80px">
+                    New
+                </button>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                        onclick="del_messages()" style="margin: 10px; width: 80px">
+                    Delete
+                </button>
+            </div>
+
+        </div>
     {% endif %}
 
     <div aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar">
