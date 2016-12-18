@@ -43,6 +43,9 @@ def login():
             cursor.execute(query, [attempted_name])
             fetched_user = cursor.fetchone()
             if fetched_user is not None:
+                query = """SELECT COUNT(MESSAGE_ID) FROM MESSAGES WHERE TO_ID=%s AND SEEN=FALSE"""
+                cursor.execute(query, [str(fetched_user[0])])
+                session['notify'] = cursor.fetchone()[0]
                 session['logged_in'] = True
                 session['username'] = attempted_name
                 session['USER_ID'] = fetched_user[0]
@@ -57,6 +60,7 @@ def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
     session.pop('USER_ID', None)
+    session.pop('notify', None)
     return redirect(url_for('login'))
 
 
@@ -843,7 +847,7 @@ def initDataBase():
                    TO_ID INT NOT NULL REFERENCES USERS (USER_ID),
                    TITLE VARCHAR(50) NOT NULL,
                    CONTENT VARCHAR(200),
-                   SEND_TIME TIMESTAMP NOT NULL DEFAULT NOW(),
+                   SEND_TIME DATE NOT NULL DEFAULT NOW(),
                    SEEN BOOLEAN NOT NULL DEFAULT FALSE
                    );"""
         cursor.execute(query)
@@ -967,6 +971,26 @@ def add_friend():
         connection.close()
     session['friend_message'] = request.form['searched_name'] + ' added to friends'
     return redirect(url_for('friends_page'))
+
+
+@app.route('/messages')
+def messages():
+    session['notify'] = None
+    try:
+        connection = dbapi2.connect(app.config['dsn'])
+        cursor = connection.cursor()
+        query = """SELECT * FROM MESSAGES WHERE TO_ID=%s"""
+        cursor.execute(query, (str(session['USER_ID'])))
+        u_messages = cursor.fetchall()
+        query = """UPDATE MESSAGES SET SEEN=TRUE WHERE SEEN=FALSE"""
+        cursor.execute(query)
+        connection.commit()
+    except dbapi2.DatabaseError as error:
+        connection.rollback()
+        return error.pgerror
+    finally:
+        connection.close()
+    return render_template('messages.html', messages=u_messages)
 
 
 if __name__ == '__main__':
