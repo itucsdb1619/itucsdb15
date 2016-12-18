@@ -862,121 +862,77 @@ def initDataBase():
         connection.close()
 
 
-@app.route('/friends', methods=['POST', 'GET'])
+@app.route('/friends', methods=['GET', 'POST'])
 def friends_page():
-    last_query = ""
-    personID = None
-    if request.method == 'POST' and request.args.get('user') is not None:
-        personID = request.args.get('user')
-        friendID = request.form['friendID']
-        actionType = request.form['actionType']
-        actionData = request.form['actionData']
-        friendStatus = request.form['friendStatus']
-        friendName = request.form['newfriend']
-        if friendStatus == '':
-            friendStatus = '0'
-        if actionType == 'delete':
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-                pid, fid = actionData.split(',')
-                query = """DELETE FROM FRIENDS WHERE PERSON_ID = %s AND FRIEND_ID=%s"""
-                cursor.execute(query, (pid, fid))
-                cursor.close()
-        elif personID == '' or friendID == '':
-            return """<script> alert('Fill the necessary inputs');
-                   window.location = '/friends';</script>"""
-        elif actionType == 'add':
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-                query = """SELECT USER_ID FROM USERS WHERE USER_NAME = """ + friendName
-                cursor.execute(query)
-                newfriend = cursor.fetchall()
-                if newfriend is None:
-                    return """<script> alert('Fill the necessary inputs');
-                                       window.location = '/friends';</script>"""
-                query = """INSERT INTO FRIENDS
-                           (PERSON_ID, FRIEND_ID, FRIEND_STATUS) VALUES (%s, %s, %s)"""
-                data = (personID, newfriend[0], 1)
-                cursor.execute(query, data)
-                cursor.close()
-        else:
-            with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-                pid, fid = actionData.split(',')
-                query = """UPDATE FRIENDS SET PERSON_ID = %s, FRIEND_ID = %s, FRIEND_STATUS = %s
-                           WHERE PERSON_ID = %s AND FRIEND_ID=%s"""
-                cursor.execute(query, (personID, friendID, friendStatus, pid, fid))
-                cursor.close()
-    if request.method == 'GET' and request.args.get('user') is not None:
-        personID = request.args.get('user')
-        query = """SELECT * FROM FRIENDS"""
-        if personID != '' or friendID != '' or friendStatus != '':
-            query += """ WHERE """
-            addquery = []
-            if personID != '' and personID is not None:
-                addquery.append('PERSON_ID = ' + format(personID))
-            for s in addquery:
-                query += s
-                query += """ AND """
-            query = query[:-5]
-            last_query = query
-    with dbapi2.connect(app.config['dsn']) as connection:
+    if 'logged_in' not in session:
+        return redirect(url_for('login'))
+
+    connection = None
+    message = None
+    if 'friend_message' in session:
+        message = session['friend_message']
+        session.pop('friend_message', None)
+    try:
+        connection = dbapi2.connect(app.config['dsn'])
         cursor = connection.cursor()
-        if last_query != "":
-            cursor.execute(last_query)
-            rows = cursor.fetchall()
-        else:
-            rows = []
-        cursor.execute("""SELECT USER_NAME, USER_ID FROM USERS""")
-        users = cursor.fetchall()
-        if personID is not None:
-            query = """SELECT USER_NAME FROM USERS WHERE USER_ID = """ + format(personID)
-            cursor.execute(query)
-            user = cursor.fetchall()
-        else:
-            user = [['User']]
+
+        if request.method == 'POST':
+            query = """DELETE FROM FRIENDS WHERE PERSON_ID=%s AND FRIEND_ID=%s"""
+            cursor.execute(query, (session['USER_ID'], str(request.form['id'])))
+            connection.commit()
+            query = """SELECT USER_NAME FROM USERS WHERE USER_ID=%s"""
+            cursor.execute(query, [str(request.form['id'])])
+            deleted_name = cursor.fetchone()[0]
+            message = deleted_name + " removed from friends"
+        query = """SELECT FRIEND_ID FROM FRIENDS WHERE PERSON_ID=%s"""
+        cursor.execute(query, [session['USER_ID']])
+        friend_ids = cursor.fetchall()
+        friends = []
+        for fid in friend_ids:
+            query = """SELECT USER_ID, USER_NAME FROM USERS WHERE USER_ID=%s"""
+            cursor.execute(query, [fid])
+            friends.append(cursor.fetchone())
         cursor.close()
-    return render_template('friends.html', rows=rows, users=users, user=user)
+    except dbapi2.DatabaseError as error:
+        connection.rollback()
+        return error.pgerror
+    finally:
+        connection.close()
+
+    return render_template('friends.html', friends=friends, show_message=message)
 
 
-@app.route('/friends_init', methods=['POST', 'GET'])
-def friends_init():
-    if request.args.get('action') == 'drop':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            query = """ DROP TABLE IF EXISTS FRIENDS"""
-            cursor.execute(query)
+@app.route('/send_message', methods=['POST'])
+def send_message():
+    session['friend_message'] = 'Message titled ' + request.form['title'] + 'will be sent'
+    return redirect(url_for('friends_page'))
+
+
+@app.route('/add_friend', methods=['POST'])
+def add_friend():
+    connection = None
+    try:
+        connection = dbapi2.connect(app.config['dsn'])
+        cursor = connection.cursor()
+        query = """SELECT USER_ID FROM USERS WHERE USER_NAME=%s"""
+        cursor.execute(query, [request.form['searched_name']])
+        new_friend = cursor.fetchone()
+        if new_friend is None:
+            session['friend_message'] = 'No user named: ' + request.form['searched_name']
+            return redirect(url_for('friends_page'))
+        else:
+            query = """INSERT INTO FRIENDS
+                           (PERSON_ID, FRIEND_ID, FRIEND_STATUS) VALUES (%s, %s, %s)"""
+            cursor.execute(query, (session['USER_ID'], new_friend[0], 1))
+            connection.commit()
             cursor.close()
-        return render_template('friends.html')
-    elif request.args.get('action') == 'create':
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            query = """ DROP TABLE IF EXISTS FRIENDS"""
-            cursor.execute(query)
-            query = """CREATE TABLE FRIENDS (
-                       PERSON_ID INT NOT NULL REFERENCES USERS (USER_ID),
-                       FRIEND_ID INT NOT NULL REFERENCES USERS (USER_ID),
-                       FRIEND_STATUS INT,
-                       primary key (PERSON_ID, FRIEND_ID)
-                       )"""
-            cursor.execute(query)
-            cursor.close()
-            return redirect('/friends')
-    else:
-        with dbapi2.connect(app.config['dsn']) as connection:
-            cursor = connection.cursor()
-            query = """INSERT INTO FRIENDS VALUES (0, 1, 1)"""
-            cursor.execute(query)
-            query = """INSERT INTO FRIENDS VALUES (0, 2, 1)"""
-            cursor.execute(query)
-            query = """INSERT INTO FRIENDS VALUES (0, 3, 2)"""
-            cursor.execute(query)
-            query = """INSERT INTO FRIENDS VALUES (1, 3, 2)"""
-            cursor.execute(query)
-            query = """INSERT INTO FRIENDS VALUES (1, 5, 3)"""
-            cursor.execute(query)
-            cursor.close()
-            return redirect('/friends')
+    except dbapi2.DatabaseError as error:
+        connection.rollback()
+        return error.pgerror
+    finally:
+        connection.close()
+    session['friend_message'] = request.form['searched_name'] + ' added to friends'
+    return redirect(url_for('friends_page'))
 
 
 if __name__ == '__main__':

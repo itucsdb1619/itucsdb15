@@ -1,124 +1,128 @@
 {% extends "base_new.html" %}
 {% block body %}
     <script>
-        function getUrlVars() {
-            var vars = {};
-            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-                vars[key] = value;
-            });
-            return vars;
+        function post(path, params, method) {
+        method = method || "post";
+        var form = document.createElement("form");
+        form.setAttribute("method", method);
+        form.setAttribute("action", path);
+        for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+        var hiddenField = document.createElement("input");
+        hiddenField.setAttribute("type", "hidden");
+        hiddenField.setAttribute("name", key);
+        hiddenField.setAttribute("value", params[key]);
+        form.appendChild(hiddenField);
+        }}
+        document.body.appendChild(form);
+        form.submit();
         }
-        function set_name(name, id) {
-            //document.getElementById('select_user').innerText = name;
-            window.location = "?user=" + id
+        function del(uid) {
+            post('/friends',{id:uid, action:'delete'})
         }
-        window.onload = function () {
-            var radios = document.getElementsByName('options');
-            for (var i = 1; i < radios.length; i++) {
-                radios[i].onclick = function () {
-                    document.getElementById('actionData').value = this.value;
-                    document.getElementById('delete').disabled = false;
-                    document.getElementById('update').disabled = true;
-                }
-            }
-            radios[0].onclick = function () {
-                document.getElementById('actionType').value = 'add';
-                document.getElementById('delete').disabled = true;
-                document.getElementById('update').disabled = true;
-            }
-            if (getUrlVars().user == null) {
-                document.getElementById('select_user').innerText = 'Select a user';
-            }
-        };
+        function writeto(uid, name) {
+            document.forms[0].elements['id'].value = uid;
+            document.getElementById('receiver').innerText = 'Send to ' + name;
+            document.getElementById('send_message').style.display='block';
 
+        }
+        function open_search() {
+            document.getElementById('search_friend').style.display='block';
+        }
+        {% if show_message %}
+        window.onload = function() {
+            var notification = document.querySelector('.mdl-js-snackbar');
+            notification.MaterialSnackbar.showSnackbar({message: '{{ show_message }}'});
+        };
+        {% endif %}
     </script>
 
-    <div style="margin: 20px 0;text-align: center;width: 400px;display:inline-block">
-        <button style="width: 88px; margin: 8px;" id="create"
-                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                onclick="window.location.href = 'friends_init?action=create'">
-            Create
-        </button>
-        <button style="width: 88px; margin: 8px;" id="fill" disabled
-                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                onclick="window.location.href = 'friends_init?action=fill'">
-            Fill
-        </button>
-        <button style="width: 88px; margin: 8px;" id="drop"
-                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                onclick="window.location.href = 'friends_init?action=drop'">
-            Drop
-        </button>
-        <button id="select_user"
-                class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
-                style="width: 302px;margin-top: 20px;">
-            Select a user
-        </button>
+    <div class="mdl-card mdl-shadow--2dp" style="margin: 10px 20px; height: 100%;">
+        <div class="mdl-card__title mdl-card--border">
+            <h4 class="mdl-card__title-text">Your Friends</h4>
+        </div>
+        {% if friends %}
+            <ul class="demo-list-control mdl-list mdl-js-ripple-effect">
+            {%for f in friends %}
+                <li class="mdl-list__item" onmouseover="document.getElementById('{{ f[0] }}').style.display = 'inline';"
+                    onmouseout="document.getElementById('{{ f[0] }}').style.display = 'none';">
+                    <span class="mdl-list__item-primary-content">
+                        <i class="material-icons mdl-list__item-avatar">person</i>
+                        <span>{{ f[1] }}</span>
+                    </span>
 
-        <ul class="mdl-menu mdl-menu--bottom-left mdl-js-menu mdl-js-ripple-effect"
-            for="select_user">
-            {% for t in users %}
-                <li class="mdl-menu__item" onclick="set_name('{{ t[0] }}', {{ t[1] }})">{{ t[0] }}</li>
+                    <span class="mdl-list__item-secondary-action" id="{{ f[0] }}" style="display: none">
+                        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored"
+                        id="{{ f[0] }}_write" onclick="writeto({{ f[0] }}, '{{ f[1] }}')">
+                            <i class="material-icons">create</i>
+                        </button>
+                        <div class="mdl-tooltip" data-mdl-for="{{ f[0] }}_write">Write Message</div>
+                        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored"
+                        id="{{ f[0] }}_delete" onclick="del({{ f[0] }})">
+                            <i class="material-icons">delete</i>
+                        </button>
+                        <div class="mdl-tooltip" data-mdl-for="{{ f[0] }}_delete">Delete</div>
+                    </span>
+                </li>
             {% endfor %}
-        </ul>
+            </ul>
+        {% else %}
+            No friends yet
+        {% endif %}
 
-        <form class="login_form" method="POST" action="/friends">
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="text"
-                       id="newfriend" name="Search Name">
-                <label class="mdl-textfield__label" for="newfriend">Add a new Friend by Name</label>
-            </div>
+        <div class="mdl-card__menu">
+            <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect mdl-button--accent"
+                    onclick="open_search()">
+                <i class="material-icons">add_circle</i>
+            </button>
+        </div>
+    </div>
 
-            <input style="display:none;" type="text" id="actionType" name="actionType" value="add">
-            <input style="display:none;" type="text" id="actionData" name="actionData" value="0">
-            <input id="add" style="width:140px;margin:10px;"
-                   class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit"
-                   value="Add" onclick="document.getElementById('actionType').value = 'add'
-                                                 document.forms[0].method = 'POST';">
-            <input id="select" style="width:140px;margin:10px;"
-                   class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit"
-                   value="Select" onclick="document.getElementById('actionType').value = 'select';
-                                                   document.forms[0].method = 'GET';">
-            <input id="update" style="width:140px;margin:10px;"
-                   class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit"
-                   value="Update" disabled onclick="document.getElementById('actionType').value = 'update'
-                                                            document.forms[0].method = 'POST';">
-            <input id="delete" style="width:140px;margin:10px;"
-                   class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit"
-                   value="Delete" disabled onclick="document.getElementById('actionType').value = 'delete'
-                                                            document.forms[0].method = 'POST';">
-        </form>
+    <div class="mdl-card mdl-shadow--4dp" id="send_message" style="margin: 10px 20px; height: 100%; display: none">
+        <div class="mdl-card__title mdl-card--border">
+            <h4 class="mdl-card__title-text" id="receiver">Send to </h4>
+        </div>
+        <div class="mdl-card__supporting-text">
+            <form action="send_message" method="POST">
+                <div class="mdl-textfield mdl-js-textfield">
+                    <input class="mdl-textfield__input" type="text" id="title" name="title" />
+                    <label class="mdl-textfield__label" for="title">Title</label>
+                </div>
+                <div class="mdl-textfield mdl-js-textfield">
+                    <textarea class="mdl-textfield__input" rows= "3" id="message" name="message"></textarea>
+                    <label class="mdl-textfield__label" for="message">Write your message...</label>
+                </div>
+                <input style="display: none" name="id"/>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+                            type="submit">
+                        Send
+                </button>
+            </form>
+        </div>
 
     </div>
-    <ul style="width:400px;display:inline-block;float:right;margin: 20px 0;padding:0">
-        <li class="mdl-list__item">
-                    <span class="mdl-list__item-primary-content">
-                        {{ user[0][0] }}'s friends
-                    </span>
-            <span>
-                        Select none
-                    </span>
-            <span style="margin-top: -30px;" class="mdl-list__item-secondary-action">
-                        <label class="demo-list-radio mdl-radio mdl-js-radio mdl-js-ripple-effect"
-                               for="list-option--1"/>
-                        <input style="display: inline;" type="radio" id="list-option--1"
-                               class="mdl-radio__button" name="options" value="add" checked/>
-                    </span>
-        </li>
-        {% for t in rows %}
-            <li class="mdl-list__item">
-                    <span class="mdl-list__item-primary-content">
-                        <i class="material-icons  mdl-list__item-avatar">person</i>
-                        p_{{ t[0] }}'s relation with p_{{ t[1] }} is {{ t[2] }}
-                    </span>
-                <span style="margin-top: -30px;" class="mdl-list__item-secondary-action">
-                        <label class="demo-list-radio mdl-radio mdl-js-radio mdl-js-ripple-effect"
-                               for="list-option-{{ t[0] }},{{ t[1] }}"/>
-                        <input style="display: inline;" type="radio" id="list-option-{{ t[0] }},{{ t[1] }}"
-                               class="mdl-radio__button" name="options"
-                               value="{{ t[0] }},{{ t[1] }}"/>
-                    </span>
-            </li>
-        {% endfor %}
-    </ul>
+
+    <div class="mdl-card mdl-shadow--4dp" id="search_friend" style="margin: 10px 20px; height: 100%; display: none">
+        <div class="mdl-card__title mdl-card--border">
+            <h4 class="mdl-card__title-text">Search by name</h4>
+        </div>
+        <div class="mdl-card__supporting-text">
+            <form action="add_friend" method="POST">
+                <div class="mdl-textfield mdl-js-textfield">
+                    <input class="mdl-textfield__input" type="text" id="search_name" name="searched_name" />
+                    <label class="mdl-textfield__label" for="search_name">Name</label>
+                </div>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+                            type="submit">
+                        Search
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+    <div aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button type="button" class="mdl-snackbar__action"></button>
+    </div>
 {% endblock %}
