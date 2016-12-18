@@ -992,12 +992,19 @@ def messages():
         query = """UPDATE MESSAGES SET SEEN=TRUE WHERE SEEN=FALSE"""
         cursor.execute(query)
         connection.commit()
+        n_messages = []
+        for message in u_messages:
+            query = """SELECT USER_NAME FROM USERS WHERE USER_ID=%s"""
+            cursor.execute(query, [message[1]])
+            name = cursor.fetchone()[0]
+            message += (name, )
+            n_messages.append(message)
     except dbapi2.DatabaseError as error:
         connection.rollback()
         return error.pgerror
     finally:
         connection.close()
-    return render_template('messages.html', messages=u_messages)
+    return render_template('messages.html', messages=n_messages)
 
 
 if __name__ == '__main__':
