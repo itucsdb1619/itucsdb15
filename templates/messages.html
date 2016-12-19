@@ -1,5 +1,12 @@
 {% extends "base_new.html" %}
 {% block body %}
+    <style>
+    .t_col1 {width: 80px;}
+    .t_col2 {width: 100px;}
+    .t_col3 {width: 280px; overflow-x: auto;}
+    .t_col4 {width: 110px;}
+    .t_col5 {width: 50px;}
+    </style>
     <script>
         function post(path, params, method) {
         method = method || "post";
@@ -41,24 +48,25 @@
 
     <div id="message_table" style="margin: 10px 20px; height: 100%;">
     {% if messages%}
-        <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+        <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp"
+               style="table-layout: fixed; width: 660px;">
             <thead>
             <tr>
-                <th class="mdl-data-table__cell--non-numeric">From</th>
-                <th class="mdl-data-table__cell--non-numeric">Title</th>
-                <th class="mdl-data-table__cell--non-numeric">Message</th>
-                <th class="mdl-data-table__cell--non-numeric">Date</th>
-                <th class="mdl-data-table__cell--non-numeric"> </th>
+                <th class="mdl-data-table__cell--non-numeric t_col1">From</th>
+                <th class="mdl-data-table__cell--non-numeric t_col2">Title</th>
+                <th class="mdl-data-table__cell--non-numeric t_col3">Message</th>
+                <th class="mdl-data-table__cell--non-numeric t_col4">Date</th>
+                <th class="mdl-data-table__cell--non-numeric t_col5"> </th>
             </tr>
             </thead>
             <tbody>
             {% for m in messages %}
                 <tr id="{{ m[0] }}">
-                    <td class="mdl-data-table__cell--non-numeric">{{ m[7] }}</td>
-                    <td class="mdl-data-table__cell--non-numeric">{{ m[3] }}</td>
-                    <td class="mdl-data-table__cell--non-numeric">{{ m[4] }}</td>
-                    <td class="mdl-data-table__cell--non-numeric">{{ m[5] }}</td>
-                    <td class="mdl-data-table__cell--non-numeric">
+                    <td class="mdl-data-table__cell--non-numeric t_col1">{{ m[7] }}</td>
+                    <td class="mdl-data-table__cell--non-numeric t_col2">{{ m[3] }}</td>
+                    <td class="mdl-data-table__cell--non-numeric t_col3">{{ m[4] }}</td>
+                    <td class="mdl-data-table__cell--non-numeric t_col4">{{ m[5] }}</td>
+                    <td class="mdl-data-table__cell--non-numeric t_col5">
                         {% if m[6]%} &#20;
                         {% else%} <i class="material-icons">priority_high</i>
                         {% endif %}
