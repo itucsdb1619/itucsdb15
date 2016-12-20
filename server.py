@@ -39,12 +39,15 @@ def login():
         return render_template('home.html')
     if request.method == 'POST':
         attempted_name = request.form['name']
+        attempted_password = request.form['password']
         with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
             query = """ SELECT * FROM USERS WHERE USER_NAME=%s"""
             cursor.execute(query, [attempted_name])
             fetched_user = cursor.fetchone()
             if fetched_user is not None:
+                if fetched_user[6] and not check_password_hash(fetched_user[6], attempted_password):
+                    return render_template('login.html', invalid_login=True)
                 query = """SELECT COUNT(MESSAGE_ID) FROM MESSAGES WHERE TO_ID=%s AND SEEN=FALSE"""
                 cursor.execute(query, [str(fetched_user[0])])
                 session['notify'] = cursor.fetchone()[0]
@@ -102,9 +105,7 @@ def createmeeting_page():
     finally:
             connection.close()
 
-@app.route('/mypage')
-def my_page():
-    return render_template('mypage.html')
+
 
 @app.route('/places')
 def places_page():
@@ -317,41 +318,72 @@ def user_page():
 def favourite_places(pk):
     with dbapi2.connect(app.config['dsn']) as connection:
         with connection.cursor() as cursor:
-            statement = """SELECT * FROM USER_FAVS WHERE USER_ID = %(user_id)s"""
-            cursor.execute(statement)
+            statement = """SELECT PLACES_ID, NAME FROM PLACES WHERE PLACES_ID IN (SELECT PLACE_ID FROM USER_FAVS WHERE USER_ID = %s)"""
+            cursor.execute(statement, [pk])
             fav_places = cursor.fetchall()
-            cursor.close()
     return render_template('favourites.html', favourite_places=fav_places, user_pk=pk)
 
-@app.route('/users', methods=['POST'])
-def operation():
-    if 'add_button' in request.form:
-        return user_add_page()
-    elif 'update_button' in request.form:
+@app.route('/users/<pk>/favourites/<place_pk>/delete')
+def delete_favourite(pk, place_pk):
+    with dbapi2.connect(app.config['dsn']) as connection:
+        with connection.cursor() as cursor:
+            statement = """DELETE FROM USER_FAVS WHERE PLACE_ID = %s"""
+            cursor.execute(statement, [place_pk])
+            connection.commit()
+    return redirect(url_for('favourite_places', pk=pk))
+
+@app.route('/users/<pk>/favourites/<place_pk>', methods=["GET"])
+def add_to_favourite(pk, place_pk):
+    with dbapi2.connect(app.config['dsn']) as connection:
+        with connection.cursor() as cursor:
+            statement = """INSERT INTO USER_FAVS (USER_ID, PLACE_ID) VALUES (%s, %s)"""
+            cursor.execute(statement, [pk, place_pk])
+            connection.commit()
+    return redirect(url_for('favourite_places', pk=pk))
+
+@app.route('/users/<pk>/update', methods=["GET", "POST"])
+def update_user(pk):
+    if request.method == "POST":
         name = request.form['name']
         birthday = request.form['birthday']
         location = request.form['location']
         ocupation = request.form['ocupation']
         interests = request.form['interests']
         with dbapi2.connect(app.config['dsn']) as connection:
-                cursor = connection.cursor()
-                statement = """ UPDATE USERS
-                        SET NAME = %s,
-                        BIRTHDAY = %s,
-                        LOCATION = %s,
-                        OCUPATION = %s,
-                        INTERESTS = %s
-                        WHERE
-                        USER_ID = %s """
-                cursor.execute(statement, [name, birthday, location, ocupation, interests])
-    elif 'delete_button' in request.form:
-        user_id = request.form['user_id']
-        with dbapi2.connect(app.config['dsn']) as connection:
             cursor = connection.cursor()
-            statement = """ DELETE FROM USERS
-                                    WHERE USER_ID = %s"""
-            cursor.execute(statement, [user_id])
-            cursor.close()
+            statement = """ UPDATE USERS
+                    SET USER_NAME = %s,
+                    BIRTHDAY = %s,
+                    LOCATION = %s,
+                    OCUPATION = %s,
+                    INTERESTS = %s
+                    WHERE
+                    USER_ID = %s """
+            cursor.execute(statement, [name, birthday, location, ocupation, interests, pk])
+            connection.commit()
+        return redirect(url_for('.user_page'))
+    with dbapi2.connect(app.config['dsn']) as connection:
+        cursor = connection.cursor()
+        statement = "SELECT * FROM USERS WHERE USER_ID = %s"
+        cursor.execute(statement, [pk])
+        user = cursor.fetchone()
+        if user:
+            return render_template('user_update.html', user=user)
+        return redirect(url_for('.user_page'))
+
+@app.route('/users/<pk>/delete', methods=["POST"])
+def delete_user(pk):
+    with dbapi2.connect(app.config['dsn']) as connection:
+        cursor = connection.cursor()
+        statement = "DELETE FROM USERS WHERE USER_ID = %s"
+        cursor.execute(statement, [pk])
+        connection.commit()
+    return redirect(url_for('.user_page'))
+
+@app.route('/users', methods=['POST'])
+def operation():
+    if 'add_button' in request.form:
+        return user_add_page()
     return users()
 
 @app.route('/user_add')
@@ -361,6 +393,7 @@ def user_add_page():
 def useradd():
     if 'add_button' in request.form:
         name = request.form['name']
+        password = request.form['password']
         birthday = request.form['birthday']
         location = request.form['location']
         ocupation = request.form['ocupation']
@@ -368,8 +401,8 @@ def useradd():
         with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
                 query = """
-                INSERT INTO USERS (USER_NAME, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s, %s, %s)"""
-                cursor.execute(query, [name, birthday, location, ocupation, interests])
+                INSERT INTO USERS (USER_NAME, PASSWORD, BIRTHDAY, LOCATION, OCUPATION, INTERESTS) VALUES (%s, %s, %s, %s, %s, %s)"""
+                cursor.execute(query, [name, generate_password_hash(password), birthday, location, ocupation, interests])
                 cursor.close()
     return render_template('home.html')
 
@@ -807,7 +840,8 @@ def initDataBase():
             BIRTHDAY date NOT NULL,
             LOCATION varchar(50) NOT NULL,
             OCUPATION varchar(50) NOT NULL,
-            INTERESTS varchar(100) NOT NULL
+            INTERESTS varchar(100) NOT NULL,
+            PASSWORD varchar(254)
             )"""
         cursor.execute(query)
         query = """DROP TABLE IF EXISTS USER_FAVS CASCADE;"""

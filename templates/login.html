@@ -140,18 +140,14 @@
                                 class="material-icons">person</i></label>
                     </div>
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="password_div">
-                        <input class="mdl-textfield__input" type="password" id="password_field" name="password"
-                               disabled>
+                        <input class="mdl-textfield__input" type="password" id="password_field" name="password">
                         <label class="mdl-textfield__label" for="password_field"><i
                                 class="material-icons">lock</i></label>
-                    </div>
-                    <div class="mdl-tooltip" for="password_div">
-                        Password functionality<br>not yet implemented
                     </div>
                     <!--<a class="forget_link" href="#">Forget Password</a>-->
                     <button style="display:none" name="add_button"></button>
                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                            onclick="post('/users',{add_button: 'Add user'})">
+                            onclick="location.href = '/user_add'; return false;">
                         Sign Up
                     </button>
                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"

@@ -4,51 +4,34 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.indigo-blue.min.css" />
     <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+    <title>Favourite Places</title>
 </head>
 <body>
    {% block body %}
     <h2> User Table Manipulations </h2>
-    <table class="mdl-data-table mdl-js-data-table">
+    <table class="mdl-data-table mdl-js-data-table favs-table">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Birthday</th>
-                <th>Location</th>
-                <th>Occupation</th>
-                <th>Interests</th>
+                <th>Place</th>
+                <th>Operation</th>
             </tr>
         </thead>
         <tbody>
-            {% for row in user_all %}
+            {% for row in favourite_places %}
             <tr>
-                <td class="thclass"> {{row[0]}}</td>
-                <td class="thclass"> {{row[1]}}</td>
-                <td class="thclass"> {{row[2]}}</td>
-                <td class="thclass"> {{row[3]}}</td>
+                <a href="{{ url_for('places_page') }}">
+                  {# Use row[0] to redirect directly to place page, not available currently #}
+                  <td class="thclass"> {{row[1]}}</td>
+                </a>
                 <td class="thclass">
-                <button class="mdl-button mdl-js-button " name="update_button" value="Update"
-                    onclick="location.href='{{ url_for('update_user', pk=row[0]) }}'; return false;">
-                    Update
-                </button>
-                    <form action="{{ url_for('delete_user', pk=row[0]) }}" method="POST">
-                        <button class="mdl-button mdl-js-button " name="delete_button" value="Delete">
-                            Delete
-                        </button>
-                    </form>
+                  <button class="mdl-button mdl-js-button " name="delete_button" value="Delete"
+                      onclick="location.href='{{ url_for('delete_favourite', pk=user_pk, place_pk=row[0])}}'; return false;">
+                      Delete
+                  </button>
                 </td>
             </tr>
             {% endfor %}
             <tr>
-                <td></td><td></td>
-                <td><form action='/users' method="post">
-                    <div align="center">
-                        <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored"
-                            type="submit" name="add_button">
-                            <i class="material-icons">add</i>
-                        </button>
-                    </div>
-                    </form>
-                </td>
                 <td></td><td></td>
             </tr>
         </tbody>
