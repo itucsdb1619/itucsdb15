@@ -37,6 +37,10 @@
                             Update
                         </button>
                     </form>
+                    <button class="mdl-button mdl-js-button "name="delete_button" value="Add to Favs"
+                        onclick="location.href='{{ url_for('add_to_favourite', pk=session['USER_ID'], place_pk=row[0])}}'; return false;">
+                        Add to Favs
+                    </button>
                 </td>
             </tr>
             {% endfor %}
