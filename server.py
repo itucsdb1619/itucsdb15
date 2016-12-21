@@ -5,12 +5,10 @@ import psycopg2 as dbapi2
 import json
 import re
 
-from flask import Flask
-from flask import redirect
-from flask import request
+from flask import Flask, redirect, request, render_template, session
 from flask.helpers import url_for
-from flask import render_template
-from flask import session
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from users import User, Users
 
 
