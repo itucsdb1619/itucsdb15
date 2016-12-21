@@ -1,0 +1,55 @@
+{% extends "base_new.html" %}
+{% block body %}
+    <div align="center" style="width: 350px;">
+        <div class="left" align="center">
+            <form action="" method="post">
+                <div class="form-group">
+                    <label for="name">Enter user name:</label>
+                    <div>
+                        <input type="text" class="form-control" name="name" placeholder="Name" value="{{ user[1] }}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bithday">Enter birthday:</label>
+                    <div>
+                        <input type="text" class="form-control" name="birthday" placeholder="DD/MM/YYYY" value="{{ user[2] }}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Enter your location:</label>
+                    <div>
+                        <input type="text" class="form-control" name="location" placeholder="Location" value="{{ user[3] }}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="ocupation">Enter your occupation:</label>
+                    <div>
+                        <input type="text" class="form-control" name="ocupation" placeholder="Occupation" value="{{ user[4] }}" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="interests">Interests:</label>
+                    <div class="col-sm-6">
+                        <select class="form-control" name="interests" required>
+                            <option> Reading</option>
+                            <option> Cinema</option>
+                            <option> Swimming</option>
+                            <option> Bicycling</option>
+                            <option> Music</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-6">
+                        <button type="submit" class="btn btn-default" name="add_button">Add user</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

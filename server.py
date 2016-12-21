@@ -8,7 +8,6 @@ import re
 from flask import Flask, redirect, request, render_template, session
 from flask.helpers import url_for
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from users import User, Users
 
 
@@ -103,7 +102,9 @@ def createmeeting_page():
     finally:
             connection.close()
 
-
+@app.route('/mypage')
+def my_page():
+    return render_template('mypage.html')
 
 @app.route('/places')
 def places_page():
@@ -153,7 +154,7 @@ def add_place_page():
     try:
         connection = dbapi2.connect(app.config['dsn'])
         cursor = connection.cursor()
-        statement = """SELECT ID, NAME
+        statement = """SELECT ID, INFORMATION
                     FROM PHOTOS"""
         cursor.execute(statement)
         connection.commit()
@@ -195,7 +196,7 @@ def update_place_page(id):
     try:
         connection = dbapi2.connect(app.config['dsn'])
         cursor = connection.cursor()
-        statement = """SELECT ID, NAME
+        statement = """SELECT ID, INFORMATION
                     FROM PHOTOS"""
         cursor.execute(statement)
         connection.commit()
@@ -239,7 +240,7 @@ def update_place():
 def photos_page():
     with dbapi2.connect(app.config['dsn']) as connection:
         with connection.cursor() as cursor:
-            statement = """SELECT ID, INFORMATION, URL, USERNAME
+            statement = """SELECT ID, INFORMATION, PHOTOURL, USERNAME
                         FROM PHOTOS"""
             cursor.execute(statement)
             photo_db = cursor.fetchall()
@@ -253,7 +254,7 @@ def photos_post():
         username = request.form['username']
         with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
-                statement = """INSERT INTO PHOTOS (INFORMATION, URL, USERNAME)
+                statement = """INSERT INTO PHOTOS (INFORMATION, PHOTOURL, USERNAME)
                       VALUES (%s, %s, %s)"""
                 cursor.execute(statement, [info, url, username])
                 cursor.close()
@@ -265,7 +266,7 @@ def photos_post():
         with dbapi2.connect(app.config['dsn']) as connection:
                 cursor = connection.cursor()
                 statement = """UPDATE PHOTOS
-                        SET INFORMATION = %s, URL = %s, USERNAME = %s
+                        SET INFORMATION = %s, PHOTOURL = %s, USERNAME = %s
                             WHERE ID = %s"""
                 cursor.execute(statement, [info, url, username, id])
                 cursor.close()
@@ -288,9 +289,10 @@ def initilize_photos_db():
                     ID SERIAL PRIMARY KEY,
                     INFORMATION VARCHAR(300) NOT NULL,
                     PHOTOURL VARCHAR(1000) NOT NULL,
-                    USERNAME VARCHAR(20)
+                    USERNAME VARCHAR(20),
                     )"""
         cursor.execute(statement)
+        connection.commit()
         cursor.close()
         return home_page()
     except dbapi2.DatabaseError:
